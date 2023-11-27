@@ -19,6 +19,8 @@ import SellerOrderList from './components/seller/SellerOrderList.tsx';
 import ProductManager from './components/seller/ProductManager.tsx';
 import SignInPage from './pages/user/SignIn.tsx';
 import SignUpPage from './pages/user/SignUp.tsx';
+import { CategoryList } from './pages/product/CategoryList.tsx';
+import { SearchResults } from './pages/product/SearchResult.tsx';
 
 const router = createBrowserRouter([
   {
@@ -27,9 +29,11 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, path: '/', element: <Home /> },
+      { path: '/category/:category', element: <CategoryList /> },
       { path: '/product', element: <ProductList /> },
       { path: '/product/:id', element: <ProductDetail /> },
       { path: '/cart', element: <MyCart /> },
+      { path: '/search', element: <SearchResults /> },
       { path: '/sign-in', element: <SignInPage /> },
       { path: '/sign-up', element: <SignUpPage /> },
     ],
