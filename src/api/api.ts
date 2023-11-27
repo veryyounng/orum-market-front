@@ -26,4 +26,5 @@ export const api = {
   checkEmail: (email: string) =>
     axiosInstance.get('/users/email', { params: { email } }),
   signIn: (credentials: any) => axiosInstance.post('/users/login', credentials),
+  getBuyerInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
 };
