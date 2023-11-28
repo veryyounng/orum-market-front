@@ -29,18 +29,32 @@ export interface IBuyerInfo {
 
 export default function BuyerInfo() {
   const { id } = useParams();
-  const [buyerFormData, setBuyFormData] = useState<IBuyerInfo>({
+  const [buyerFormData, setBuyerFormData] = useState<IBuyerInfo>({
     _id: 0,
     email: '',
     name: '',
     address: '',
   });
 
+  const handleChangeUserName = (newName: string) => {
+    setBuyerFormData({
+      ...buyerFormData,
+      name: newName,
+    });
+  };
+
+  const handleChangeUserAddress = (newAddress: string) => {
+    setBuyerFormData({
+      ...buyerFormData,
+      address: newAddress,
+    });
+  };
+
   useEffect(() => {
     const getBuyerInfo = async () => {
       try {
         const response = await api.getBuyerInfo(id);
-        setBuyFormData({
+        setBuyerFormData({
           ...buyerFormData,
           _id: response.data.item._id,
           email: response.data.item.email,
@@ -73,17 +87,15 @@ export default function BuyerInfo() {
         <TextField
           type="text"
           value={buyerFormData.name}
-          onChange={(e) =>
-            setBuyFormData({
-              ...buyerFormData,
-              name: e.target.value,
-            })
-          }
+          onChange={(e) => handleChangeUserName(e.target.value)}
           size="small"
           fullWidth
         />
         <FormLabel>기본 배송지</FormLabel>
-        <AddressForm />
+        <AddressForm
+          address={buyerFormData.address || ''}
+          handleChangeUserAddress={handleChangeUserAddress}
+        />
         <Button type="button" variant="contained" size="large">
           내 정보 수정하기
         </Button>
