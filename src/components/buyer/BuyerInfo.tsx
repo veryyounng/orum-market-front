@@ -62,7 +62,7 @@ export default function BuyerInfo() {
   useEffect(() => {
     const getBuyerInfo = async () => {
       try {
-        const response = await api.getBuyerInfo(id);
+        const response = await api.getUserInfo(id);
         setBuyerFormData({
           ...buyerFormData,
           _id: response.data.item._id,
