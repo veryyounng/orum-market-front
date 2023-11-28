@@ -11,17 +11,26 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Badge, Button, Container } from '@mui/material';
+import { Badge, Box, Button, Container } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from '../lib/store';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Logout } from '@mui/icons-material';
-import { UserStore } from '../lib/store';
+
+const categories = ['tops', 'bottoms', 'backpacks', 'shoes', 'gear'];
 
 export default function Header() {
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
-  const { isLoggedIn, logOut }: UserStore = useUserStore();
+  const { isLoggedIn, logOut } = useUserStore();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    let queryParam = `?query=${searchQuery}`;
+    navigate(`/search${queryParam}`);
+    setSearchQuery('');
+  };
 
   const navigate = useNavigate();
   const _id = localStorage.getItem('_id');
@@ -36,9 +45,9 @@ export default function Header() {
 
   const handleLogout = () => {
     logOut();
+    localStorage.removeItem('token');
     alert('로그아웃 되었습니다. 다음에 또 만나요!');
     setOpenLogoutDialog(false);
-    localStorage.removeItem('token');
     navigate('/');
   };
 
@@ -89,6 +98,19 @@ export default function Header() {
     );
   }
 
+  const renderCategoryLinks = () => {
+    return categories.map((category) => (
+      <Button
+        key={category}
+        component={Link}
+        to={`/category/${category}`}
+        color="inherit"
+      >
+        {category.charAt(0).toUpperCase() + category.slice(1)}
+      </Button>
+    ));
+  };
+
   return (
     <Container maxWidth="sm">
       <AppBar position="fixed">
@@ -112,15 +134,24 @@ export default function Header() {
               ORUM
             </Typography>
           </Link>
-          <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+
+          <Box sx={{ display: 'flex' }}>{renderCategoryLinks()}</Box>
+          <form onSubmit={handleSearch}>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="검색해볼까"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                inputProps={{ 'aria-label': 'search' }}
+              />
+              <Button type="submit" color="inherit" variant="outlined">
+                검색
+              </Button>
+            </Search>
+          </form>
           {isLoggedIn && isLoggedInUserButton()}
           {!isLoggedIn && notLoggedInUserButton()}
         </Toolbar>
