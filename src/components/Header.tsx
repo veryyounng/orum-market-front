@@ -24,7 +24,7 @@ export default function Header() {
   const { isLoggedIn, logOut }: UserStore = useUserStore();
 
   const navigate = useNavigate();
-  const userId = localStorage.getItem('_id');
+  const _id = localStorage.getItem('_id');
 
   const handleLogoutDialogOpen = () => {
     setOpenLogoutDialog(true);
@@ -42,21 +42,17 @@ export default function Header() {
     navigate('/');
   };
 
-  const handleMoveDashboard = () => {
-    navigate(`/user/${userId}`);
-  };
-
   function isLoggedInUserButton() {
     return (
       <>
-        <Button
-          onClick={handleMoveDashboard}
-          type="button"
-          variant="text"
-          color="inherit"
+        <Link
+          to={`/user/${_id}`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          대시보드
-        </Button>
+          <Button type="button" variant="text" color="inherit">
+            대시보드
+          </Button>
+        </Link>
         <IconButton color="inherit">
           <Badge badgeContent={4} color="error">
             {/* <Avatar alt="Remy Sharp" src="/broken-image.jpg" /> */}

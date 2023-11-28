@@ -1,5 +1,4 @@
 const _id = localStorage.getItem('_id');
-console.log(_id);
 
 export const DASHBOARD_MENU = {
   buyer: [
