@@ -30,4 +30,6 @@ export const api = {
   searchProducts: (keyword: string) =>
     axiosInstance.get('/products', { params: { keyword } }),
   getBuyerInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
+  updateUserInfo: (_id: any, userData: any) =>
+    axiosInstance.patch(`/users/${_id}`, userData),
 };

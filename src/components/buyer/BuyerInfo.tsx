@@ -50,6 +50,15 @@ export default function BuyerInfo() {
     });
   };
 
+  const handleUpdateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      await api.updateUserInfo(id, buyerFormData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     const getBuyerInfo = async () => {
       try {
@@ -71,8 +80,7 @@ export default function BuyerInfo() {
   return (
     <Container>
       <Typography variant="h4">내 정보 수정</Typography>
-
-      <Form action="">
+      <Form onSubmit={handleUpdateUserInfo}>
         <FormLabel>이메일</FormLabel>
         <TextField
           type="email"
@@ -96,7 +104,7 @@ export default function BuyerInfo() {
           address={buyerFormData.address || ''}
           handleChangeUserAddress={handleChangeUserAddress}
         />
-        <Button type="button" variant="contained" size="large">
+        <Button type="submit" variant="contained" size="large">
           내 정보 수정하기
         </Button>
       </Form>
