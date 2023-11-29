@@ -34,6 +34,7 @@ export default function Header() {
   };
 
   const navigate = useNavigate();
+  const _id = localStorage.getItem('_id');
 
   const handleLogoutDialogOpen = () => {
     setOpenLogoutDialog(true);
@@ -57,8 +58,11 @@ export default function Header() {
   function isLoggedInUserButton() {
     return (
       <>
-        <Link to="/user/1" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Button variant="text" color="inherit">
+        <Link
+          to={`/user/${_id}`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <Button type="button" variant="text" color="inherit">
             대시보드
           </Button>
         </Link>

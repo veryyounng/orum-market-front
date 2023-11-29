@@ -59,4 +59,7 @@ export const api = {
       name: productData.title,
       content: productData.content,
     }),
+  getUserInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
+  updateUserInfo: (_id: any, userData: any) =>
+    axiosInstance.patch(`/users/${_id}`, userData),
 };
