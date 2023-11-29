@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material';
 
-export interface IuserInfoAddress {
+export interface IUserInfoAddress {
   address: string;
   handleChangeUserAddress: (address: string) => void;
 }
@@ -8,7 +8,7 @@ export interface IuserInfoAddress {
 export default function AddressForm({
   address,
   handleChangeUserAddress,
-}: IuserInfoAddress) {
+}: IUserInfoAddress) {
   return (
     <>
       <TextField

@@ -29,7 +29,7 @@ export interface IBuyerInfo {
 
 export default function BuyerInfo() {
   const { id } = useParams();
-  const [buyerFormData, setBuyerFormData] = useState<IBuyerInfo>({
+  const [buyerInfoData, setBuyerInfoData] = useState<IBuyerInfo>({
     _id: 0,
     email: '',
     name: '',
@@ -37,15 +37,15 @@ export default function BuyerInfo() {
   });
 
   const handleChangeUserName = (newName: string) => {
-    setBuyerFormData({
-      ...buyerFormData,
+    setBuyerInfoData({
+      ...buyerInfoData,
       name: newName,
     });
   };
 
   const handleChangeUserAddress = (newAddress: string) => {
-    setBuyerFormData({
-      ...buyerFormData,
+    setBuyerInfoData({
+      ...buyerInfoData,
       address: newAddress,
     });
   };
@@ -53,7 +53,7 @@ export default function BuyerInfo() {
   const handleUpdateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await api.updateUserInfo(id, buyerFormData);
+      await api.updateUserInfo(id, buyerInfoData);
     } catch (error) {
       console.log(error);
     }
@@ -63,8 +63,8 @@ export default function BuyerInfo() {
     const getBuyerInfo = async () => {
       try {
         const response = await api.getUserInfo(id);
-        setBuyerFormData({
-          ...buyerFormData,
+        setBuyerInfoData({
+          ...buyerInfoData,
           _id: response.data.item._id,
           email: response.data.item.email,
           name: response.data.item.name,
@@ -84,7 +84,7 @@ export default function BuyerInfo() {
         <FormLabel>이메일</FormLabel>
         <TextField
           type="email"
-          value={buyerFormData.email}
+          value={buyerInfoData.email}
           variant="outlined"
           size="small"
           fullWidth
@@ -94,14 +94,14 @@ export default function BuyerInfo() {
         <FormLabel>이름</FormLabel>
         <TextField
           type="text"
-          value={buyerFormData.name}
+          value={buyerInfoData.name}
           onChange={(e) => handleChangeUserName(e.target.value)}
           size="small"
           fullWidth
         />
         <FormLabel>기본 배송지</FormLabel>
         <AddressForm
-          address={buyerFormData.address || ''}
+          address={buyerInfoData.address || ''}
           handleChangeUserAddress={handleChangeUserAddress}
         />
         <Button type="submit" variant="contained" size="large">
