@@ -54,8 +54,10 @@ export const api = {
   createProduct: (productData: any) =>
     axiosInstance.post('/seller/products/', {
       ...data,
-      price: productData.price,
-      shippingFees: productData.shippingFees,
+      ...productData,
+      //   price: productData.price,
+      //   shippingFees: productData.shippingFees,
+      mainImages: ['/uploads/sample-janngu.jpg'],
       name: productData.title,
       content: productData.content,
     }),
