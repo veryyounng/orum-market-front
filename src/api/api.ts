@@ -64,4 +64,8 @@ export const api = {
   getUserInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
   updateUserInfo: (_id: any, userData: any) =>
     axiosInstance.patch(`/users/${_id}`, userData),
+  updateProduct: (productData: any) =>
+    axiosInstance.patch('/seller/products/{_id}', {
+      ...productData,
+    }),
 };
