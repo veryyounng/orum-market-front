@@ -22,8 +22,17 @@ export default function ProductCreate() {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
 
+    if (name === 'content' && value.length < 10) {
+      // content의 길이가 10 미만인 경우 에러 메시지 설정
+      setContentError('상품 설명이 10글자 이상이여야 합니다.');
+    } else {
+      // 유효한 경우 에러 메시지 초기화
+      setContentError('');
+    }
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
+  const [contentError, setContentError] = useState('');
+
   const productSubmit = async () => {
     await api
       .createProduct(productData)
@@ -102,6 +111,8 @@ export default function ProductCreate() {
             value={productData.content}
             onChange={handleChange}
           ></Input>
+          {/* 상품 설명을 10글자 이상 해야합니다 */}
+          {contentError && <div style={{ color: 'red' }}>{contentError}</div>}
         </div>
         <button type="submit" onClick={productSubmit}>
           등록하기
