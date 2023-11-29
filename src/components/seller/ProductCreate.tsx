@@ -28,6 +28,10 @@ export default function ProductCreate() {
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleCancel = () => {
+    window.history.back();
+  };
+
   const productSubmit = async () => {
     // await api.createProduct(productData);
     if (contentError) {
@@ -118,6 +122,9 @@ export default function ProductCreate() {
           등록하기
         </button>
       </div>
+      <button type="button" onClick={handleCancel}>
+        취소하기
+      </button>
     </div>
   );
 }
