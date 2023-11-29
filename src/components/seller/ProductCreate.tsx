@@ -123,7 +123,7 @@ export default function ProductCreate() {
         </button>
       </div>
       <button type="button" onClick={handleCancel}>
-        취소하기
+        취소
       </button>
     </div>
   );
