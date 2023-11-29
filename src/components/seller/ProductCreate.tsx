@@ -5,11 +5,6 @@ import { Input } from '@mui/material';
 import { api } from '../../api/api';
 
 export default function ProductCreate() {
-  //   const [title, setTitle] = useState('');
-  //   const [content, setContent] = useState('');
-  //   const [price, setPrice] = useState('');
-  //   const [shippingFees, setShippingFees] = useState('');
-
   const [productData, setProductData] = useState({
     mainImages: '',
     category: '',
@@ -19,9 +14,10 @@ export default function ProductCreate() {
     title: '',
     content: '',
   });
+  const [contentError, setContentError] = useState('');
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
     if (name === 'content' && value.length < 10) {
       // content의 길이가 10 미만인 경우 에러 메시지 설정
       setContentError('상품 설명이 10글자 이상이여야 합니다.');
@@ -31,17 +27,21 @@ export default function ProductCreate() {
     }
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
-  const [contentError, setContentError] = useState('');
 
   const productSubmit = async () => {
-    await api
-      .createProduct(productData)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    // await api.createProduct(productData);
+    if (contentError) {
+      alert('양식이 올바르지 않습니다.');
+      return;
+    }
+
+    try {
+      // Proceed with the API call if there is no validation error
+      const response = await api.createProduct(productData);
+      console.log(response);
+    } catch (error) {
+      console.error('API Error:', error);
+    }
   };
   return (
     <div>
