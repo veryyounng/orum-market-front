@@ -77,37 +77,45 @@ export default function BuyerInfo() {
     getBuyerInfo();
   }, []);
 
+  if (!buyerInfoData) {
+    return <>사용자 정보를 받아오지 못했습니다.</>;
+  }
+
   return (
     <Container>
-      <Typography variant="h4">내 정보 수정</Typography>
-      <Form onSubmit={handleUpdateUserInfo}>
-        <FormLabel>이메일</FormLabel>
-        <TextField
-          type="email"
-          value={buyerInfoData.email}
-          variant="outlined"
-          size="small"
-          fullWidth
-          required
-          disabled
-        />
-        <FormLabel>이름</FormLabel>
-        <TextField
-          type="text"
-          value={buyerInfoData.name}
-          onChange={(e) => handleChangeUserName(e.target.value)}
-          size="small"
-          fullWidth
-        />
-        <FormLabel>기본 배송지</FormLabel>
-        <AddressForm
-          address={buyerInfoData.address || ''}
-          handleChangeUserAddress={handleChangeUserAddress}
-        />
-        <Button type="submit" variant="contained" size="large">
-          내 정보 수정하기
-        </Button>
-      </Form>
+      {buyerInfoData && (
+        <>
+          <Typography variant="h4">내 정보 수정</Typography>
+          <Form onSubmit={handleUpdateUserInfo}>
+            <FormLabel>이메일</FormLabel>
+            <TextField
+              type="email"
+              value={buyerInfoData.email}
+              variant="outlined"
+              size="small"
+              fullWidth
+              required
+              disabled
+            />
+            <FormLabel>이름</FormLabel>
+            <TextField
+              type="text"
+              value={buyerInfoData.name}
+              onChange={(e) => handleChangeUserName(e.target.value)}
+              size="small"
+              fullWidth
+            />
+            <FormLabel>기본 배송지</FormLabel>
+            <AddressForm
+              address={buyerInfoData.address || ''}
+              handleChangeUserAddress={handleChangeUserAddress}
+            />
+            <Button type="submit" variant="contained" size="large">
+              내 정보 수정하기
+            </Button>
+          </Form>
+        </>
+      )}
     </Container>
   );
 }
