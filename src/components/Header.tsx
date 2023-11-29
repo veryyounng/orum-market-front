@@ -13,8 +13,9 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Badge, Box, Button, Container } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserStore } from '../lib/store';
+import { useCart, useUserStore } from '../lib/store';
 import React, { useState } from 'react';
 import { Logout } from '@mui/icons-material';
 
@@ -50,6 +51,9 @@ export default function Header() {
     navigate('/');
   };
 
+  const { items: cartItems } = useCart();
+  const cartItemsCount = cartItems.length;
+
   function isLoggedInUserButton() {
     return (
       <>
@@ -64,6 +68,13 @@ export default function Header() {
             <NotificationsIcon />
           </Badge>
         </IconButton>
+        <Link to="/cart" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <IconButton color="inherit">
+            <Badge badgeContent={cartItemsCount} color="error">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+        </Link>
         {/* 로그아웃 버튼은 아바타 클릭 후 생성되는 모달 안으로 이동 시킬 것 */}
         <Button onClick={handleLogoutDialogOpen} variant="text" color="inherit">
           로그아웃
