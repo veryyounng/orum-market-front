@@ -37,7 +37,7 @@ export const api = {
       ...productData,
       //   price: productData.price,
       //   shippingFees: productData.shippingFees,
-      mainImages: ['/uploads/sample-janngu.jpg'],
+      mainImages: productData.mainImages,
       name: productData.title,
       content: productData.content,
     }),
