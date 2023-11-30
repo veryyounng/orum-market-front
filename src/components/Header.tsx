@@ -11,20 +11,58 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Badge, Box, Button, Container } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Container,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart, useUserStore } from '../lib/store';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Logout } from '@mui/icons-material';
-
-const categories = ['tops', 'bottoms', 'backpacks', 'shoes', 'gear'];
+import { IUserStore } from '../type';
+import useOutsideClick from '../hooks/useOutsideClick';
+import CategoryNavBar from './CategoryNavBar';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 export default function Header() {
+  const { isLoggedIn, logOut } = useUserStore() as IUserStore;
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
-  const { isLoggedIn, logOut } = useUserStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [showCategoryNavBar, setShowCategoryNavBar] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const headerRef = useRef(null);
+  useOutsideClick(headerRef, () => {
+    if (showCategoryNavBar) {
+      setShowCategoryNavBar(false);
+    }
+  });
+
+  const toggleCategoryNavBar = () => {
+    setShowCategoryNavBar(!showCategoryNavBar);
+  };
+
+  const handleDashboard = () => {
+    navigate(`/user/${_id}`); // Navigate to dashboard route
+    handleMenuClose();
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,7 +71,6 @@ export default function Header() {
     setSearchQuery('');
   };
 
-  const navigate = useNavigate();
   const _id = localStorage.getItem('_id');
 
   const handleLogoutDialogOpen = () => {
@@ -57,15 +94,13 @@ export default function Header() {
 
   function isLoggedInUserButton() {
     return (
-      <>
-        <Link
-          to={`/user/${_id}`}
-          style={{ textDecoration: 'none', color: 'inherit' }}
-        >
-          <Button type="button" variant="text" color="inherit">
-            대시보드
-          </Button>
-        </Link>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+        }}
+      >
         <IconButton color="inherit">
           <Badge badgeContent={4} color="error">
             {/* <Avatar alt="Remy Sharp" src="/broken-image.jpg" /> */}
@@ -79,16 +114,39 @@ export default function Header() {
             </Badge>
           </IconButton>
         </Link>
-        {/* 로그아웃 버튼은 아바타 클릭 후 생성되는 모달 안으로 이동 시킬 것 */}
-        <Button onClick={handleLogoutDialogOpen} variant="text" color="inherit">
-          로그아웃
-        </Button>
-        <LogoutDialog
-          open={openLogoutDialog}
-          onClose={handleLogoutDialogClose}
-          onConfirm={handleLogout}
-        />
-      </>
+        <IconButton
+          aria-label="account of current user"
+          aria-controls="menu-appbar"
+          aria-haspopup="true"
+          onClick={handleAvatarClick}
+          color="inherit"
+        >
+          <Avatar alt="User Avatar" src="/path/to/your/avatar.jpg" />
+        </IconButton>
+        <Menu
+          id="menu-appbar"
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          keepMounted
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          open={open}
+          onClose={handleMenuClose}
+        >
+          <MenuItem onClick={handleDashboard}>대시보드</MenuItem>
+          <MenuItem onClick={handleLogoutDialogOpen}>로그아웃</MenuItem>
+          <LogoutDialog
+            open={openLogoutDialog}
+            onClose={handleLogoutDialogClose}
+            onConfirm={handleLogout}
+          />
+        </Menu>
+      </Box>
     );
   }
 
@@ -109,46 +167,50 @@ export default function Header() {
     );
   }
 
-  const renderCategoryLinks = () => {
-    return categories.map((category) => (
-      <Button
-        key={category}
-        component={Link}
-        to={`/category/${category}`}
-        color="inherit"
-      >
-        {category.charAt(0).toUpperCase() + category.slice(1)}
-      </Button>
-    ));
-  };
-
   return (
-    <Container maxWidth="sm">
-      <AppBar position="fixed">
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            sx={{ mr: 2, display: { sm: 'none' } }}
+    <AppBar
+      position="sticky"
+      color="default"
+      elevation={0}
+      sx={{
+        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+        left: 0,
+        right: 0,
+        top: 0,
+      }}
+    >
+      <Toolbar
+        disableGutters
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%', // Ensure the Toolbar is full width
+          marginRight: 'calc(-50vw + 50%)', // Adjust for scrollbar
+        }}
+      >
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
           >
-            <MenuIcon />
-          </IconButton>
+            ORUM
+          </Typography>
+        </Link>
 
-          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, display: 'block', textAlign: 'left' }}
-            >
-              ORUM
-            </Typography>
-          </Link>
+        <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
+          쇼핑하기
+          {showCategoryNavBar ? (
+            <KeyboardArrowUpIcon />
+          ) : (
+            <KeyboardArrowDownIcon />
+          )}
+        </Button>
 
-          <Box sx={{ display: 'flex' }}>{renderCategoryLinks()}</Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <form onSubmit={handleSearch}>
-            <Search>
+            <Search sx={{ marginRight: '16px' }}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -158,17 +220,15 @@ export default function Header() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 inputProps={{ 'aria-label': 'search' }}
               />
-              <Button type="submit" color="inherit" variant="outlined">
-                검색
-              </Button>
             </Search>
           </form>
+
           {isLoggedIn && isLoggedInUserButton()}
           {!isLoggedIn && notLoggedInUserButton()}
-        </Toolbar>
-      </AppBar>
-      <Toolbar />
-    </Container>
+        </Box>
+      </Toolbar>
+      {showCategoryNavBar && <CategoryNavBar />}
+    </AppBar>
   );
 }
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ICategoryPreview, IProduct } from '../../type';
 import { api } from '../../api/api';
-import { Button, Box, Grid, Typography } from '@mui/material';
+import { Button, Box, Grid, Typography, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ProductCard from './ProductCard';
 import { CATEGORY } from '../../constants/index';
@@ -27,23 +27,19 @@ export default function ProductList() {
     }
   };
 
-  // useEffect(() => {
-  //   CATEGORY.depth2.forEach((category) => {
-  //     fetchProducts(category.dbCode);
-  //   });
-  // }, []);
-
   if (loading) {
-    return <div>로딩중입니다.</div>;
+    return <CircularProgress />;
   }
 
-  if (!products || products.length === 0) {
-    return <div>상품이 없습니다.</div>;
+  if (!products.length) {
+    return <Typography>상품이 없습니다.</Typography>;
   }
 
   return (
-    <main>
-      <h1>제품 전체 목록 페이지</h1>
+    <Box sx={{ padding: '1rem' }}>
+      <Typography variant="h4" gutterBottom mb={5}>
+        최근 올라온 상품
+      </Typography>
       {CATEGORY.depth2.map((category) => (
         <CategoryPreview
           key={category.id}
@@ -53,7 +49,7 @@ export default function ProductList() {
           )}
         />
       ))}
-    </main>
+    </Box>
   );
 }
 
@@ -77,7 +73,7 @@ const CategoryPreview = ({ category, products }: ICategoryPreview) => {
       {products.length === 0 && <div>제품이 없습니다.</div>}
       {products.length > 0 && (
         <Grid container spacing={2}>
-          {products.slice(0, 5).map((product) => (
+          {products.slice(0, 4).map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </Grid>

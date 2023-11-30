@@ -143,3 +143,39 @@ export const QUALITY = [
     dbCode: 4,
   },
 ];
+
+export const PRICE_MARKS = [
+  {
+    value: 0,
+  },
+  {
+    value: 10000,
+  },
+  {
+    value: 20000,
+  },
+  {
+    value: 30000,
+  },
+  {
+    value: 40000,
+  },
+  {
+    value: 50000,
+  },
+  {
+    value: 60000,
+  },
+  {
+    value: 70000,
+  },
+  {
+    value: 80000,
+  },
+  {
+    value: 90000,
+  },
+  {
+    value: 100000,
+  },
+];
