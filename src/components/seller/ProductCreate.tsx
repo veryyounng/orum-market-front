@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Input } from '@mui/material';
 import { api } from '../../api/api';
 import { validateProductTitle } from '../../lib/validation';
+import { CleaningServices } from '@mui/icons-material';
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
@@ -15,45 +16,26 @@ export default function ProductCreate() {
     title: '',
     content: '',
   });
+
+  const [isValid, setIsValid] = useState(true);
   const [contentError, setContentError] = useState('');
   const [numberError, setNumberError] = useState('');
   const [titleError, setTitleError] = useState('');
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    // if (name === 'title' && value.length < 2) {
-    //   setTitleError('상품명을 2글자 이상 입력해주세요.');
-    // } else if (
-    //   (name === 'price' || name === 'shippingFees') &&
-    //   !Number.isInteger(Number(value))
-    // ) {
-    //   // price 또는 shippingFees가 정수가 아닌 경우 에러 메시지 설정
-    //   setNumberError('숫자를 입력하세요.');
-    // } else if (name === 'content' && value.length < 10) {
-    //   // content의 길이가 10 미만인 경우 에러 메시지 설정
-    //   setContentError('상품 설명이 10글자 이상이여야 합니다.');
-    // } else {
-    //   setTitleError('');
-    //   setContentError('');
-    //   setNumberError('');
-    // }
+
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
   const handleCancel = () => {
     window.history.back();
   };
 
-  let isValid = true;
-
   const productSubmit = async () => {
-    if (!validateProductTitle(productData.title)) {
-      setTitleError('제목은 2글자 이상 입력하세요.');
-      isValid = false;
+    if (!isValid) {
+      alert('양식이 올바르지 않습니다.');
       return;
-    } else {
-      setTitleError('');
     }
-
     try {
       const response = await api.createProduct(productData);
       console.log(response);
@@ -71,7 +53,7 @@ export default function ProductCreate() {
             type="text"
             name="mainImages"
             value={productData.mainImages}
-            onChange={handleChange}
+            onChange={handleAllChange}
           ></Input>
         </div>
         <div>
@@ -80,17 +62,11 @@ export default function ProductCreate() {
             type="text"
             name="category"
             value={productData.category}
-            onChange={handleChange}
           ></Input>
         </div>
         <div>
           상품 품질:
-          <Input
-            type="text"
-            name="quality"
-            value={productData.quality}
-            onChange={handleChange}
-          ></Input>
+          <Input type="text" name="quality" value={productData.quality}></Input>
         </div>
         <div>
           상품명:
@@ -99,9 +75,13 @@ export default function ProductCreate() {
             name="title"
             placeholder="상품명을 입력하세요."
             value={productData.title}
-            onChange={handleChange}
+            onChange={handleAllChange}
           ></Input>
-          {titleError && <div style={{ color: 'red' }}>{titleError}</div>}
+          {!isValid && productData.title.length !== 0 ? (
+            <div style={{ color: 'red' }}>{titleError}</div>
+          ) : (
+            <div> </div>
+          )}
         </div>
         <div>
           상품 가격:
@@ -109,7 +89,7 @@ export default function ProductCreate() {
             type="text"
             name="price"
             value={productData.price}
-            onChange={handleChange}
+            onChange={handleAllChange}
           ></Input>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </div>
@@ -119,7 +99,7 @@ export default function ProductCreate() {
             type="text"
             name="shippingFees"
             value={productData.shippingFees}
-            onChange={handleChange}
+            onChange={handleAllChange}
           ></Input>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </div>
@@ -130,7 +110,7 @@ export default function ProductCreate() {
             name="content"
             placeholder="상품 설명을 입력하세요."
             value={productData.content}
-            onChange={handleChange}
+            onChange={handleAllChange}
           ></Input>
           {/* 상품 설명을 10글자 이상 해야합니다 */}
           {contentError && <div style={{ color: 'red' }}>{contentError}</div>}

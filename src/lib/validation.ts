@@ -9,7 +9,7 @@ export const validatePassword = (password: string) => {
 };
 
 export const validateProductTitle = (title: string) => {
-  return title.length > 3;
+  return title.length > 2;
 };
 
 export const validateProductContent = (content: string) => {

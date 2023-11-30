@@ -1,5 +1,3 @@
-import ProductCreate from '../components/seller/ProductCreate';
-import { IProduct } from './../type/index';
 import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -41,13 +39,14 @@ const data = {
     order: 7,
   },
 };
+
 // api 함수 정의
 export const api = {
   signUp: (userData: any) => axiosInstance.post('/users/', userData),
   checkEmail: (email: string) =>
     axiosInstance.get('/users/email', { params: { email } }),
   signIn: (credentials: any) => axiosInstance.post('/users/login', credentials),
-  getProductList: () => axiosInstance.get('/products'),
+  getProductList: (query = '') => axiosInstance.get(`/products/?${query}`),
   getProduct: (id: string) => axiosInstance.get(`/products/${id}`),
   searchProducts: (keyword: string) =>
     axiosInstance.get('/products', { params: { keyword } }),
@@ -67,4 +66,5 @@ export const api = {
   updateProduct: (productData: any) =>
     axiosInstance.patch('/seller/products/{_id}', productData),
   getSellerProductInfo: () => axiosInstance.get('/seller/products/'),
+  checkOut: (orderData: any) => axiosInstance.post('/orders/', orderData),
 };
