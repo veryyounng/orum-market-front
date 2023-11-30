@@ -56,7 +56,9 @@ export default function ProductCreate() {
 
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
-  const handleCancel = () => {
+
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     window.history.back();
   };
 
@@ -74,7 +76,8 @@ export default function ProductCreate() {
     });
   };
 
-  const productSubmit = async () => {
+  const productSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     console.log('버튼 눌림!');
 
     if (!isValid) {
@@ -84,6 +87,16 @@ export default function ProductCreate() {
     try {
       const response = await api.createProduct(productData);
       console.log(response);
+      setProductData({
+        ...productData,
+        mainImages: ['image/url'],
+        extra: { category: ['H01', 'H0101'] },
+        quality: '1',
+        price: '',
+        shippingFees: '',
+        title: '',
+        content: '',
+      });
     } catch (error) {
       console.error('API Error:', error);
     }
@@ -91,7 +104,6 @@ export default function ProductCreate() {
 
   return (
     <>
-      ProductCreate
       <form>
         <>
           사진
