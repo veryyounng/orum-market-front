@@ -120,3 +120,26 @@ export const CATEGORY = {
     },
   ],
 };
+
+export const QUALITY = [
+  {
+    id: 1,
+    name: '최상',
+    dbCode: 1,
+  },
+  {
+    id: 2,
+    name: '상',
+    dbCode: 2,
+  },
+  {
+    id: 3,
+    name: '중',
+    dbCode: 3,
+  },
+  {
+    id: 4,
+    name: '하',
+    dbCode: 3,
+  },
+];
