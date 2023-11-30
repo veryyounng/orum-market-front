@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { data } from '../../src/components/seller/ProductCreate';
+import initCreateData from '../../src/components/seller/ProductCreate';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -33,7 +33,7 @@ export const api = {
     axiosInstance.get('/products', { params: { keyword } }),
   createProduct: (productData: any) =>
     axiosInstance.post('/seller/products/', {
-      ...data,
+      ...initCreateData,
       ...productData,
       //   price: productData.price,
       //   shippingFees: productData.shippingFees,

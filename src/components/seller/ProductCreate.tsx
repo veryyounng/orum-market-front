@@ -1,30 +1,40 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Input, TextField } from '@mui/material';
-import { api } from '../../api/api';
-import { validateProductTitle } from '../../lib/validation';
+import {
+  Input,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+} from '@mui/material';
 import { CleaningServices } from '@mui/icons-material';
 
-export const data = {
-  price: 22000,
-  shippingFees: 3000,
+import { api } from '../../api/api';
+import { CATEGORY } from '../../constants/index';
+import { validateProductTitle } from '../../lib/validation';
+
+const initCreateData = {
+  price: 0,
+  shippingFees: 0,
   show: true,
   active: true,
   name: '',
-  mainImages: ['/uploads/sample-janngu.jpg'],
+  mainImages: [''],
   content: '',
-  createdAt: '2023.10.12 12:34:56',
-  updatedAt: '2023.10.12 12:34:56',
+  createdAt: '',
+  updatedAt: '',
   extra: {
     isNew: true,
     isBest: true,
-    category: ['PC02', 'PC0201'],
-    quantity: 600,
-    buyQuantity: 190,
-    order: 7,
+    category: ['H01', ''],
+    quantity: 1,
+    buyQuantity: 0,
+    order: 0,
   },
 };
+
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
     mainImages: '',
@@ -35,6 +45,10 @@ export default function ProductCreate() {
     title: '',
     content: '',
   });
+
+  const [selectCategory, setSelectCategory] = useState('H0101');
+
+  console.log(productData);
 
   const [isValid, setIsValid] = useState(true);
   const [contentError, setContentError] = useState('');
@@ -62,6 +76,9 @@ export default function ProductCreate() {
       console.error('API Error:', error);
     }
   };
+
+  console.log(selectCategory);
+
   return (
     <>
       ProductCreate
@@ -76,14 +93,26 @@ export default function ProductCreate() {
           ></TextField>
         </>
         <br></br>
-        <>
-          카테고리:
-          <TextField
-            type="text"
-            name="category"
-            value={productData.category}
-          ></TextField>
-        </>
+        카테고리:
+        <FormControl>
+          <InputLabel id="category-label">카테고리</InputLabel>
+          <Select
+            labelId="category-label"
+            id="category-select"
+            label="category"
+            value={selectCategory || ''}
+            onChange={(e) => setSelectCategory(e.target.value)}
+            sx={{ width: '100px' }}
+          >
+            {CATEGORY.depth2.map((menu) => {
+              return (
+                <MenuItem key={menu.id} value={menu.dbCode}>
+                  {menu.name}
+                </MenuItem>
+              );
+            })}
+          </Select>
+        </FormControl>
         <br></br>
         <>
           상품 품질:
