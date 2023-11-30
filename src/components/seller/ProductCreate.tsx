@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Input } from '@mui/material';
 import { api } from '../../api/api';
+import { validateProductTitle } from '../../lib/validation';
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
@@ -15,32 +16,45 @@ export default function ProductCreate() {
     content: '',
   });
   const [contentError, setContentError] = useState('');
+  const [numberError, setNumberError] = useState('');
+  const [titleError, setTitleError] = useState('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    if (name === 'content' && value.length < 10) {
-      // content의 길이가 10 미만인 경우 에러 메시지 설정
-      setContentError('상품 설명이 10글자 이상이여야 합니다.');
-    } else {
-      // 유효한 경우 에러 메시지 초기화
-      setContentError('');
-    }
+    // if (name === 'title' && value.length < 2) {
+    //   setTitleError('상품명을 2글자 이상 입력해주세요.');
+    // } else if (
+    //   (name === 'price' || name === 'shippingFees') &&
+    //   !Number.isInteger(Number(value))
+    // ) {
+    //   // price 또는 shippingFees가 정수가 아닌 경우 에러 메시지 설정
+    //   setNumberError('숫자를 입력하세요.');
+    // } else if (name === 'content' && value.length < 10) {
+    //   // content의 길이가 10 미만인 경우 에러 메시지 설정
+    //   setContentError('상품 설명이 10글자 이상이여야 합니다.');
+    // } else {
+    //   setTitleError('');
+    //   setContentError('');
+    //   setNumberError('');
+    // }
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleCancel = () => {
     window.history.back();
   };
 
+  let isValid = true;
+
   const productSubmit = async () => {
-    // await api.createProduct(productData);
-    if (contentError) {
-      alert('양식이 올바르지 않습니다.');
+    if (!validateProductTitle(productData.title)) {
+      setTitleError('제목은 2글자 이상 입력하세요.');
+      isValid = false;
       return;
+    } else {
+      setTitleError('');
     }
 
     try {
-      // Proceed with the API call if there is no validation error
       const response = await api.createProduct(productData);
       console.log(response);
     } catch (error) {
@@ -87,6 +101,7 @@ export default function ProductCreate() {
             value={productData.title}
             onChange={handleChange}
           ></Input>
+          {titleError && <div style={{ color: 'red' }}>{titleError}</div>}
         </div>
         <div>
           상품 가격:
@@ -96,6 +111,7 @@ export default function ProductCreate() {
             value={productData.price}
             onChange={handleChange}
           ></Input>
+          {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </div>
         <div>
           배송비:
@@ -105,6 +121,7 @@ export default function ProductCreate() {
             value={productData.shippingFees}
             onChange={handleChange}
           ></Input>
+          {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </div>
         <div>
           상품 설명:

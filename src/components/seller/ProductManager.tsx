@@ -20,7 +20,7 @@ export default function ProductManager() {
       setProductData(response.data.item);
     };
     getProductInfo();
-  });
+  }, []);
   return (
     <div>
       ProductManager
