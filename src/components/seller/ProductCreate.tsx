@@ -12,7 +12,7 @@ import {
 import { CleaningServices } from '@mui/icons-material';
 
 import { api } from '../../api/api';
-import { CATEGORY } from '../../constants/index';
+import { CATEGORY, QUALITY } from '../../constants/index';
 import { validateProductTitle } from '../../lib/validation';
 
 const initCreateData = {
@@ -47,8 +47,10 @@ export default function ProductCreate() {
   });
 
   const [selectCategory, setSelectCategory] = useState('H0101');
+  const [quilty, setQuilty] = useState('1');
 
   console.log(productData);
+  console.log(quilty);
 
   const [isValid, setIsValid] = useState(true);
   const [contentError, setContentError] = useState('');
@@ -92,7 +94,8 @@ export default function ProductCreate() {
             onChange={handleAllChange}
           ></TextField>
         </>
-        <br></br>
+        <br />
+        <br />
         카테고리:
         <FormControl>
           <InputLabel id="category-label">카테고리</InputLabel>
@@ -100,7 +103,7 @@ export default function ProductCreate() {
             labelId="category-label"
             id="category-select"
             label="category"
-            value={selectCategory || ''}
+            value={selectCategory}
             onChange={(e) => setSelectCategory(e.target.value)}
             sx={{ width: '100px' }}
           >
@@ -113,16 +116,32 @@ export default function ProductCreate() {
             })}
           </Select>
         </FormControl>
-        <br></br>
+        <br />
+        <br />
         <>
           상품 품질:
-          <TextField
-            type="text"
-            name="quality"
-            value={productData.quality}
-          ></TextField>
+          <FormControl>
+            <InputLabel id="quilty-label">상품 품질</InputLabel>
+            <Select
+              labelId="quilty-label"
+              id="quilty-select"
+              label="quilty"
+              value={quilty}
+              onChange={(e) => setQuilty(e.target.value)}
+              sx={{ width: '100px' }}
+            >
+              {QUALITY.map((menu) => {
+                return (
+                  <MenuItem key={menu.id} value={menu.dbCode}>
+                    {menu.name}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
         </>
-        <br></br>
+        <br />
+        <br />
         <>
           상품명:
           <TextField
@@ -138,7 +157,8 @@ export default function ProductCreate() {
             <> </>
           )}
         </>
-        <br></br>
+        <br />
+        <br />
         <>
           상품 가격:
           <TextField
@@ -149,7 +169,8 @@ export default function ProductCreate() {
           ></TextField>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </>
-        <br></br>
+        <br />
+        <br />
         <>
           배송비:
           <TextField
@@ -160,7 +181,8 @@ export default function ProductCreate() {
           ></TextField>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
         </>
-        <br></br>
+        <br />
+        <br />
         <>
           상품 설명:
           <TextField
@@ -173,7 +195,7 @@ export default function ProductCreate() {
           {/* 상품 설명을 10글자 이상 해야합니다 */}
           {contentError && <div style={{ color: 'red' }}>{contentError}</div>}
         </>
-        <br></br>
+        <br />
         <button type="submit" onClick={productSubmit}>
           등록하기
         </button>

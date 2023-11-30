@@ -140,6 +140,6 @@ export const QUALITY = [
   {
     id: 4,
     name: '하',
-    dbCode: 3,
+    dbCode: 4,
   },
 ];
