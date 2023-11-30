@@ -13,7 +13,7 @@ export default function ProductUpdate() {
     content: '',
   });
   const [contentError, setContentError] = useState('');
-  const handleCancel = () => {
+  const handleMoveBack = () => {
     window.history.back();
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,7 +118,7 @@ export default function ProductUpdate() {
         {contentError && <div style={{ color: 'red' }}>{contentError}</div>}
       </div>
       <Button onClick={handleSubmit}>수정하기</Button>
-      <Button onClick={handleCancel}>취소</Button>
+      <Button onClick={handleMoveBack}>취소</Button>
     </div>
   );
 }

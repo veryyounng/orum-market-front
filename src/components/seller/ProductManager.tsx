@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
@@ -10,10 +10,6 @@ export default function ProductManager() {
   const navigate = useNavigate();
   const [productData, setProductData] = useState<IProduct[]>([]);
 
-  const handleUpdate = () => {
-    navigate(`/user/${_id}/product-update`);
-  };
-
   useEffect(() => {
     const getProductInfo = async () => {
       const response = await api.getSellerProductInfo();
@@ -24,7 +20,7 @@ export default function ProductManager() {
   return (
     <div>
       ProductManager
-      <Button onClick={handleUpdate}>수정하기</Button>
+      <Link to={`/user/${_id}/product-update`}>수정하기</Link>
     </div>
   );
 }

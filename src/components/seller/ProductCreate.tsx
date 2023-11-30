@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Input } from '@mui/material';
+import { Input, TextField } from '@mui/material';
 import { api } from '../../api/api';
 import { validateProductTitle } from '../../lib/validation';
 import { CleaningServices } from '@mui/icons-material';
@@ -63,84 +63,95 @@ export default function ProductCreate() {
     }
   };
   return (
-    <div>
+    <>
       ProductCreate
-      <div>
-        <div>
+      <form>
+        <>
           사진
-          <Input
+          <TextField
             type="text"
             name="mainImages"
             value={productData.mainImages}
             onChange={handleAllChange}
-          ></Input>
-        </div>
-        <div>
+          ></TextField>
+        </>
+        <br></br>
+        <>
           카테고리:
-          <Input
+          <TextField
             type="text"
             name="category"
             value={productData.category}
-          ></Input>
-        </div>
-        <div>
+          ></TextField>
+        </>
+        <br></br>
+        <>
           상품 품질:
-          <Input type="text" name="quality" value={productData.quality}></Input>
-        </div>
-        <div>
+          <TextField
+            type="text"
+            name="quality"
+            value={productData.quality}
+          ></TextField>
+        </>
+        <br></br>
+        <>
           상품명:
-          <Input
+          <TextField
             type="text"
             name="title"
             placeholder="상품명을 입력하세요."
             value={productData.title}
             onChange={handleAllChange}
-          ></Input>
+          ></TextField>
           {!isValid && productData.title.length !== 0 ? (
             <div style={{ color: 'red' }}>{titleError}</div>
           ) : (
-            <div> </div>
+            <> </>
           )}
-        </div>
-        <div>
+        </>
+        <br></br>
+        <>
           상품 가격:
-          <Input
+          <TextField
             type="text"
             name="price"
             value={productData.price}
             onChange={handleAllChange}
-          ></Input>
+          ></TextField>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
-        </div>
-        <div>
+        </>
+        <br></br>
+        <>
           배송비:
-          <Input
+          <TextField
             type="text"
             name="shippingFees"
             value={productData.shippingFees}
             onChange={handleAllChange}
-          ></Input>
+          ></TextField>
           {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
-        </div>
-        <div>
+        </>
+        <br></br>
+        <>
           상품 설명:
-          <Input
+          <TextField
             type="text"
             name="content"
             placeholder="상품 설명을 입력하세요."
             value={productData.content}
             onChange={handleAllChange}
-          ></Input>
+          ></TextField>
           {/* 상품 설명을 10글자 이상 해야합니다 */}
           {contentError && <div style={{ color: 'red' }}>{contentError}</div>}
-        </div>
+        </>
+        <br></br>
         <button type="submit" onClick={productSubmit}>
           등록하기
         </button>
-      </div>
+      </form>
       <button type="button" onClick={handleCancel}>
         취소
       </button>
-    </div>
+    </>
   );
 }
