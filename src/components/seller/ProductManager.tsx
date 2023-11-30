@@ -99,5 +99,71 @@ const dummySellerProductList = [
 ];
 
 export default function ProductManager() {
-  return <div>ProductManager</div>;
+  const _id = localStorage.getItem('_id');
+
+  const [isShow, setIsShow] = useState(false);
+
+  const test = dummySellerProductList.filter(
+    (test) => test.item.seller_id === Number(_id),
+  );
+  console.log(test);
+
+  return (
+    <>
+      <TableContainer component={Paper}>
+        <Table aria-label="구매내역">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">
+                등록일자
+                <br /> (등록번호)
+              </TableCell>
+              <TableCell align="center">카테고리</TableCell>
+              <TableCell align="center">이미지</TableCell>
+              <TableCell align="center">상품명</TableCell>
+              <TableCell align="center">수량</TableCell>
+              <TableCell align="center">가격</TableCell>
+              <TableCell align="center">공개여부</TableCell>
+              <TableCell align="center"></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {dummySellerProductList
+              .filter((matchId) => matchId.item.seller_id === Number(_id))
+              .map((rows) => (
+                <TableRow key={rows.item._id}>
+                  <TableCell align="center">
+                    {rows.item.updatedAt} <br /> {rows.item._id}
+                  </TableCell>
+                  <TableCell align="center">
+                    {rows.item.extra.category[1]}
+                  </TableCell>
+                  <TableCell align="center">{rows.item.images}</TableCell>
+                  <TableCell align="center">{rows.item.name}</TableCell>
+                  <TableCell align="center">
+                    {rows.item.extra.quantity}
+                  </TableCell>
+                  <TableCell align="center">{rows.item.price}</TableCell>
+                  <TableCell align="center">
+                    <ToggleButton
+                      value="check"
+                      selected={isShow}
+                      size={'small'}
+                      onChange={() => {
+                        setIsShow(!rows.item.show);
+                      }}
+                    >
+                      <CheckIcon />
+                    </ToggleButton>
+                  </TableCell>
+                  <TableCell>
+                    <button type="button">수정하기</button>
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
+  );
 }
