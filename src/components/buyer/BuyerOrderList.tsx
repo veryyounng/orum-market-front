@@ -32,8 +32,8 @@ const dummyUserOderList = [
       name: '우리집',
       value: '서울시 강남구 어디동',
     },
-    createdAt: '2023-11-29',
-    updatedAt: '2023-11-29',
+    createAt: '2023-11-29',
+    updateAt: '2023-11-29',
   },
   {
     _id: 2,

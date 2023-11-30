@@ -103,11 +103,6 @@ export default function ProductManager() {
 
   const [isShow, setIsShow] = useState(false);
 
-  const test = dummySellerProductList.filter(
-    (test) => test.item.seller_id === Number(_id),
-  );
-  console.log(test);
-
   return (
     <>
       <TableContainer component={Paper}>
