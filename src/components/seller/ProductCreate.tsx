@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useState } from 'react';
+// import { Link, useParams } from 'react-router-dom';
+// import axios from 'axios';
 import {
   Input,
   TextField,
@@ -9,11 +9,11 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import { CleaningServices } from '@mui/icons-material';
+// import { CleaningServices } from '@mui/icons-material';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import { validateProductTitle } from '../../lib/validation';
+// import { validateProductTitle } from '../../lib/validation';
 
 const initCreateData = {
   price: 0,
@@ -28,7 +28,7 @@ const initCreateData = {
   extra: {
     isNew: true,
     isBest: true,
-    category: ['H01', ''],
+    category: ['H01', 'H0101'],
     quantity: 1,
     buyQuantity: 0,
     order: 0,
@@ -37,25 +37,19 @@ const initCreateData = {
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
-    mainImages: '',
-    category: '',
-    quality: '',
+    mainImages: ['image/url'],
+    extra: { category: ['H01', 'H0101'] },
+    quality: '1',
     price: '',
     shippingFees: '',
     title: '',
     content: '',
   });
 
-  const [selectCategory, setSelectCategory] = useState('H0101');
-  const [quilty, setQuilty] = useState('1');
-
-  console.log(productData);
-  console.log(quilty);
-
   const [isValid, setIsValid] = useState(true);
-  const [contentError, setContentError] = useState('');
-  const [numberError, setNumberError] = useState('');
-  const [titleError, setTitleError] = useState('');
+  // const [contentError, setContentError] = useState('');
+  // const [numberError, setNumberError] = useState('');
+  // const [titleError, setTitleError] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -66,7 +60,23 @@ export default function ProductCreate() {
     window.history.back();
   };
 
+  const handleCategory = (categorySelected: string) => {
+    setProductData({
+      ...productData,
+      extra: { category: ['H01', categorySelected] },
+    });
+  };
+
+  const handleQuilty = (quiltySelected: string) => {
+    setProductData({
+      ...productData,
+      quality: quiltySelected,
+    });
+  };
+
   const productSubmit = async () => {
+    console.log('버튼 눌림!');
+
     if (!isValid) {
       alert('양식이 올바르지 않습니다.');
       return;
@@ -78,8 +88,6 @@ export default function ProductCreate() {
       console.error('API Error:', error);
     }
   };
-
-  console.log(selectCategory);
 
   return (
     <>
@@ -103,8 +111,8 @@ export default function ProductCreate() {
             labelId="category-label"
             id="category-select"
             label="category"
-            value={selectCategory}
-            onChange={(e) => setSelectCategory(e.target.value)}
+            value={productData.extra.category[1]}
+            onChange={(e) => handleCategory(e.target.value)}
             sx={{ width: '100px' }}
           >
             {CATEGORY.depth2.map((menu) => {
@@ -126,8 +134,8 @@ export default function ProductCreate() {
               labelId="quilty-label"
               id="quilty-select"
               label="quilty"
-              value={quilty}
-              onChange={(e) => setQuilty(e.target.value)}
+              value={productData.quality}
+              onChange={(e) => handleQuilty(e.target.value)}
               sx={{ width: '100px' }}
             >
               {QUALITY.map((menu) => {
@@ -151,11 +159,11 @@ export default function ProductCreate() {
             value={productData.title}
             onChange={handleAllChange}
           ></TextField>
-          {!isValid && productData.title.length !== 0 ? (
+          {/* {!isValid && productData.title.length !== 0 ? (
             <div style={{ color: 'red' }}>{titleError}</div>
           ) : (
             <> </>
-          )}
+          )} */}
         </>
         <br />
         <br />
@@ -167,7 +175,7 @@ export default function ProductCreate() {
             value={productData.price}
             onChange={handleAllChange}
           ></TextField>
-          {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
+          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
         <br />
         <br />
@@ -179,7 +187,7 @@ export default function ProductCreate() {
             value={productData.shippingFees}
             onChange={handleAllChange}
           ></TextField>
-          {numberError && <div style={{ color: 'red' }}>{numberError}</div>}
+          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
         <br />
         <br />
@@ -193,7 +201,7 @@ export default function ProductCreate() {
             onChange={handleAllChange}
           ></TextField>
           {/* 상품 설명을 10글자 이상 해야합니다 */}
-          {contentError && <div style={{ color: 'red' }}>{contentError}</div>}
+          {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
         </>
         <br />
         <button type="submit" onClick={productSubmit}>
