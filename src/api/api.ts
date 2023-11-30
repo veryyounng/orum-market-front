@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { data } from '../../src/components/seller/ProductCreate';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -19,26 +20,6 @@ axiosInstance.interceptors.request.use(
     return Promise.reject(error);
   },
 );
-
-const data = {
-  price: 22000,
-  shippingFees: 3000,
-  show: true,
-  active: true,
-  name: '',
-  mainImages: ['/uploads/sample-janngu.jpg'],
-  content: '',
-  createdAt: '2023.10.12 12:34:56',
-  updatedAt: '2023.10.12 12:34:56',
-  extra: {
-    isNew: true,
-    isBest: true,
-    category: ['PC02', 'PC0201'],
-    quantity: 600,
-    buyQuantity: 190,
-    order: 7,
-  },
-};
 
 // api 함수 정의
 export const api = {

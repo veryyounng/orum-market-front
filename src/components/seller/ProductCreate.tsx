@@ -6,6 +6,25 @@ import { api } from '../../api/api';
 import { validateProductTitle } from '../../lib/validation';
 import { CleaningServices } from '@mui/icons-material';
 
+export const data = {
+  price: 22000,
+  shippingFees: 3000,
+  show: true,
+  active: true,
+  name: '',
+  mainImages: ['/uploads/sample-janngu.jpg'],
+  content: '',
+  createdAt: '2023.10.12 12:34:56',
+  updatedAt: '2023.10.12 12:34:56',
+  extra: {
+    isNew: true,
+    isBest: true,
+    category: ['PC02', 'PC0201'],
+    quantity: 600,
+    buyQuantity: 190,
+    order: 7,
+  },
+};
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
     mainImages: '',
