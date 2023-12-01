@@ -1,30 +1,42 @@
-# React + TypeScript + Vite
+# Orum Market 🏔️
+등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Team ❤️‍🔥
+Phoenix ❤️‍🔥 
 
-Currently, two official plugins are available:
+# 주제 선정이유 👀 
+진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. 
+평소에 등산용품을 새로 사려면 가격대가 고민이 되었는데, 오름마켓에서는 중고로 누구나 판매할 수 있다는 장점에 합리적인 가격으로 구입할 수 있습니다. 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# 기술 스택 📚
+- 협업툴 <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"> <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white">
+- 사용툴 <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white"> 
+- 사용언어 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
+- DataBase <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">
+- Style <img src="https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white">
 
-## Expanding the ESLint configuration
+# 주요 기능 🛒
+## 비회원 (Guest) 👩‍💻
+- 오픈 마켓을 상품을 둘러볼 수 있습니다.
+- 장바구니에 상품을 담을 수 있습니다.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## 판매자 (seller) 🙇‍♂️
+- 오픈 마켓에 로그인할 수 있습니다.
+- 오픈 마켓에 상품을 판매할 수 있습니다.
+- 내 정보를 수정할 수 있습니다.
+- 오픈마켓에 본인이 판매중인 상품을 관리할 수 있습니다.
+- 배송중인 상품의 배송상태를 확인할 수 있습니다.
 
-- Configure the top-level `parserOptions` property like this:
+## 구매자 (buyer) 🙋‍♀️
+- 오픈 마켓에 로그인 할 수 있습니다.
+- - 마음에 드는 상품을 찜하기할 수 있습니다.
+- 오픈 마켓 상품을 구입할 수 있습니다.
+- 구매한 상품의 배송상태를 확인할 수 있습니다.
+- 내 정보를 수정할 수 있습니다.
+- 최근 본 상품을 볼 수 있습니다.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+# Figma 
+https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+# 팀 노션 👩‍👧‍👦
+https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b
