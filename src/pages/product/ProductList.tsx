@@ -36,10 +36,20 @@ export default function ProductList() {
   }
 
   return (
-    <Box sx={{ padding: '1rem' }}>
-      <Typography variant="h4" gutterBottom mb={5}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 2,
+        width: '100%',
+      }}
+    >
+      <Typography variant="h4" gutterBottom my={10}>
         최근 올라온 상품
       </Typography>
+
       {CATEGORY.depth2.map((category) => (
         <CategoryPreview
           key={category.id}
@@ -55,16 +65,17 @@ export default function ProductList() {
 
 const CategoryPreview = ({ category, products }: ICategoryPreview) => {
   return (
-    <Box sx={{ marginBottom: 4 }}>
+    <>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: 2,
+          width: '100%',
         }}
       >
-        <Typography variant="h5">{category.name}</Typography>
+        <h1>{category.dbName}</h1>
         <Button component={Link} to={`/category/${category.dbName}`}>
           더보기
         </Button>
@@ -78,6 +89,6 @@ const CategoryPreview = ({ category, products }: ICategoryPreview) => {
           ))}
         </Grid>
       )}
-    </Box>
+    </>
   );
 };

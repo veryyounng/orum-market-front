@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = useAddToCart();
 
   return (
-    <Grid item xs={12} sm={6} md={4} lg={3} xl={3} mb={10}>
+    <Grid item xs={8} sm={4} md={4} lg={3} xl={3} mb={10}>
       <Card
         sx={{
           maxWidth: 345,
@@ -67,7 +67,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             sx={{ marginLeft: '1rem' }}
             onClick={() => handleAddToCart(product)}
           >
-            장바구니 담기
+            장바구니
           </Button>
           <Button
             variant="outlined"

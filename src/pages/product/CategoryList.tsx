@@ -72,13 +72,12 @@ export const CategoryList = () => {
 
   return (
     <>
-      {/* <CategoryNavBar /> */}
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: 2,
+          marginY: 5,
         }}
       >
         <h1>{categoryName}</h1>
