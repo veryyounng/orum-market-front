@@ -2,29 +2,19 @@ import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Container,
-  Menu,
-  MenuItem,
-} from '@mui/material';
+import { Avatar, Badge, Box, Button, Menu, MenuItem } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart, useUserStore } from '../lib/store';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Logout } from '@mui/icons-material';
 import { IUserStore } from '../type';
 import useOutsideClick from '../hooks/useOutsideClick';
@@ -189,14 +179,11 @@ export default function Header() {
         }}
       >
         <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
-          >
-            ORUM
-          </Typography>
+          <img
+            src="../../public/assets/logo.png"
+            alt="ORUM"
+            style={{ width: '100px', height: 'auto' }}
+          />
         </Link>
 
         <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
