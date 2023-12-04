@@ -15,22 +15,32 @@ import {
   Box,
   Button,
   CssBaseline,
+  Divider,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
   Menu,
   MenuItem,
   Typography,
+  useTheme,
 } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart, useUserStore } from '../lib/store';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Logout } from '@mui/icons-material';
 import { IUserStore } from '../type';
 import useOutsideClick from '../hooks/useOutsideClick';
 import CategoryNavBar from './CategoryNavBar';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { ColorModeContext } from '../App';
 
 export default function Header() {
   const { isLoggedIn, logOut } = useUserStore() as IUserStore;
@@ -40,6 +50,8 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -166,7 +178,32 @@ export default function Header() {
       </>
     );
   }
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
 
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        MUI
+      </Typography>
+      <Divider />
+      <List>
+        {/* {navItems.map((item) => (
+          <ListItem key={item} disablePadding>
+            <ListItemButton sx={{ textAlign: 'center' }}>
+              <ListItemText primary={item} />
+            </ListItemButton>
+          </ListItem>
+        ))} */}
+        {isLoggedIn && isLoggedInUserButton()}
+        {!isLoggedIn && notLoggedInUserButton()}
+      </List>
+    </Box>
+  );
+  const container =
+    typeof window !== 'undefined' ? window.document.body : undefined;
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -194,37 +231,70 @@ export default function Header() {
               />
             </Typography>
           </Link>
-
-          <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
-            쇼핑하기
-            {showCategoryNavBar ? (
-              <KeyboardArrowUpIcon />
+          <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+            {theme.palette.mode === 'dark' ? (
+              <Brightness7Icon />
             ) : (
-              <KeyboardArrowDownIcon />
+              <Brightness4Icon />
             )}
-          </Button>
+          </IconButton>
 
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <form onSubmit={handleSearch}>
-              <Search sx={{ marginRight: '16px' }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="검색해볼까"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  inputProps={{ 'aria-label': 'search' }}
-                />
-              </Search>
-            </form>
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            <Button
+              onClick={toggleCategoryNavBar}
+              variant="text"
+              color="inherit"
+            >
+              쇼핑하기
+              {showCategoryNavBar ? (
+                <KeyboardArrowUpIcon />
+              ) : (
+                <KeyboardArrowDownIcon />
+              )}
+            </Button>
 
-            {isLoggedIn && isLoggedInUserButton()}
-            {!isLoggedIn && notLoggedInUserButton()}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <form onSubmit={handleSearch}>
+                <Search sx={{ marginRight: '16px' }}>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="검색해볼까"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    inputProps={{ 'aria-label': 'search' }}
+                  />
+                </Search>
+              </form>
+
+              {isLoggedIn && isLoggedInUserButton()}
+              {!isLoggedIn && notLoggedInUserButton()}
+            </Box>
           </Box>
         </Toolbar>
         {showCategoryNavBar && <CategoryNavBar />}
       </AppBar>
+      <nav>
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: '240px',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </nav>
     </Box>
   );
 }
