@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const dummySellerProductList = [
   {
@@ -152,7 +153,9 @@ export default function ProductManager() {
                     </ToggleButton>
                   </TableCell>
                   <TableCell>
+                    {/* <Link to={`/user/${_id}/product-update`}수정하기 */}
                     <button type="button">수정하기</button>
+                    {/* </Link> */}
                   </TableCell>
                 </TableRow>
               ))}

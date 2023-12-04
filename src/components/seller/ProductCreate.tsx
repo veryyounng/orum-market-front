@@ -1,6 +1,7 @@
 import { useState } from 'react';
 // import { Link, useParams } from 'react-router-dom';
 // import axios from 'axios';
+import { styled } from '@mui/material/styles';
 import {
   Input,
   TextField,
@@ -8,8 +9,10 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Button,
 } from '@mui/material';
 // import { CleaningServices } from '@mui/icons-material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
@@ -35,6 +38,18 @@ const initCreateData = {
   },
 };
 
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
     mainImages: ['image/url'],
@@ -50,14 +65,14 @@ export default function ProductCreate() {
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMoveBack = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     window.history.back();
   };
@@ -78,8 +93,6 @@ export default function ProductCreate() {
 
   const productSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('버튼 눌림!');
-
     if (!isValid) {
       alert('양식이 올바르지 않습니다.');
       return;
@@ -102,17 +115,41 @@ export default function ProductCreate() {
     }
   };
 
+  const handleFileUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.persist();
+    const file = event?.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImageUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
+    try {
+      const response = await api.uploadFile(productData);
+      setProductData({
+        ...productData,
+        mainImages: ['image/url'],
+      });
+    } catch (error) {
+      console.error('API Error:', error);
+    }
+  };
   return (
     <>
       <form>
         <>
           사진
-          <TextField
-            type="text"
-            name="mainImages"
-            value={productData.mainImages}
-            onChange={handleAllChange}
-          ></TextField>
+          <Button
+            component="label"
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+            onChange={handleFileUpload}
+          >
+            Upload file
+            <VisuallyHiddenInput type="file" />
+          </Button>
+          {imageUrl && <img src={imageUrl} alt="Uploaded Image" height="300" />}
         </>
         <br />
         <br />
@@ -220,7 +257,7 @@ export default function ProductCreate() {
           등록하기
         </button>
       </form>
-      <button type="button" onClick={handleCancel}>
+      <button type="button" onClick={handleMoveBack}>
         취소
       </button>
     </>
