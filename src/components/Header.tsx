@@ -9,9 +9,19 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Avatar, Badge, Box, Button, Menu, MenuItem } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  CssBaseline,
+  Menu,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart, useUserStore } from '../lib/store';
 import { useRef, useState } from 'react';
@@ -158,64 +168,64 @@ export default function Header() {
   }
 
   return (
-    <AppBar
-      position="sticky"
-      color="default"
-      elevation={0}
-      sx={{
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-        left: 0,
-        right: 0,
-        top: 0,
-      }}
-    >
-      <Toolbar
-        disableGutters
-        sx={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%', // Ensure the Toolbar is full width
-          marginRight: 'calc(-50vw + 50%)', // Adjust for scrollbar
-        }}
-      >
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <img
-            src="../../public/assets/logo.png"
-            alt="ORUM"
-            style={{ width: '100px', height: 'auto' }}
-          />
-        </Link>
-
-        <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
-          쇼핑하기
-          {showCategoryNavBar ? (
-            <KeyboardArrowUpIcon />
-          ) : (
-            <KeyboardArrowDownIcon />
-          )}
-        </Button>
-
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <form onSubmit={handleSearch}>
-            <Search sx={{ marginRight: '16px' }}>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="검색해볼까"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                inputProps={{ 'aria-label': 'search' }}
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar component="nav">
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            // onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            >
+              <img
+                src="../../public/assets/logo.png"
+                alt="ORUM"
+                style={{ width: '100px', height: 'auto' }}
               />
-            </Search>
-          </form>
+            </Typography>
+          </Link>
 
-          {isLoggedIn && isLoggedInUserButton()}
-          {!isLoggedIn && notLoggedInUserButton()}
-        </Box>
-      </Toolbar>
-      {showCategoryNavBar && <CategoryNavBar />}
-    </AppBar>
+          <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
+            쇼핑하기
+            {showCategoryNavBar ? (
+              <KeyboardArrowUpIcon />
+            ) : (
+              <KeyboardArrowDownIcon />
+            )}
+          </Button>
+
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <form onSubmit={handleSearch}>
+              <Search sx={{ marginRight: '16px' }}>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder="검색해볼까"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
+              </Search>
+            </form>
+
+            {isLoggedIn && isLoggedInUserButton()}
+            {!isLoggedIn && notLoggedInUserButton()}
+          </Box>
+        </Toolbar>
+        {showCategoryNavBar && <CategoryNavBar />}
+      </AppBar>
+    </Box>
   );
 }
 
