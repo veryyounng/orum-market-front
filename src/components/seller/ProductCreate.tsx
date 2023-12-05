@@ -67,7 +67,7 @@ export default function ProductCreate() {
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [file1, setFile1] = useState<File>();
+  const [filePreview, setFilePreview] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -125,6 +125,13 @@ export default function ProductCreate() {
     const formData = new FormData();
     formData.append('attach', fileInput);
 
+    if (fileInput) {
+      reader.readAsDataURL(fileInput);
+      reader.onloadend = () => {
+        setFilePreview(reader.result);
+        console.log(reader);
+      };
+    }
     try {
       const response = await api.uploadFile(formData);
       setImageUrl(response.data.file.path);
@@ -137,6 +144,7 @@ export default function ProductCreate() {
       console.log('사진첨부에러발생', error);
     }
   };
+  console.log(filePreview);
   return (
     <>
       <form>
@@ -149,9 +157,15 @@ export default function ProductCreate() {
             onChange={handleFileUpload}
           >
             Upload file
-            <VisuallyHiddenInput type="file" />
+            <VisuallyHiddenInput type="file" multiple />
           </Button>
-          {imageUrl && <img src={imageUrl} alt="Uploaded Image" height="300" />}
+          {filePreview && (
+            <img
+              src={filePreview}
+              alt="File Preview"
+              style={{ marginTop: '10px', maxWidth: '100%' }}
+            />
+          )}
         </>
         <br />
         <br />
