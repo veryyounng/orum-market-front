@@ -11,15 +11,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {
-  Avatar,
-  Badge,
-  Box,
-  Button,
-  Container,
-  Menu,
-  MenuItem,
-} from '@mui/material';
+import { Avatar, Badge, Box, Button, Menu, MenuItem } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link, useNavigate } from 'react-router-dom';
@@ -83,7 +75,6 @@ export default function Header() {
 
   const handleLogout = () => {
     logOut();
-    localStorage.removeItem('token');
     alert('로그아웃 되었습니다. 다음에 또 만나요!');
     setOpenLogoutDialog(false);
     navigate('/');

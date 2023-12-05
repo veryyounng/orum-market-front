@@ -7,12 +7,14 @@ export const useUserStore = create(
   persist(
     (set) => ({
       isLoggedIn: false,
-      logIn: (token: string) => {
-        localStorage.setItem('token', token);
+      logIn: (accessToken: string, refreshToken: string) => {
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
         set({ isLoggedIn: true });
       },
       logOut: () => {
-        localStorage.removeItem('token');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         set({ isLoggedIn: false });
       },
     }),
