@@ -52,7 +52,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
-    mainImages: ['image/url'],
+    mainImages: [''],
     extra: { category: ['H01', 'H0101'] },
     quality: '1',
     price: '',
@@ -60,12 +60,14 @@ export default function ProductCreate() {
     title: '',
     content: '',
   });
+  // const response = await api.createProduct(productData);
 
   const [isValid, setIsValid] = useState(true);
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [file1, setFile1] = useState<File>();
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -99,10 +101,11 @@ export default function ProductCreate() {
     }
     try {
       const response = await api.createProduct(productData);
+
       console.log(response);
       setProductData({
         ...productData,
-        mainImages: ['image/url'],
+        mainImages: [imageUrl],
         extra: { category: ['H01', 'H0101'] },
         quality: '1',
         price: '',
@@ -117,22 +120,21 @@ export default function ProductCreate() {
 
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    e.persist();
-    const file = event?.target.files[0];
+    const fileInput = e.target.files[0];
     const reader = new FileReader();
+    const formData = new FormData();
+    formData.append('attach', fileInput);
 
-    reader.onloadend = () => {
-      setImageUrl(reader.result);
-    };
-    reader.readAsDataURL(file);
     try {
-      const response = await api.uploadFile(productData);
+      const response = await api.uploadFile(formData);
+      setImageUrl(response.data.file.path);
+      console.log(response);
       setProductData({
         ...productData,
-        mainImages: ['image/url'],
+        mainImages: [response.data.file.path],
       });
     } catch (error) {
-      console.error('API Error:', error);
+      console.log('사진첨부에러발생', error);
     }
   };
   return (
