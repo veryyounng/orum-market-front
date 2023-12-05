@@ -129,7 +129,15 @@ export default function ProductCreate() {
     const formData = new FormData();
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        filePreview.push(dataUrl);
+        setFilePreview([...filePreview]);
+      };
+      reader.readAsDataURL(fileInput[i]);
     }
+    console.log('filePreview', filePreview);
 
     // for (let i = 0; i < fileInput.length; i++) {
     //   let fileRead = new FileReader();
@@ -161,8 +169,6 @@ export default function ProductCreate() {
       console.log('사진첨부에러발생', error);
     }
   };
-  //   console.log('이미지data:', productData.mainImages);
-
   return (
     <>
       <form>
@@ -177,13 +183,14 @@ export default function ProductCreate() {
             Upload file
             <input hidden type="file" multiple accept="image/*" />
           </Button>
-          {filePreview && (
+          {filePreview.map((filePreview, index) => (
             <img
+              key={index}
               src={filePreview}
-              alt="File Preview"
+              alt={`File Preview ${index + 1}`}
               style={{ marginTop: '10px', maxWidth: '100%' }}
             />
-          )}
+          ))}
         </>
         <br />
         <br />
