@@ -63,11 +63,15 @@ export default function ProductCreate() {
   // const response = await api.createProduct(productData);
 
   const [isValid, setIsValid] = useState(true);
+
+  // 사진 미리보기 상태값
+  const [filePreview, setFilePreview] = useState([]);
+  const [fileSelect, setFileSelect] = useState([]);
+
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [filePreview, setFilePreview] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -118,33 +122,39 @@ export default function ProductCreate() {
     }
   };
 
+  // 업로드 버튼 클릭 시 실행되는 함수
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fileInput = e.target.files[0];
-    const reader = new FileReader();
+    const fileInput = e.target.files;
+    console.log('사용자가 선택한 파일', fileInput);
     const formData = new FormData();
-    formData.append('attach', fileInput);
-
-    if (fileInput) {
-      reader.readAsDataURL(fileInput);
-      reader.onloadend = () => {
-        setFilePreview(reader.result);
-        console.log(reader);
-      };
+    for (let i = 0; i < fileInput.length; i++) {
+      formData.append('attach', fileInput[i]);
     }
+
+    // const reader = new FileReader();
+
+    // for (let i = 0; i < fileUrlLists.length; i++) {
+    //   fileUrlLists = fileUrlLists.slice(0, 3);
+    //   setFilePreview(...filePreview, fileUrlLists);
+    // }
+
     try {
       const response = await api.uploadFile(formData);
-      setImageUrl(response.data.file.path);
-      console.log(response);
+      console.log('path값', response.data.files);
+      setImageUrl(response.data.files.path);
+      console.log('이미지 url', imageUrl);
+      console.log('response:', response);
+
       setProductData({
         ...productData,
-        mainImages: [response.data.file.path],
+        mainImages: [response.data.files.path],
       });
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
   };
-  console.log(filePreview);
+
   return (
     <>
       <form>
@@ -157,7 +167,7 @@ export default function ProductCreate() {
             onChange={handleFileUpload}
           >
             Upload file
-            <VisuallyHiddenInput type="file" multiple />
+            <input hidden type="file" multiple accept="image/*" />
           </Button>
           {filePreview && (
             <img
