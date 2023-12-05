@@ -7,102 +7,61 @@ import {
   TableCell,
   Paper,
   ToggleButton,
+  Typography,
+  Box,
+  Button,
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-const dummySellerProductList = [
-  {
-    item: {
-      _id: 4,
-      seller_id: 7,
-      price: 8000,
-      shippingFees: 3500,
-      show: true,
-      active: true,
-      name: '등산용 양말',
-      images: 'imiageURL',
-      content: '내용',
-      createdAt: '2023-11-29',
-      updatedAt: '2023-11-29',
-      extra: {
-        category: ['H01', 'H0105'],
-        quantity: 1,
-        buyQuantity: 1,
-        order: 0,
-      },
-    },
-  },
-  {
-    item: {
-      _id: 6,
-      seller_id: 7,
-      price: 35000,
-      shippingFees: 3500,
-      show: true,
-      active: true,
-      name: '바람막이',
-      images: 'imiageURL',
-      content: '내용',
-      createdAt: '2023-11-29',
-      updatedAt: '2023-11-29',
-      extra: {
-        category: ['H01', 'H0101'],
-        quantity: 1,
-        buyQuantity: 1,
-        order: 0,
-      },
-    },
-  },
-  {
-    item: {
-      _id: 8,
-      seller_id: 5,
-      price: 20000,
-      shippingFees: 2500,
-      show: true,
-      active: true,
-      name: '등산용 바지',
-      images: 'imiageURL',
-      content: '내용',
-      createdAt: '2023-11-29',
-      updatedAt: '2023-11-29',
-      extra: {
-        category: ['H01', 'H0102'],
-        quantity: 1,
-        buyQuantity: 1,
-        order: 0,
-      },
-    },
-  },
-  {
-    item: {
-      _id: 10,
-      seller_id: 7,
-      price: 40000,
-      shippingFees: 3500,
-      show: true,
-      active: true,
-      name: '등산용 배낭',
-      images: 'imiageURL',
-      content: '내용',
-      createdAt: '2023-11-30',
-      updatedAt: '2023-11-30',
-      extra: {
-        category: ['H01', 'H0105'],
-        quantity: 1,
-        buyQuantity: 1,
-        order: 0,
-      },
-    },
-  },
-];
+import { api } from '../../api/api';
+import { IProduct } from '../../type';
+import { CATEGORY } from '../../constants/index';
+import { Link } from 'react-router-dom';
 
 export default function ProductManager() {
   const _id = localStorage.getItem('_id');
-
+  const [productList, setProductList] = useState<IProduct[]>([]);
   const [isShow, setIsShow] = useState(false);
+
+  // 날짜 변환 함수
+  function formatDate(dateString: string) {
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(new Date(dateString));
+  }
+
+  useEffect(() => {
+    const fetchSellerProductData = async () => {
+      try {
+        const response = await api.getProductList();
+        const getMatchItem = response.data.item.filter(
+          (id: IProduct) => id.seller_id === Number(_id),
+        );
+        setProductList(getMatchItem);
+      } catch (error) {
+        console.log('상품 목록을 가져오는데 실패했습니다', error);
+      }
+    };
+    fetchSellerProductData();
+  }, []);
+
+  if (productList.length === 0) {
+    return (
+      <>
+        <Typography variant="h3" sx={{ marginBottom: '1rem' }}>
+          등록된 물품이 없습니다.
+        </Typography>
+        <Link to={`/user/${_id}/product-create`}>
+          <Button type="button" variant="contained" size="large">
+            물품 등록하러 가기
+          </Button>
+        </Link>
+      </>
+    );
+  }
 
   return (
     <>
@@ -153,9 +112,7 @@ export default function ProductManager() {
                     </ToggleButton>
                   </TableCell>
                   <TableCell>
-                    {/* <Link to={`/user/${_id}/product-update`}수정하기 */}
                     <button type="button">수정하기</button>
-                    {/* </Link> */}
                   </TableCell>
                 </TableRow>
               ))}
