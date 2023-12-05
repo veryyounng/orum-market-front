@@ -38,17 +38,17 @@ const initCreateData = {
   },
 };
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+// const VisuallyHiddenInput = styled('input')({
+//   clip: 'rect(0 0 0 0)',
+//   clipPath: 'inset(50%)',
+//   height: 1,
+//   overflow: 'hidden',
+//   position: 'absolute',
+//   bottom: 0,
+//   left: 0,
+//   whiteSpace: 'nowrap',
+//   width: 1,
+// });
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
@@ -72,7 +72,7 @@ export default function ProductCreate() {
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-
+  //   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
@@ -109,7 +109,7 @@ export default function ProductCreate() {
       console.log(response);
       setProductData({
         ...productData,
-        mainImages: [imageUrl],
+        mainImages: [''],
         extra: { category: ['H01', 'H0101'] },
         quality: '1',
         price: '',
@@ -126,13 +126,19 @@ export default function ProductCreate() {
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
-    console.log('사용자가 선택한 파일', fileInput);
     const formData = new FormData();
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
     }
 
-    // const reader = new FileReader();
+    // for (let i = 0; i < fileInput.length; i++) {
+    //   let fileRead = new FileReader();
+    //   fileRead.onload = function () {
+    //     fileUrl[i] = fileRead.result;
+    //     setFilePreview([...fileUrl]);
+    //     fileRead.readAsDataURL(fileInput[i]);
+    //   };
+    // }
 
     // for (let i = 0; i < fileUrlLists.length; i++) {
     //   fileUrlLists = fileUrlLists.slice(0, 3);
@@ -141,19 +147,21 @@ export default function ProductCreate() {
 
     try {
       const response = await api.uploadFile(formData);
-      console.log('path값', response.data.files);
-      setImageUrl(response.data.files.path);
-      console.log('이미지 url', imageUrl);
-      console.log('response:', response);
+      const fileArr = response.data.files;
+      const filePath = [];
+      for (let i = 0; i < fileArr.length; i++) {
+        filePath.push(fileArr[i].path);
+      }
 
       setProductData({
         ...productData,
-        mainImages: [response.data.files.path],
+        mainImages: filePath,
       });
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
   };
+  //   console.log('이미지data:', productData.mainImages);
 
   return (
     <>
