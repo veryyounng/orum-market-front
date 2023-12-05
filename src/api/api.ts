@@ -1,22 +1,96 @@
 import axios from 'axios';
+import mem from 'mem';
 import initCreateData from '../../src/components/seller/ProductCreate';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const REFRESH_URL = '/users/refresh';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 1000 * 5,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  },
+  withCredentials: true,
 });
+
+// Token Refresh Function
+const getAccessToken = mem(
+  async function () {
+    try {
+      const {
+        data: {
+          item: {
+            token: { accessToken },
+          },
+        },
+      } = await axiosInstance.get('/users/refresh');
+      return accessToken;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  },
+  { maxAge: 1000 },
+);
 
 // 요청 인터셉터 추가
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    let token = localStorage.accessToken;
+    if (config.url === REFRESH_URL) {
+      token = localStorage.refreshToken;
+    }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
   (error) => {
+    console.error('Request interceptor error', error);
+    return Promise.reject(error);
+  },
+);
+
+// 응답 인터셉터 추가
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const { config, response } = error;
+    console.error('interceptors err', error);
+
+    if (response.status === 401) {
+      if (
+        response.data.errorName === 'TokenExpiredError' &&
+        config.url !== REFRESH_URL
+      ) {
+        console.log('Access token expired. Trying to refresh...');
+        const newAccessToken = await getAccessToken();
+
+        if (newAccessToken) {
+          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          localStorage.setItem('accessToken', newAccessToken);
+          return axios(error.config);
+        }
+      } else {
+        alert('로그인이 필요한 서비스입니다.');
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+      }
+    } else {
+      const error = response?.data?.error;
+      if (!response || error) {
+        alert(
+          error?.message ||
+            `요청하신 작업처리에 실패했습니다. 잠시후 다시 요청하시기 바랍니다.`,
+        );
+      }
+    }
+
     return Promise.reject(error);
   },
 );
@@ -31,9 +105,6 @@ export const api = {
 
   // 로그인
   signIn: (credentials: any) => axiosInstance.post('/users/login', credentials),
-
-  // 토큰 재발행
-  refreshToken: (token: string) => axiosInstance.post('/users/refresh', token),
 
   // 유저 정보 조회
   getUserInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
@@ -91,4 +162,7 @@ export const api = {
 
   // 상품 결제
   checkOut: (orderData: any) => axiosInstance.post('/orders/', orderData),
+
+  // 구매자 구매 목록 조회
+  getOrderProductInfo: () => axiosInstance.get('/orders/'),
 };
