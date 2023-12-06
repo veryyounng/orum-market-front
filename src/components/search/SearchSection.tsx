@@ -3,11 +3,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Box, FormControl, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { api } from '../../api/api';
+import { useSearchStore } from '../../lib/store';
 
 export function SearchSection() {
+  const { searchQuery, searchResult, setSearchQuery, setSearchResult } =
+    useSearchStore();
   const [inputValue, setInputValue] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResult, setSearchResult] = useState([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = async (event: React.FormEvent) => {
@@ -27,7 +28,15 @@ export function SearchSection() {
 
   return (
     <>
-      <Box sx={{ my: 2 }}>
+      <Box
+        sx={{
+          my: 2,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
+      >
         <form onSubmit={handleSearch}>
           <FormControl variant="standard" fullWidth>
             <InputBase
