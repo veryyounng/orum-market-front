@@ -1,44 +1,70 @@
-import React, { useEffect, useState } from 'react';
+import InputBase from '@mui/material/InputBase';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, FormControl, Typography } from '@mui/material';
+import { useRef, useState } from 'react';
+import { api } from '../../api/api';
 
-export const SearchSection: React.FC = () => {
-  // State for managing rolling items
-  const [rollingItems, setRollingItems] = useState<string[]>([]);
+export function SearchSection() {
+  const [inputValue, setInputValue] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResult, setSearchResult] = useState([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    // Add your logic for fetching rolling items here
-    // For demonstration, I'm just setting some dummy data
-    setRollingItems(['Item 1', 'Item 2', 'Item 3']);
+  const handleSearch = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setSearchQuery(inputValue);
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
 
-    const height = 30; // Adjust height according to your CSS
-    let move = 0;
-    const interval = setInterval(() => {
-      move += height;
-      // Logic for rolling animation
-      if (move >= height * rollingItems.length) {
-        move = 0;
-      }
-      // Update DOM or state as needed for the animation
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [rollingItems]);
+    try {
+      const response = await api.searchProducts(inputValue, 0, 999999);
+      setSearchResult(response.data.item);
+    } catch (error) {
+      console.error('Failed to search products', error);
+    }
+  };
 
   return (
-    <div className="border-gray-5px my-4">
-      {/* ... Other content ... */}
-
-      {/* Rolling Items Section */}
-      <div className="col-6 px-3">
-        <div className="row">
-          {rollingItems.map((item, index) => (
-            <div key={index} className="col-4">
-              <div className="box_main btn-round">
-                <div>{item}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
+    <>
+      <Box sx={{ my: 2 }}>
+        <form onSubmit={handleSearch}>
+          <FormControl variant="standard" fullWidth>
+            <InputBase
+              id="search-input"
+              startAdornment={<SearchIcon sx={{ fontSize: '3rem' }} />}
+              placeholder="검색해볼까"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              ref={searchInputRef}
+              sx={{
+                borderBottom: '1px solid black',
+                pl: 1,
+                pb: 1,
+                maxWidth: '960px',
+                alignItems: 'flex-end',
+                fontSize: '2rem',
+                gap: '1rem',
+              }}
+              inputProps={{
+                'aria-label': 'search',
+              }}
+            />
+          </FormControl>
+        </form>
+        {searchResult.length > 0 && searchQuery && (
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            <strong>'{searchQuery}'</strong> 검색 결과{' '}
+            <span style={{ color: 'red' }}>{searchResult.length}</span>개의
+            상품이 있습니다.
+          </Typography>
+        )}
+        {searchResult.length === 0 && searchQuery && (
+          <Typography variant="body1" sx={{ mt: 2 }}>
+            <strong>'{searchQuery}'</strong> 검색 결과가 없습니다.
+          </Typography>
+        )}
+      </Box>
+    </>
   );
-};
+}
