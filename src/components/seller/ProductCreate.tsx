@@ -60,7 +60,6 @@ export default function ProductCreate() {
     title: '',
     content: '',
   });
-  // const response = await api.createProduct(productData);
 
   const [isValid, setIsValid] = useState(true);
 
@@ -72,7 +71,6 @@ export default function ProductCreate() {
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  //   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
@@ -97,6 +95,7 @@ export default function ProductCreate() {
     });
   };
 
+  //상품데이터 등록하기
   const productSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) {
@@ -129,38 +128,17 @@ export default function ProductCreate() {
     const formData = new FormData();
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const dataUrl = e.target.result;
-        filePreview.push(dataUrl);
-        setFilePreview([...filePreview]);
-      };
-      reader.readAsDataURL(fileInput[i]);
     }
-    console.log('filePreview', filePreview);
-
-    // for (let i = 0; i < fileInput.length; i++) {
-    //   let fileRead = new FileReader();
-    //   fileRead.onload = function () {
-    //     fileUrl[i] = fileRead.result;
-    //     setFilePreview([...fileUrl]);
-    //     fileRead.readAsDataURL(fileInput[i]);
-    //   };
-    // }
-
-    // for (let i = 0; i < fileUrlLists.length; i++) {
-    //   fileUrlLists = fileUrlLists.slice(0, 3);
-    //   setFilePreview(...filePreview, fileUrlLists);
-    // }
-
     try {
       const response = await api.uploadFile(formData);
       const fileArr = response.data.files;
       const filePath = [];
       for (let i = 0; i < fileArr.length; i++) {
-        filePath.push(fileArr[i].path);
+        // filePath.push(fileArr[i].path);
+        const fullPath = `https://localhost:443/${fileArr[i].path}`;
+        filePath.push(fullPath);
       }
-
+      console.log('filepath:', filePath);
       setProductData({
         ...productData,
         mainImages: filePath,
@@ -183,12 +161,12 @@ export default function ProductCreate() {
             Upload file
             <input hidden type="file" multiple accept="image/*" />
           </Button>
-          {filePreview.map((filePreview, index) => (
+          {productData.mainImages.map((fullPath, index) => (
             <img
               key={index}
-              src={filePreview}
+              src={fullPath}
               alt={`File Preview ${index + 1}`}
-              style={{ marginTop: '10px', maxWidth: '100%' }}
+              style={{ marginTop: '10px', maxWidth: '60%' }}
             />
           ))}
         </>
