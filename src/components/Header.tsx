@@ -1,12 +1,14 @@
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import React, { useState, useContext, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Avatar,
   Badge,
   Box,
@@ -19,19 +21,20 @@ import {
   MenuItem,
   Typography,
   useTheme,
+  styled,
 } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
-import Brightness7Icon from '@mui/icons-material/Brightness7';
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link, useNavigate } from 'react-router-dom';
-import { useCart, useUserStore } from '../lib/store';
-import { useContext, useRef, useState } from 'react';
-import { Logout } from '@mui/icons-material';
-import { IUserStore } from '../type';
+import {
+  Notifications as NotificationsIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Brightness4 as Brightness4Icon,
+  Brightness7 as Brightness7Icon,
+  Menu as MenuIcon,
+  Logout,
+} from '@mui/icons-material';
 import useOutsideClick from '../hooks/useOutsideClick';
 import CategoryNavBar from './CategoryNavBar';
+import { useCart, useUserStore } from '../lib/store';
+import { IUserStore } from '../type';
 import { ColorModeContext } from '../App';
 
 export default function Header() {
@@ -43,6 +46,9 @@ export default function Header() {
   const navigate = useNavigate();
   const theme = useTheme();
   const colorMode = useContext(ColorModeContext);
+  const headerRef = useRef(null);
+  const { items: cartItems } = useCart();
+  const cartItemsCount = cartItems.length;
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -51,12 +57,6 @@ export default function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  const headerRef = useRef(null);
-  useOutsideClick(headerRef, () => {
-    if (showCategoryNavBar) {
-      setShowCategoryNavBar(false);
-    }
-  });
 
   const handleDashboard = () => {
     navigate(`/user/${_id}`); // Navigate to dashboard route
@@ -80,8 +80,26 @@ export default function Header() {
     navigate('/');
   };
 
-  const { items: cartItems } = useCart();
-  const cartItemsCount = cartItems.length;
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        MUI
+      </Typography>
+      <Divider />
+      <List>
+        {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
+      </List>
+    </Box>
+  );
+
+  const container =
+    typeof window !== 'undefined' ? window.document.body : undefined;
 
   function isLoggedInUserButton() {
     return (
@@ -117,7 +135,7 @@ export default function Header() {
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
           }}
           keepMounted
@@ -156,32 +174,7 @@ export default function Header() {
       </>
     );
   }
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const handleDrawerToggle = () => {
-    setMobileOpen((prevState) => !prevState);
-  };
 
-  const drawer = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
-      </Typography>
-      <Divider />
-      <List>
-        {/* {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))} */}
-        {isLoggedIn && isLoggedInUserButton()}
-        {!isLoggedIn && notLoggedInUserButton()}
-      </List>
-    </Box>
-  );
-  const container =
-    typeof window !== 'undefined' ? window.document.body : undefined;
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -193,12 +186,12 @@ export default function Header() {
           zIndex: theme.zIndex.drawer + 2,
         }}
       >
-        <Toolbar>
+        <ToolbarStyled>
           <IconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
-            // onClick={handleDrawerToggle}
+            onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: 'none' } }}
           >
             <MenuIcon />
@@ -217,7 +210,9 @@ export default function Header() {
             </Typography>
           </Link>
 
-          <Box sx={{ display: 'flex', alignItems: 'end', margin: '0 auto' }}>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}
+          >
             <IconButton onClick={colorMode.toggleColorMode} color="inherit">
               {theme.palette.mode === 'dark' ? (
                 <Brightness7Icon />
@@ -225,10 +220,9 @@ export default function Header() {
                 <Brightness4Icon />
               )}
             </IconButton>
-            {isLoggedIn && isLoggedInUserButton()}
-            {!isLoggedIn && notLoggedInUserButton()}
+            {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
           </Box>
-        </Toolbar>
+        </ToolbarStyled>
         {showCategoryNavBar && <CategoryNavBar />}
       </AppBar>
       <nav>
@@ -276,13 +270,13 @@ function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="inherit">
           취소
         </Button>
         <Button
           startIcon={<Logout />}
           onClick={onConfirm}
-          color="primary"
+          color="inherit"
           autoFocus
         >
           로그아웃
@@ -291,3 +285,7 @@ function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
     </Dialog>
   );
 }
+
+const ToolbarStyled = styled(Toolbar)({
+  justifyContent: 'space-between',
+});

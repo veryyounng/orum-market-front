@@ -29,58 +29,27 @@ function App() {
       createTheme({
         palette: {
           mode,
+          primary: {
+            main: '#ffffff',
+            contrastText: '#212427',
+          },
         },
       }),
     [mode],
   );
 
-  // 헤더에 연결하고 싶은 부분
-  // function MyApp() {
-  //   const theme = useTheme();
-  //   const colorMode = React.useContext(ColorModeContext);
-  //   return (
-  //     <Box
-  //       sx={{
-  //         display: 'flex',
-  //         width: '100%',
-  //         alignItems: 'center',
-  //         justifyContent: 'center',
-  //         bgcolor: 'background.default',
-  //         color: 'text.primary',
-  //         borderRadius: 1,
-  //         p: 3,
-  //       }}
-  //     >
-  //       {theme.palette.mode} mode
-  //       <IconButton
-  //         sx={{ ml: 1 }}
-  //         onClick={colorMode.toggleColorMode}
-  //         color="inherit"
-  //       >
-  //         {theme.palette.mode === 'dark' ? (
-  //           <Brightness7Icon />
-  //         ) : (
-  //           <Brightness4Icon />
-  //         )}
-  //       </IconButton>
-  //     </Box>
-  //   );
-  // }
-
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <Container>
-          <Header />
-          <BreadcrumbsNavBar />
-          <Toolbar id="back-to-top-anchor" />
-          <Outlet />
-          <ScrollTop>
-            <Fab size="small" aria-label="scroll back to top">
-              <KeyboardArrowUpIcon />
-            </Fab>
-          </ScrollTop>
-        </Container>
+        <Header />
+        <BreadcrumbsNavBar />
+        <Toolbar id="back-to-top-anchor" />
+        <Outlet />
+        <ScrollTop>
+          <Fab size="small" aria-label="scroll back to top">
+            <KeyboardArrowUpIcon />
+          </Fab>
+        </ScrollTop>
       </ThemeProvider>
     </ColorModeContext.Provider>
   );
