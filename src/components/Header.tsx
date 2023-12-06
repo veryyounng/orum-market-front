@@ -1,9 +1,6 @@
-import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -35,14 +32,11 @@ import { Logout } from '@mui/icons-material';
 import { IUserStore } from '../type';
 import useOutsideClick from '../hooks/useOutsideClick';
 import CategoryNavBar from './CategoryNavBar';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { ColorModeContext } from '../App';
 
 export default function Header() {
   const { isLoggedIn, logOut } = useUserStore() as IUserStore;
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [showCategoryNavBar, setShowCategoryNavBar] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -64,20 +58,9 @@ export default function Header() {
     }
   });
 
-  const toggleCategoryNavBar = () => {
-    setShowCategoryNavBar(!showCategoryNavBar);
-  };
-
   const handleDashboard = () => {
     navigate(`/user/${_id}`); // Navigate to dashboard route
     handleMenuClose();
-  };
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let queryParam = `?query=${searchQuery}`;
-    navigate(`/search${queryParam}`);
-    setSearchQuery('');
   };
 
   const _id = localStorage.getItem('_id');
@@ -111,7 +94,6 @@ export default function Header() {
       >
         <IconButton color="inherit">
           <Badge badgeContent={4} color="error">
-            {/* <Avatar alt="Remy Sharp" src="/broken-image.jpg" /> */}
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -203,7 +185,14 @@ export default function Header() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar component="nav">
+      <AppBar
+        component="nav"
+        sx={{
+          boxShadow: 'none',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+          zIndex: theme.zIndex.drawer + 2,
+        }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -221,52 +210,23 @@ export default function Header() {
               sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
             >
               <img
-                src="../../public/assets/logo.png"
+                src="../../assets/logo.png"
                 alt="ORUM"
                 style={{ width: '100px', height: 'auto' }}
               />
             </Typography>
           </Link>
-          <IconButton onClick={colorMode.toggleColorMode} color="inherit">
-            {theme.palette.mode === 'dark' ? (
-              <Brightness7Icon />
-            ) : (
-              <Brightness4Icon />
-            )}
-          </IconButton>
 
-          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <Button
-              onClick={toggleCategoryNavBar}
-              variant="text"
-              color="inherit"
-            >
-              쇼핑하기
-              {showCategoryNavBar ? (
-                <KeyboardArrowUpIcon />
+          <Box sx={{ display: 'flex', alignItems: 'end', margin: '0 auto' }}>
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
               ) : (
-                <KeyboardArrowDownIcon />
+                <Brightness4Icon />
               )}
-            </Button>
-
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <form onSubmit={handleSearch}>
-                <Search sx={{ marginRight: '16px' }}>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder="검색해볼까"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    inputProps={{ 'aria-label': 'search' }}
-                  />
-                </Search>
-              </form>
-
-              {isLoggedIn && isLoggedInUserButton()}
-              {!isLoggedIn && notLoggedInUserButton()}
-            </Box>
+            </IconButton>
+            {isLoggedIn && isLoggedInUserButton()}
+            {!isLoggedIn && notLoggedInUserButton()}
           </Box>
         </Toolbar>
         {showCategoryNavBar && <CategoryNavBar />}
@@ -331,46 +291,3 @@ function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
     </Dialog>
   );
 }
-
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  marginRight: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
