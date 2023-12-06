@@ -105,7 +105,7 @@ export default function ProductCreate() {
     try {
       const response = await api.createProduct(productData);
 
-      console.log(response);
+      //   console.log(response);
       setProductData({
         ...productData,
         mainImages: [''],
@@ -126,23 +126,38 @@ export default function ProductCreate() {
     e.preventDefault();
     const fileInput = e.target.files;
     const formData = new FormData();
-    for (let i = 0; i < fileInput.length; i++) {
-      formData.append('attach', fileInput[i]);
+
+    if (fileInput.length > 1) {
+      for (let i = 0; i < fileInput.length; i++) {
+        formData.append('attach', fileInput[i]);
+      }
+    } else if (fileInput.length === 1) {
+      formData.append('attach', fileInput[0]);
     }
+    console.log('통신전', productData);
+    const filePath = [];
     try {
       const response = await api.uploadFile(formData);
-      const fileArr = response.data.files;
-      const filePath = [];
-      for (let i = 0; i < fileArr.length; i++) {
-        // filePath.push(fileArr[i].path);
-        const fullPath = `https://localhost:443/${fileArr[i].path}`;
-        filePath.push(fullPath);
+      if (response.data.files) {
+        let fileArr = response.data.files;
+        for (let i = 0; i < fileArr.length; i++) {
+          let fullPath = `https://localhost:443${fileArr[i].path}`;
+          filePath.push(fullPath);
+          setProductData({
+            ...productData,
+            mainImages: filePath,
+          });
+        }
+      } else {
+        let oneFilePath = response.data.file;
+        let oneFile = `https://localhost:443${oneFilePath.path}`;
+        filePath.push(oneFile);
+        setProductData({
+          ...productData,
+          mainImages: filePath,
+        });
+        console.log('통신후', filePath);
       }
-      console.log('filepath:', filePath);
-      setProductData({
-        ...productData,
-        mainImages: filePath,
-      });
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
@@ -165,7 +180,7 @@ export default function ProductCreate() {
             <img
               key={index}
               src={fullPath}
-              alt={`File Preview ${index + 1}`}
+              alt={'File Preview'}
               style={{ marginTop: '10px', maxWidth: '60%' }}
             />
           ))}
