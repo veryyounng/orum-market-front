@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { ICartItem, ICartStore } from '../type';
+import { ICartItem, ICartStore, ISearchState } from '../type';
 import { persist } from 'zustand/middleware';
 
 // 로그인 상태 관리 store
@@ -61,3 +61,10 @@ export function useCart() {
   const cartStore = useCartStore() as ICartStore;
   return cartStore;
 }
+
+export const useSearchStore = create<ISearchState>((set) => ({
+  searchQuery: '',
+  searchResult: [],
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  setSearchResult: (result) => set({ searchResult: result }),
+}));
