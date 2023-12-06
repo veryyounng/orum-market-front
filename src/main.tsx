@@ -22,7 +22,6 @@ import SignUpPage from './pages/user/SignUp.tsx';
 import { CategoryList } from './pages/product/CategoryList.tsx';
 import { SearchResults } from './pages/product/SearchResult.tsx';
 import CheckOut from './pages/user/CheckOut.tsx';
-import AddressList from './components/address/AddressList.tsx';
 
 const router = createBrowserRouter([
   {
@@ -78,10 +77,6 @@ const router = createBrowserRouter([
       {
         path: '/user/:id/seller-orderlist',
         element: <SellerOrderList />,
-      },
-      {
-        path: '/user/:id/buyer-info/address',
-        element: <AddressList />,
       },
     ],
   },
