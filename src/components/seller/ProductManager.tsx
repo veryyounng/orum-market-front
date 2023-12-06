@@ -99,42 +99,6 @@ export default function ProductManager() {
 
   return (
     <>
-<<<<<<< HEAD
-      <TableContainer component={Paper}>
-        <Table aria-label="구매내역">
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">
-                등록일자
-                <br /> (등록번호)
-              </TableCell>
-              <TableCell align="center">카테고리</TableCell>
-              <TableCell align="center">이미지</TableCell>
-              <TableCell align="center">상품명</TableCell>
-              <TableCell align="center">수량</TableCell>
-              <TableCell align="center">가격</TableCell>
-              <TableCell align="center">공개여부</TableCell>
-              <TableCell align="center"></TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {dummySellerProductList
-              .filter((matchId) => matchId.item.seller_id === Number(_id))
-              .map((rows) => (
-                <TableRow key={rows.item._id}>
-                  <TableCell align="center">
-                    {rows.item.updatedAt} <br /> {rows.item._id}
-                  </TableCell>
-                  <TableCell align="center">
-                    {rows.item.extra.category[1]}
-                  </TableCell>
-                  <TableCell align="center">{rows.item.images}</TableCell>
-                  <TableCell align="center">{rows.item.name}</TableCell>
-                  <TableCell align="center">
-                    {rows.item.extra.quantity}
-                  </TableCell>
-                  <TableCell align="center">{rows.item.price}</TableCell>
-=======
       <Box
         sx={{
           display: 'flex',
@@ -208,33 +172,18 @@ export default function ProductManager() {
                   <TableCell align="center">
                     {rows.price.toLocaleString()}원
                   </TableCell>
->>>>>>> e81757220091a25e8cc5174fc71a59b69eedd963
                   <TableCell align="center">
                     <ToggleButton
                       value="check"
                       selected={isShow}
                       size={'small'}
                       onChange={() => {
-<<<<<<< HEAD
-                        setIsShow(!rows.item.show);
-=======
                         setIsShow(!rows.show);
->>>>>>> e81757220091a25e8cc5174fc71a59b69eedd963
                       }}
                     >
                       <CheckIcon />
                     </ToggleButton>
                   </TableCell>
-<<<<<<< HEAD
-                  <TableCell>
-                    <button type="button">수정하기</button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-=======
                   <TableCell align="center">
                     <Box
                       sx={{
@@ -265,7 +214,6 @@ export default function ProductManager() {
           </Table>
         </TableContainer>
       </Box>
->>>>>>> e81757220091a25e8cc5174fc71a59b69eedd963
     </>
   );
 }
