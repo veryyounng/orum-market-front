@@ -52,7 +52,7 @@ const initCreateData = {
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
-    mainImages: [],
+    mainImages: [''],
     extra: { category: ['H01', 'H0101'] },
     quality: '1',
     price: '',
@@ -63,7 +63,6 @@ export default function ProductCreate() {
 
   const [isValid, setIsValid] = useState(true);
 
-  // 사진 미리보기 상태값
   const [filePreview, setFilePreview] = useState([]);
 
   // const [contentError, setContentError] = useState('');
@@ -105,7 +104,7 @@ export default function ProductCreate() {
       //   console.log(response);
       setProductData({
         ...productData,
-        mainImages: [''],
+        mainImages: [],
         extra: { category: ['H01', 'H0101'] },
         quality: '1',
         price: '',
@@ -125,53 +124,47 @@ export default function ProductCreate() {
     if (!fileInput) return;
 
     const formData = new FormData();
-
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
     }
-    console.log('통신전', productData);
+
+    setProductData({
+      ...productData,
+      mainImages: filePreview,
+    });
     const filePath = [];
     try {
       const response = await api.uploadFile(formData);
+      //파일이 여러개일때
       if (response.data.files) {
         let fileArr = response.data.files;
         const resImgUrl = fileArr.map(
           (images) => `https://localhost:443${images.path}`,
         );
+        // console.log('첨부하려는갯수', fileArr.length + filePreview.length);
+        if (filePreview.length + resImgUrl.length > 3) {
+          alert('이미지는 3개까지 첨부가능합니다');
+          return;
+        }
         setFilePreview([...filePreview, ...resImgUrl]);
-        // setProductData({
-        //   ...productData,
-        //   mainImages: getArrayImages,
-        // });
 
-        // for (let item of fileArr) {
-        //   let fullPath = `https://localhost:443${item.path}`;
-        //   setFilePreview([fullPath]);
-        //   filePath.push(fullPath);
-        //   console.log('여러개파일주소', fullPath);
-        //   setProductData({
-        //     ...productData,
-        //     mainImages: filePath,
-        //   });
-        // }
-        // console.log('통신후', productData);
-      } else {
-        // let oneFilePath = response.data.file;
-        // let oneFile = `https://localhost:443${oneFilePath.path}`;
-        // filePath.push(oneFile);
-        // setProductData({
-        //   ...productData,
-        //   mainImages: filePath,
         // });
+        //단일파일일때
+      } else {
         let fileArr = `https://localhost:443${response.data.file.path}`;
-        console.log(fileArr);
+        if (filePreview.length + 1 > 3) {
+          alert('이미지는 3개까지 첨부가능합니다');
+          return;
+        }
         setFilePreview([...filePreview, fileArr]);
       }
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
   };
-  console.log('통신후', filePreview);
+
+  console.log('선택한 사진들', filePreview);
+  console.log('서버로 보낼 사진들', productData);
   return (
     <>
       <form>
