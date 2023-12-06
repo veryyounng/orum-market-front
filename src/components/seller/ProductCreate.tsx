@@ -52,7 +52,7 @@ const initCreateData = {
 
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
-    mainImages: [''],
+    mainImages: [],
     extra: { category: ['H01', 'H0101'] },
     quality: '1',
     price: '',
@@ -65,12 +65,10 @@ export default function ProductCreate() {
 
   // 사진 미리보기 상태값
   const [filePreview, setFilePreview] = useState([]);
-  const [fileSelect, setFileSelect] = useState([]);
 
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
@@ -104,7 +102,6 @@ export default function ProductCreate() {
     }
     try {
       const response = await api.createProduct(productData);
-
       //   console.log(response);
       setProductData({
         ...productData,
@@ -125,14 +122,12 @@ export default function ProductCreate() {
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
+    if (!fileInput) return;
+
     const formData = new FormData();
 
-    if (fileInput.length > 1) {
-      for (let i = 0; i < fileInput.length; i++) {
-        formData.append('attach', fileInput[i]);
-      }
-    } else if (fileInput.length === 1) {
-      formData.append('attach', fileInput[0]);
+    for (let i = 0; i < fileInput.length; i++) {
+      formData.append('attach', fileInput[i]);
     }
     console.log('통신전', productData);
     const filePath = [];
@@ -140,28 +135,43 @@ export default function ProductCreate() {
       const response = await api.uploadFile(formData);
       if (response.data.files) {
         let fileArr = response.data.files;
-        for (let i = 0; i < fileArr.length; i++) {
-          let fullPath = `https://localhost:443${fileArr[i].path}`;
-          filePath.push(fullPath);
-          setProductData({
-            ...productData,
-            mainImages: filePath,
-          });
-        }
+        const resImgUrl = fileArr.map(
+          (images) => `https://localhost:443${images.path}`,
+        );
+        setFilePreview([...filePreview, ...resImgUrl]);
+        // setProductData({
+        //   ...productData,
+        //   mainImages: getArrayImages,
+        // });
+
+        // for (let item of fileArr) {
+        //   let fullPath = `https://localhost:443${item.path}`;
+        //   setFilePreview([fullPath]);
+        //   filePath.push(fullPath);
+        //   console.log('여러개파일주소', fullPath);
+        //   setProductData({
+        //     ...productData,
+        //     mainImages: filePath,
+        //   });
+        // }
+        // console.log('통신후', productData);
       } else {
-        let oneFilePath = response.data.file;
-        let oneFile = `https://localhost:443${oneFilePath.path}`;
-        filePath.push(oneFile);
-        setProductData({
-          ...productData,
-          mainImages: filePath,
-        });
-        console.log('통신후', filePath);
+        // let oneFilePath = response.data.file;
+        // let oneFile = `https://localhost:443${oneFilePath.path}`;
+        // filePath.push(oneFile);
+        // setProductData({
+        //   ...productData,
+        //   mainImages: filePath,
+        // });
+        let fileArr = `https://localhost:443${response.data.file.path}`;
+        console.log(fileArr);
+        setFilePreview([...filePreview, fileArr]);
       }
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
   };
+  console.log('통신후', filePreview);
   return (
     <>
       <form>
@@ -176,10 +186,11 @@ export default function ProductCreate() {
             Upload file
             <input hidden type="file" multiple accept="image/*" />
           </Button>
-          {productData.mainImages.map((fullPath, index) => (
+          이미지는 3개까지 첨부 가능합니다.
+          {filePreview.map((path, index) => (
             <img
               key={index}
-              src={fullPath}
+              src={path}
               alt={'File Preview'}
               style={{ marginTop: '10px', maxWidth: '60%' }}
             />
