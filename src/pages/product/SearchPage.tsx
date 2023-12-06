@@ -47,8 +47,8 @@ export function SearchPage() {
         handleSort={setCurrentSortOrder}
         handleDisplayChange={handleDisplayChange}
       />
-      <Container>
-        <Grid container spacing={2}>
+      <Container sx={{ marginTop: '50px' }}>
+        <Grid container spacing={4} rowSpacing={8}>
           {sortedProducts.map((product: IProduct) => (
             <Grid
               item

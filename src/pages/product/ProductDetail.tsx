@@ -17,7 +17,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useCartStore, useUserStore } from '../../lib/store';
 
 export default function ProductDetail() {
-  const { id } = useParams<{ id: number }>();
+  const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function ProductDetail() {
   const fetchProduct = async () => {
     if (id) {
       try {
-        const response = await api.getProduct(id);
+        const response = await api.getProduct(Number(id));
         setProduct(response.data.item);
         console.log(response.data.item);
       } catch (error) {
