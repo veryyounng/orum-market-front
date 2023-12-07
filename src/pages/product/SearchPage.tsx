@@ -194,7 +194,7 @@ export function SearchPage() {
         handleDisplayChange={handleDisplayChange}
         handleToggel={toggleSidebar}
       />
-      <Box sx={{ marginTop: '50px', maxWidth: '100%', paddingX: '50px' }}>
+      <Box sx={{ marginTop: '50px', maxWidth: '100%', paddingX: '20px' }}>
         <Grid container spacing={3}>
           {isSidebarOpen && sidebarGrid}
           <Grid item xs={isSidebarOpen ? 10 : 12}>
