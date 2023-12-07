@@ -49,6 +49,7 @@ export default function ProductCreate() {
     shippingFees: '',
     title: '',
     content: '',
+    quantity: '',
   });
 
   const [isValid, setIsValid] = useState(true);
@@ -75,12 +76,12 @@ export default function ProductCreate() {
     });
   };
 
-  const handleQuilty = (quiltySelected: string) => {
+  function handleQuantity(quantitySelected: string) {
     setProductData({
       ...productData,
-      quality: quiltySelected,
+      quantity: quantitySelected,
     });
-  };
+  }
 
   //상품데이터 등록하기
   const productSubmit = async (e: React.FormEvent) => {
@@ -216,13 +217,13 @@ export default function ProductCreate() {
         <>
           상품 품질:
           <FormControl>
-            <InputLabel id="quilty-label">상품 품질</InputLabel>
+            <InputLabel id="quantity-label">상품 품질</InputLabel>
             <Select
-              labelId="quilty-label"
-              id="quilty-select"
-              label="quilty"
-              value={productData.quality}
-              onChange={(e) => handleQuilty(e.target.value)}
+              labelId="quantity-label"
+              id="quantity-select"
+              label="quantity"
+              value={productData.quantity}
+              onChange={(e) => handleQuantity(e.target.value)}
               sx={{ width: '100px' }}
             >
               {QUALITY.map((menu) => {
