@@ -15,12 +15,14 @@ import { SORT_OPTIONS } from '../constants';
 
 interface INavigationBar {
   totalProducts: number;
+  handleToggel: () => void;
   handleSort: (value: string) => void;
   handleDisplayChange: (value: number) => void;
 }
 
 export default function NavigationBar({
   totalProducts,
+  handleToggel,
   handleSort,
   handleDisplayChange,
 }: INavigationBar) {
@@ -45,6 +47,9 @@ export default function NavigationBar({
   return (
     <StickyNavbar>
       <NavbarContent>
+        <IconButton>
+          <GridViewOutlinedIcon onClick={handleToggel} />
+        </IconButton>
         <Typography variant="h6">총 {totalProducts}개의 상품</Typography>
         <Box sx={{ marginLeft: 'auto' }}>
           {SORT_OPTIONS.map((option) => (
