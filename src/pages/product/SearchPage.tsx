@@ -8,7 +8,7 @@ import ProductCard from './ProductCard';
 import { SearchSection } from '../../components/search/SearchSection';
 import { useSearchStore } from '../../lib/store';
 import StickyNavbar from '../../components/NavigationBar';
-import { useSort } from '../../hooks/\buseSort';
+import { useSort } from '../../hooks/useSort';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
@@ -194,7 +194,7 @@ export function SearchPage() {
         handleDisplayChange={handleDisplayChange}
         handleToggel={toggleSidebar}
       />
-      <Box sx={{ marginTop: '50px', maxWidth: '100%', paddingX: '50px' }}>
+      <Box sx={{ marginTop: '50px', maxWidth: '100%', paddingX: '20px' }}>
         <Grid container spacing={3}>
           {isSidebarOpen && sidebarGrid}
           <Grid item xs={isSidebarOpen ? 10 : 12}>
