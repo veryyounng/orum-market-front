@@ -8,7 +8,7 @@ import ProductCard from './ProductCard';
 import { SearchSection } from '../../components/search/SearchSection';
 import { useSearchStore } from '../../lib/store';
 import StickyNavbar from '../../components/NavigationBar';
-import { useSort } from '../../hooks/\buseSort';
+import { useSort } from '../../hooks/useSort';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
