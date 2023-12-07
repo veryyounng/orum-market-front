@@ -311,13 +311,13 @@ export default function ProductCreate() {
           {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
         </>
         <br />
-        <button type="submit" onClick={productSubmit}>
+        <Button type="submit" onClick={productSubmit} variant="contained">
           등록하기
-        </button>
+        </Button>
       </form>
-      <button type="button" onClick={handleMoveBack}>
+      <Button type="button" onClick={handleMoveBack} variant="outlined">
         취소
-      </button>
+      </Button>
     </>
   );
 }
