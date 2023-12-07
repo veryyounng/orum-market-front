@@ -11,10 +11,10 @@ import Modal from '@mui/joy/Modal';
 import { useState } from 'react';
 import { ModalClose, ModalDialog } from '@mui/joy';
 
-export interface IUserInfoAddress {
-  address: string;
-  handleChangeUserAddress: (address: string) => void;
-}
+// export interface IUserInfoAddress {
+//   address: string;
+//   handleChangeUserAddress: (address: string) => void;
+// }
 
 const style = {
   position: 'absolute',
@@ -29,9 +29,13 @@ const style = {
 };
 
 export default function AddressForm({
-  address,
+  addressName,
+  tel,
+  name,
+  address_main,
+  address_sub,
   handleChangeUserAddress,
-}: IUserInfoAddress) {
+}) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -99,10 +103,9 @@ export default function AddressForm({
                 <TextField
                   type="text"
                   placeholder="배송지명을 입력하세요. ex)집, 회사 등"
-                  value={address}
-                  onChange={(e) => {
-                    handleChangeUserAddress(e.target.value);
-                  }}
+                  id="addressName"
+                  value={addressName}
+                  onChange={handleChangeUserAddress}
                   size="small"
                   fullWidth
                   required
@@ -112,10 +115,9 @@ export default function AddressForm({
                 <TextField
                   type="text"
                   placeholder="이름"
-                  value={address}
-                  onChange={(e) => {
-                    handleChangeUserAddress(e.target.value);
-                  }}
+                  id="name"
+                  value={name}
+                  onChange={handleChangeUserAddress}
                   size="small"
                   fullWidth
                   required
@@ -125,10 +127,9 @@ export default function AddressForm({
                 <TextField
                   type="text"
                   placeholder="-없이 입력"
-                  value={address}
-                  onChange={(e) => {
-                    handleChangeUserAddress(e.target.value);
-                  }}
+                  id="tel"
+                  value={tel}
+                  onChange={handleChangeUserAddress}
                   size="small"
                   fullWidth
                   required
@@ -138,10 +139,9 @@ export default function AddressForm({
                 <TextField
                   type="text"
                   placeholder="예) 서울특별시 강남구 테헤란로 443 "
-                  value={address}
-                  onChange={(e) => {
-                    handleChangeUserAddress(e.target.value);
-                  }}
+                  id="address_main"
+                  value={address_main}
+                  onChange={handleChangeUserAddress}
                   size="small"
                   fullWidth
                   required
@@ -150,10 +150,9 @@ export default function AddressForm({
                 <TextField
                   type="text"
                   placeholder="나머지 주소를 입력하세요 "
-                  value={address}
-                  onChange={(e) => {
-                    handleChangeUserAddress(e.target.value);
-                  }}
+                  id="address_sub"
+                  value={address_sub}
+                  onChange={handleChangeUserAddress}
                   size="small"
                   fullWidth
                   required
@@ -168,20 +167,18 @@ export default function AddressForm({
           </Modal>
         </FormControl>
       </>
-      {address && (
-        <>
-          <TextField
-            type="text"
-            placeholder="주소를 입력해주세요"
-            value={address}
-            onChange={(e) => {
-              handleChangeUserAddress(e.target.value);
-            }}
-            size="small"
-            fullWidth
-          />
-        </>
-      )}
+
+      <>
+        <TextField
+          type="text"
+          placeholder="주소를 입력해주세요"
+          onChange={(e) => {
+            handleChangeUserAddress(e.target.value);
+          }}
+          size="small"
+          fullWidth
+        />
+      </>
     </>
   );
 }

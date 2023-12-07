@@ -74,6 +74,17 @@ export interface IUserInfo {
   email: string;
   name: string;
   address?: string;
+  extra: {
+    addressBook: [
+      {
+        addressName: string;
+        tel: number;
+        name: string;
+        address_main: string;
+        address_sub: string;
+      },
+    ];
+  };
 }
 
 export interface ISearchState {

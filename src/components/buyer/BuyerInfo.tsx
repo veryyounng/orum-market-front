@@ -27,6 +27,25 @@ export default function BuyerInfo() {
     email: '',
     name: '',
     address: '',
+    extra: {
+      addressBook: [
+        {
+          addressName: '',
+          tel: 0,
+          name: '',
+          address_main: '',
+          address_sub: '',
+        },
+      ],
+    },
+  });
+
+  const [getAddressInfo, setGetAddressInfo] = useState({
+    addressName: '',
+    tel: 0,
+    name: '',
+    address_main: '',
+    address_sub: '',
   });
 
   const handleChangeUserName = (newName: string) => {
@@ -36,12 +55,16 @@ export default function BuyerInfo() {
     });
   };
 
-  const handleChangeUserAddress = (newAddress: string) => {
-    setBuyerInfoData({
-      ...buyerInfoData,
-      address: newAddress,
+  const handleChangeUserAddress = (e) => {
+    const { id, value } = e.target;
+
+    setGetAddressInfo({
+      ...getAddressInfo,
+      [id]: value,
     });
   };
+
+  console.log('상태값', getAddressInfo);
 
   const handleUpdateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -106,7 +129,7 @@ export default function BuyerInfo() {
             />
             <FormLabel>기본 배송지</FormLabel>
             <AddressForm
-              address={buyerInfoData.address || ''}
+              getAddressInfo={getAddressInfo || ''}
               handleChangeUserAddress={handleChangeUserAddress}
             />
             <Button type="submit" variant="contained" size="large">
