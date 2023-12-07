@@ -38,18 +38,6 @@ const initCreateData = {
   },
 };
 
-// const VisuallyHiddenInput = styled('input')({
-//   clip: 'rect(0 0 0 0)',
-//   clipPath: 'inset(50%)',
-//   height: 1,
-//   overflow: 'hidden',
-//   position: 'absolute',
-//   bottom: 0,
-//   left: 0,
-//   whiteSpace: 'nowrap',
-//   width: 1,
-// });
-
 export default function ProductCreate() {
   const [productData, setProductData] = useState({
     mainImages: [''],
@@ -101,7 +89,6 @@ export default function ProductCreate() {
     }
     try {
       const response = await api.createProduct(productData);
-      //   console.log(response);
       setProductData({
         ...productData,
         mainImages: [],
@@ -122,17 +109,11 @@ export default function ProductCreate() {
     e.preventDefault();
     const fileInput = e.target.files;
     if (!fileInput) return;
-
     const formData = new FormData();
+
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
     }
-
-    setProductData({
-      ...productData,
-      mainImages: filePreview,
-    });
-    const filePath = [];
     try {
       const response = await api.uploadFile(formData);
       //파일이 여러개일때
@@ -141,14 +122,16 @@ export default function ProductCreate() {
         const resImgUrl = fileArr.map(
           (images) => `https://localhost:443${images.path}`,
         );
-        // console.log('첨부하려는갯수', fileArr.length + filePreview.length);
         if (filePreview.length + resImgUrl.length > 3) {
           alert('이미지는 3개까지 첨부가능합니다');
           return;
         }
         setFilePreview([...filePreview, ...resImgUrl]);
+        setProductData({
+          ...productData,
+          mainImages: [...filePreview, ...resImgUrl],
+        });
 
-        // });
         //단일파일일때
       } else {
         let fileArr = `https://localhost:443${response.data.file.path}`;
@@ -157,14 +140,16 @@ export default function ProductCreate() {
           return;
         }
         setFilePreview([...filePreview, fileArr]);
+        setProductData({
+          ...productData,
+          mainImages: [...filePreview, fileArr],
+        });
       }
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
   };
 
-  console.log('선택한 사진들', filePreview);
-  console.log('서버로 보낼 사진들', productData);
   return (
     <>
       <form>
