@@ -10,9 +10,12 @@ import {
   InputLabel,
   FormControl,
   Button,
+  Stack,
+  IconButton,
 } from '@mui/material';
 // import { CleaningServices } from '@mui/icons-material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
@@ -42,7 +45,6 @@ export default function ProductCreate() {
   const [productData, setProductData] = useState({
     mainImages: [''],
     extra: { category: ['H01', 'H0101'] },
-    quality: '1',
     price: '',
     shippingFees: '',
     title: '',
@@ -93,7 +95,7 @@ export default function ProductCreate() {
         ...productData,
         mainImages: [],
         extra: { category: ['H01', 'H0101'] },
-        quality: '1',
+        quantity: '1',
         price: '',
         shippingFees: '',
         title: '',
@@ -109,23 +111,30 @@ export default function ProductCreate() {
     e.preventDefault();
     const fileInput = e.target.files;
     if (!fileInput) return;
+
+    const totalFiles = filePreview.length + fileInput.length;
+
+    if (totalFiles > 3) {
+      alert('이미지는 3개까지 첨부가능합니다');
+      return;
+    }
+
     const formData = new FormData();
 
     for (let i = 0; i < fileInput.length; i++) {
       formData.append('attach', fileInput[i]);
     }
+
     try {
       const response = await api.uploadFile(formData);
+
       //파일이 여러개일때
       if (response.data.files) {
         let fileArr = response.data.files;
         const resImgUrl = fileArr.map(
           (images) => `https://localhost:443${images.path}`,
         );
-        if (filePreview.length + resImgUrl.length > 3) {
-          alert('이미지는 3개까지 첨부가능합니다');
-          return;
-        }
+
         setFilePreview([...filePreview, ...resImgUrl]);
         setProductData({
           ...productData,
@@ -135,10 +144,7 @@ export default function ProductCreate() {
         //단일파일일때
       } else {
         let fileArr = `https://localhost:443${response.data.file.path}`;
-        if (filePreview.length + 1 > 3) {
-          alert('이미지는 3개까지 첨부가능합니다');
-          return;
-        }
+
         setFilePreview([...filePreview, fileArr]);
         setProductData({
           ...productData,
@@ -148,6 +154,10 @@ export default function ProductCreate() {
     } catch (error) {
       console.log('사진첨부에러발생', error);
     }
+  };
+  const handelFileRemove = (indexToRemove) => {
+    const updatedFilePreview = [...filePreview];
+    updatedFilePreview.splice;
   };
 
   return (
@@ -173,6 +183,11 @@ export default function ProductCreate() {
               style={{ marginTop: '10px', maxWidth: '60%' }}
             />
           ))}
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <IconButton aria-label="delete" size="small">
+              <DeleteIcon fontSize="inherit" />
+            </IconButton>
+          </Stack>
         </>
         <br />
         <br />
