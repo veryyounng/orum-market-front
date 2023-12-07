@@ -4,7 +4,6 @@ import './index.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import NotFound from './pages/NotFound.tsx';
 import Home from './pages/Home.tsx';
-import ProductList from './pages/product/ProductList.tsx';
 import ProductDetail from './pages/product/ProductDetail.tsx';
 import MyCart from './pages/MyCart.tsx';
 import Dashboard from './pages/user/Dashboard.tsx';
@@ -20,7 +19,7 @@ import ProductManager from './components/seller/ProductManager.tsx';
 import SignInPage from './pages/user/SignIn.tsx';
 import SignUpPage from './pages/user/SignUp.tsx';
 import { CategoryList } from './pages/product/CategoryList.tsx';
-import { SearchResults } from './pages/product/SearchResult.tsx';
+import { SearchPage } from './pages/product/SearchPage.tsx';
 import CheckOut from './pages/user/CheckOut.tsx';
 
 const router = createBrowserRouter([
@@ -31,11 +30,11 @@ const router = createBrowserRouter([
     children: [
       { index: true, path: '/', element: <Home /> },
       { path: '/category/:category', element: <CategoryList /> },
-      { path: '/product', element: <ProductList /> },
+      { path: '/product', element: <SearchPage /> },
       { path: '/product/:id', element: <ProductDetail /> },
       { path: '/cart', element: <MyCart /> },
       { path: '/checkout', element: <CheckOut /> },
-      { path: '/search', element: <SearchResults /> },
+      { path: '/search', element: <SearchPage /> },
       { path: '/sign-in', element: <SignInPage /> },
       { path: '/sign-up', element: <SignUpPage /> },
     ],

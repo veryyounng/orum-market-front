@@ -75,3 +75,10 @@ export interface IUserInfo {
   name: string;
   address?: string;
 }
+
+export interface ISearchState {
+  searchQuery: string;
+  searchResult: any[];
+  setSearchQuery: (query: string) => void;
+  setSearchResult: (result: any[]) => void;
+}

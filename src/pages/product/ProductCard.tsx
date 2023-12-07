@@ -1,18 +1,16 @@
 import {
   Box,
-  Button,
   Card,
   CardActionArea,
-  CardContent,
   CardMedia,
-  Grid,
+  IconButton,
   Typography,
+  styled,
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { IProduct } from '../../type';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { useAddToCart } from '../../hooks/useAddToCart';
 
 interface ProductCardProps {
@@ -23,72 +21,66 @@ export default function ProductCard({ product }: ProductCardProps) {
   const handleAddToCart = useAddToCart();
 
   return (
-    <Grid item xs={8} sm={4} md={4} lg={3} xl={3} mb={10}>
-      <Card
-        sx={{
-          maxWidth: 345,
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          backgroundColor: 'grey.50',
-        }}
-      >
+    <>
+      <StyledCard>
         <CardActionArea component={Link} to={`/product/${product._id}`}>
-          <CardMedia
-            component="img"
-            height="200"
-            image={product.mainImages[0]}
-            alt={product.name}
-            sx={{ objectFit: 'cover', padding: '4px' }}
-          />
+          <ProductImage image={product.mainImages[0]} title={product.name} />
+          <ProductDetails>
+            <Typography variant="h6">{product.name}</Typography>
+            <Typography variant="h6" color="inherit" fontWeight={700}>
+              {product.price.toLocaleString()} 원
+            </Typography>
+          </ProductDetails>
         </CardActionArea>
-        <CardContent>
-          <Typography gutterBottom variant="h6" component="div">
-            {product.name}
-          </Typography>
-          <Typography variant="body1" color="blue">
-            {product.price.toLocaleString()} 원
-          </Typography>
-        </CardContent>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '1rem',
-          }}
-        >
-          <Button
-            variant="outlined"
-            size="small"
-            color="primary"
-            startIcon={<ShoppingCartIcon />}
-            sx={{ marginLeft: '1rem' }}
-            onClick={() => handleAddToCart(product)}
-          >
-            장바구니
-          </Button>
-          <Button
-            variant="outlined"
-            size="small"
-            color="primary"
-            startIcon={<PaymentIcon />}
-            sx={{ marginRight: '1rem' }}
-            onClick={() => handleAddToCart(product)}
-          >
-            주문하기
-          </Button>
-        </Box>
-      </Card>
-    </Grid>
+        <ProductActions>
+          <ShippingFee>
+            <Typography variant="body2">
+              {product.shippingFees === 0
+                ? '무료배송'
+                : '배송료: ' + product.shippingFees.toLocaleString() + '원'}
+            </Typography>
+          </ShippingFee>
+          <IconButton onClick={() => handleAddToCart(product)}>
+            <ShoppingCartIcon />
+          </IconButton>
+          <IconButton>
+            <PaymentIcon />
+          </IconButton>
+        </ProductActions>
+      </StyledCard>
+    </>
   );
 }
 
-const CustomCardMedia = styled(CardMedia)`
-  transition: transform 0.3s ease-in-out;
+const StyledCard = styled(Card)({
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'relative',
+  boxShadow: 'none',
+  borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+});
 
-  &:hover {
-    transform: scale(1.05);
-  }
-`;
+const ProductImage = styled(CardMedia)({
+  height: '200px',
+  backgroundSize: 'cover',
+  backgroundColor: 'grey.50',
+});
+
+const ProductDetails = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+  padding: '16px',
+});
+
+const ProductActions = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  padding: '8px',
+});
+
+const ShippingFee = styled(Box)({
+  flexGrow: 1,
+  padding: '0 8px',
+});

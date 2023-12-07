@@ -1,37 +1,54 @@
-import { styled, alpha } from '@mui/material/styles';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Avatar, Badge, Box, Button, Menu, MenuItem } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import React, { useState, useContext, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCart, useUserStore } from '../lib/store';
-import React, { useRef, useState } from 'react';
-import { Logout } from '@mui/icons-material';
-import { IUserStore } from '../type';
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  CssBaseline,
+  Divider,
+  Drawer,
+  List,
+  Menu,
+  MenuItem,
+  Typography,
+  useTheme,
+  styled,
+} from '@mui/material';
+import {
+  Notifications as NotificationsIcon,
+  ShoppingCart as ShoppingCartIcon,
+  Brightness4 as Brightness4Icon,
+  Brightness7 as Brightness7Icon,
+  Menu as MenuIcon,
+  Logout,
+} from '@mui/icons-material';
 import useOutsideClick from '../hooks/useOutsideClick';
 import CategoryNavBar from './CategoryNavBar';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useCart, useUserStore } from '../lib/store';
+import { IUserStore } from '../type';
+import { ColorModeContext } from '../App';
 
 export default function Header() {
   const { isLoggedIn, logOut } = useUserStore() as IUserStore;
   const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [showCategoryNavBar, setShowCategoryNavBar] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
+  const headerRef = useRef(null);
+  const { items: cartItems } = useCart();
+  const cartItemsCount = cartItems.length;
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,27 +57,10 @@ export default function Header() {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-  const headerRef = useRef(null);
-  useOutsideClick(headerRef, () => {
-    if (showCategoryNavBar) {
-      setShowCategoryNavBar(false);
-    }
-  });
-
-  const toggleCategoryNavBar = () => {
-    setShowCategoryNavBar(!showCategoryNavBar);
-  };
 
   const handleDashboard = () => {
     navigate(`/user/${_id}`); // Navigate to dashboard route
     handleMenuClose();
-  };
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let queryParam = `?query=${searchQuery}`;
-    navigate(`/search${queryParam}`);
-    setSearchQuery('');
   };
 
   const _id = localStorage.getItem('_id');
@@ -80,8 +80,26 @@ export default function Header() {
     navigate('/');
   };
 
-  const { items: cartItems } = useCart();
-  const cartItemsCount = cartItems.length;
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        MUI
+      </Typography>
+      <Divider />
+      <List>
+        {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
+      </List>
+    </Box>
+  );
+
+  const container =
+    typeof window !== 'undefined' ? window.document.body : undefined;
 
   function isLoggedInUserButton() {
     return (
@@ -94,7 +112,6 @@ export default function Header() {
       >
         <IconButton color="inherit">
           <Badge badgeContent={4} color="error">
-            {/* <Avatar alt="Remy Sharp" src="/broken-image.jpg" /> */}
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -118,7 +135,7 @@ export default function Header() {
           id="menu-appbar"
           anchorEl={anchorEl}
           anchorOrigin={{
-            vertical: 'top',
+            vertical: 'bottom',
             horizontal: 'right',
           }}
           keepMounted
@@ -159,67 +176,76 @@ export default function Header() {
   }
 
   return (
-    <AppBar
-      position="sticky"
-      color="default"
-      elevation={0}
-      sx={{
-        borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-        left: 0,
-        right: 0,
-        top: 0,
-      }}
-    >
-      <Toolbar
-        disableGutters
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        component="nav"
         sx={{
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%', // Ensure the Toolbar is full width
-          marginRight: 'calc(-50vw + 50%)', // Adjust for scrollbar
+          boxShadow: 'none',
+          borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+          zIndex: theme.zIndex.drawer + 2,
         }}
       >
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+        <ToolbarStyled>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ mr: 2, display: { sm: 'none' } }}
           >
-            ORUM
-          </Typography>
-        </Link>
-
-        <Button onClick={toggleCategoryNavBar} variant="text" color="inherit">
-          쇼핑하기
-          {showCategoryNavBar ? (
-            <KeyboardArrowUpIcon />
-          ) : (
-            <KeyboardArrowDownIcon />
-          )}
-        </Button>
-
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <form onSubmit={handleSearch}>
-            <Search sx={{ marginRight: '16px' }}>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="검색해볼까"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                inputProps={{ 'aria-label': 'search' }}
+            <MenuIcon />
+          </IconButton>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Typography
+              variant="h6"
+              component="div"
+              sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+            >
+              <img
+                src="../../assets/logo.png"
+                alt="ORUM"
+                style={{ width: '100px', height: 'auto' }}
               />
-            </Search>
-          </form>
+            </Typography>
+          </Link>
 
-          {isLoggedIn && isLoggedInUserButton()}
-          {!isLoggedIn && notLoggedInUserButton()}
-        </Box>
-      </Toolbar>
-      {showCategoryNavBar && <CategoryNavBar />}
-    </AppBar>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}
+          >
+            <IconButton onClick={colorMode.toggleColorMode} color="inherit">
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
+            {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
+          </Box>
+        </ToolbarStyled>
+        {showCategoryNavBar && <CategoryNavBar />}
+      </AppBar>
+      <nav>
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: '240px',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </nav>
+    </Box>
   );
 }
 
@@ -244,13 +270,13 @@ function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="inherit">
           취소
         </Button>
         <Button
           startIcon={<Logout />}
           onClick={onConfirm}
-          color="primary"
+          color="inherit"
           autoFocus
         >
           로그아웃
@@ -260,45 +286,6 @@ function LogoutDialog({ open, onClose, onConfirm }: LogoutDialogProps) {
   );
 }
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  marginRight: theme.spacing(2),
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      width: '12ch',
-      '&:focus': {
-        width: '20ch',
-      },
-    },
-  },
-}));
+const ToolbarStyled = styled(Toolbar)({
+  justifyContent: 'space-between',
+});

@@ -26,12 +26,21 @@ export default function ProductDetail() {
 
   const fetchProduct = async () => {
     if (id) {
-      const response = await api.getProduct(id);
-      setProduct(response.data.item);
+      try {
+        const response = await api.getProduct(Number(id));
+        setProduct(response.data.item);
+        console.log(response.data.item);
+      } catch (error) {
+        console.error('API Error:', error);
+      }
     } else {
       console.log('id가 없습니다.');
     }
   };
+
+  if (!product) {
+    return <Typography>상품이 없습니다.</Typography>;
+  }
 
   return (
     <Box sx={{ p: 4 }}>

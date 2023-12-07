@@ -116,8 +116,12 @@ export const api = {
   // 상품 목록 조회
   getProductList: (query = '') => axiosInstance.get(`/products/?${query}`),
 
+  // 상품 카테고리 조회
+  getProductListByCategory: (extraQuery: string) =>
+    axiosInstance.get(`/products/?extra=${extraQuery}`),
+
   // 상품 상세 조회
-  getProduct: (id: string) => axiosInstance.get(`/products/${id}`),
+  getProduct: (_id: number) => axiosInstance.get(`/products/${_id}`),
 
   // 상품 검색
   searchProducts: (keyword: string, minPrice: number, maxPrice: number) => {
