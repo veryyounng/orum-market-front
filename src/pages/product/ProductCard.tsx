@@ -26,10 +26,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         <CardActionArea component={Link} to={`/product/${product._id}`}>
           <ProductImage image={product.mainImages[0]} title={product.name} />
           <ProductDetails>
-            <Typography variant="subtitle1" component="h2">
-              {product.name}
-            </Typography>
-            <Typography variant="h6" color="inherit">
+            <Typography variant="h6">{product.name}</Typography>
+            <Typography variant="h6" color="inherit" fontWeight={700}>
               {product.price.toLocaleString()} 원
             </Typography>
           </ProductDetails>
@@ -37,10 +35,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <ProductActions>
           <ShippingFee>
             <Typography variant="body2">
-              배송료:{' '}
               {product.shippingFees === 0
                 ? '무료배송'
-                : product.shippingFees.toLocaleString() + '원'}
+                : '배송료: ' + product.shippingFees.toLocaleString() + '원'}
             </Typography>
           </ShippingFee>
           <IconButton onClick={() => handleAddToCart(product)}>
