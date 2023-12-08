@@ -78,11 +78,7 @@ export default function BuyerInfo() {
       },
     ]);
 
-    setAddressName('');
-    setAddressUserName('');
-    setAddressUserTel(0);
-    setAddressMain('');
-    setAddressDetail('');
+    setAddressForm(initUser.extra.addressBook);
     handleClose();
   };
 
