@@ -105,7 +105,18 @@ export function SearchPage() {
         </Grow>
       ))}
       {filteredProducts.length === 0 && (
-        <Typography>찾으시는 상품이 없습니다.</Typography>
+        <Grid item xs={12} style={{ height: '100%' }}>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            style={{ height: '100%' }}
+          >
+            <Typography variant="h6" color="textSecondary">
+              찾으시는 상품이 없습니다.
+            </Typography>
+          </Box>
+        </Grid>
       )}
     </Grid>
   );
