@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -45,25 +45,54 @@ export default function BuyerInfo() {
   const handleOpen = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
   const userId = localStorage.getItem('_id');
-  const [addressForm, setAddressForm] = useState(initUser.extra.addressBook);
-  const [userInfo, setUserInfo] = useState(initUser);
-  const [updateUserInfo, setUpdateUserInfo] = useState({});
+  const [addressForm, setAddressForm] = useState(initUser.extra.addressBook); // 주소값을 담을 정보
+  const [userInfo, setUserInfo] = useState(initUser); // 서버에서 받아오는 유저 정보
+  const [updateUserInfo, setUpdateUserInfo] = useState({}); // 새로 업데이트되는 유저 정보
   const [addressBook, setAddressBook] = useState(initUser.extra.addressBook);
 
+  // input 상태값 저장
   const [addressName, setAddressName] = useState('');
   const [addressUserName, setAddressUserName] = useState('');
   const [addressUserTel, setAddressUserTel] = useState(0);
   const [addressMain, setAddressMain] = useState('');
   const [addressDetail, setAddressDetail] = useState('');
+  const resetData = () => {
+    setUpdateUserInfo(userInfo); // 주소지 등록안하고 취소했을 때 받아온 데이터로 reset
+  };
 
-  const handleChangeUserName = (newName: string) => {
-    setUserInfo({
-      ...userInfo,
-      name: newName,
+  // GET API
+  useEffect(() => {
+    if (!userId) {
+      console.log('ID가 유효하지 않습니다.');
+      return;
+    }
+
+    const fetchUserInfo = async () => {
+      try {
+        const response = await api.getUserInfo(userId);
+        setUserInfo(response.data.item);
+        setUpdateUserInfo(response.data.item);
+        setAddressBook([response.data.item.extra.addressBook]);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
+  if (!userInfo) {
+    return <>사용자 정보를 받아오지 못했습니다.</>;
+  }
+
+  // Edit UserInfo
+  const handleChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUpdateUserInfo({
+      ...updateUserInfo,
+      name: e.target.value,
     });
   };
 
-  console.log('주소 작성 값', addressForm);
+  console.log('updateValue: ', updateUserInfo);
 
   const submitAddressForm = (e) => {
     e.preventDefault();
@@ -82,26 +111,12 @@ export default function BuyerInfo() {
     handleClose();
   };
 
-  console.log('저장된 주소록', addressForm.slice(1));
-
-  const test = () => {
-    setUserInfo({
-      ...userInfo,
-      address: `${addressForm[1].address_main} ${addressForm[1].address_sub} `,
-      extra: {
-        addressBook: [...addressBook.slice(1), ...addressForm.slice(1)],
-      },
-    });
-  };
-
-  console.log('after submit addressbook: ', userInfo);
-
   const handleUpdateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      setUserInfo({
-        ...userInfo,
+      setUpdateUserInfo({
+        ...updateUserInfo,
         address: `${addressForm[1].address_main} ${addressForm[1].address_sub} `,
         extra: {
           addressBook: [...addressBook.slice(1), ...addressForm.slice(1)],
@@ -114,30 +129,6 @@ export default function BuyerInfo() {
     }
   };
 
-  useEffect(() => {
-    if (!userId) {
-      console.log('ID가 유효하지 않습니다.');
-      return;
-    }
-
-    const fetchUserInfo = async () => {
-      try {
-        const response = await api.getUserInfo(userId);
-        setUserInfo(response.data.item);
-        setAddressBook([response.data.item.extra.addressBook]);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchUserInfo();
-  }, []);
-
-  if (!userInfo) {
-    return <>사용자 정보를 받아오지 못했습니다.</>;
-  }
-
-  console.log('address book', addressForm.length);
-
   return (
     <Container>
       {userInfo && (
@@ -147,7 +138,7 @@ export default function BuyerInfo() {
             <FormLabel>이메일</FormLabel>
             <TextField
               type="email"
-              value={userInfo.email}
+              defaultValue={userInfo.email}
               variant="outlined"
               size="small"
               fullWidth
@@ -157,8 +148,9 @@ export default function BuyerInfo() {
             <FormLabel>이름</FormLabel>
             <TextField
               type="text"
-              value={userInfo.name}
-              onChange={(e) => handleChangeUserName(e.target.value)}
+              value={updateUserInfo.name}
+              defaultValue={userInfo.name}
+              onChange={handleChangeUserName}
               size="small"
               fullWidth
               required
@@ -221,7 +213,6 @@ export default function BuyerInfo() {
                 </Box>
               </>
             )}
-            <Button onClick={test}>테스트</Button>
             <Button type="submit" variant="contained" size="large">
               내 정보 수정하기
             </Button>
