@@ -1,8 +1,12 @@
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Grow, Slide, Typography } from '@mui/material';
+
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import ProductCard from './ProductCard';
 import { SearchSection } from '../../components/search/SearchSection';
@@ -12,8 +16,12 @@ import { useSort } from '../../hooks/useSort';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
-import { CATEGORY } from '../../constants';
-import { CheckBox } from '@mui/icons-material';
+import {
+  CATEGORY,
+  PRICE_BOUNDARIES,
+  PRICE_RANGE,
+  SHIPPING_FEE,
+} from '../../constants';
 
 export function SearchPage() {
   const { searchResult, setSearchResult } = useSearchStore();
@@ -23,12 +31,13 @@ export function SearchPage() {
   ) as any;
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [expanded, setExpanded] = useState<string | false>(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedPrice, setSelectedPrice] = useState('전체');
+  const [selectedShippingFee, setSelectedShippingFee] = useState('전체');
 
-  const toggleSidebar = () => {
+  function toggleSidebar() {
     setIsSidebarOpen(!isSidebarOpen);
-  };
+  }
 
   useEffect(() => {
     const fetchAllProducts = async () => {
@@ -47,34 +56,74 @@ export function SearchPage() {
     setItemsPerPage(value);
   };
 
-  const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
-    };
-
   // 아이템 사이즈를 계산하는 함수
   const getItemSize = () => {
     if (itemsPerPage === 8) return { xs: 6, sm: 3, md: 2, lg: 2, xl: 2 };
     return { xs: 12, sm: 6, md: 4, lg: 4, xl: 4 };
   };
 
+  // 카테고리, 가격, 배송료에 따라 필터링된 상품 목록
+  const selectedPriceRange = PRICE_BOUNDARIES[selectedPrice];
+
+  const filteredProducts = sortedProducts.filter((product: IProduct) => {
+    const withinCategory =
+      selectedCategory === 'all' ||
+      product.extra.category.includes(selectedCategory);
+    const withinPriceRange =
+      product.price >= selectedPriceRange.min &&
+      product.price <= selectedPriceRange.max;
+    let withinShippingFee = true;
+
+    if (selectedShippingFee !== '전체') {
+      withinShippingFee =
+        (selectedShippingFee === '무료배송' && product.shippingFees === 0) ||
+        (selectedShippingFee === '유료배송' && product.shippingFees > 0);
+    }
+
+    return withinCategory && withinPriceRange && withinShippingFee;
+  });
+
+  const resetFilters = () => {
+    setSelectedCategory('all');
+    setSelectedPrice('전체');
+    setSelectedShippingFee('전체');
+  };
+
   // 상품 목록 Grid
   const productGrid = (
     <Grid container spacing={4} rowSpacing={8}>
-      {sortedProducts.map((product: IProduct) => (
-        <Grid item {...getItemSize()} key={product._id}>
-          <ProductCard product={product} />
-        </Grid>
+      {filteredProducts.map((product: IProduct) => (
+        <Grow
+          in={true}
+          key={product._id}
+          style={{ transformOrigin: '0 0 0' }}
+          {...{ timeout: 1000 }}
+        >
+          <Grid item {...getItemSize()}>
+            <ProductCard product={product} />
+          </Grid>
+        </Grow>
       ))}
-      {sortedProducts.length === 0 && (
-        <Typography>찾으시는 상품이 없습니다.</Typography>
+      {filteredProducts.length === 0 && (
+        <Grid item xs={12} style={{ height: '100%' }}>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            style={{ height: '100%' }}
+          >
+            <Typography variant="h6" color="textSecondary">
+              찾으시는 상품이 없습니다.
+            </Typography>
+          </Box>
+        </Grid>
       )}
     </Grid>
   );
 
   // 사이드바 Grid
   const sidebarGrid = (
-    <Grid item xs={2}>
+    <Grid item xs={3}>
       <Box
         sx={{
           width: '100%',
@@ -84,95 +133,137 @@ export function SearchPage() {
           boxShadow: 'none',
         }}
       >
-        <Accordion
-          expanded={expanded === `panel${0}`}
-          onChange={handleAccordionChange(`panel${0}`)}
-          sx={{
-            boxShadow: 'none',
-            borderBottom: '1px solid #bdbdbd',
-            borderRadius: '0px',
-          }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button variant="text" color="inherit" onClick={resetFilters}>
+            필터 초기화
+            <RefreshIcon sx={{ marginLeft: '5px' }} />
+          </Button>
+        </Box>
+        <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls={`panel${0}bh-content`}
-            id={`panel${0}bh-header`}
-            sx={{ paddingLeft: 0, paddingRight: 0 }}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
           >
-            <Typography variant="body1" fontWeight={800}>
+            <Typography variant="body2" fontWeight={800}>
               카테고리
             </Typography>
           </AccordionSummary>
-          {CATEGORY.depth2.map((category) => (
-            <AccordionDetails sx={{ paddingLeft: 0, paddingRight: 0 }}>
+          <AccordionDetails>
+            <Button
+              key="all"
+              variant="text"
+              color="inherit"
+              onClick={() => setSelectedCategory('all')}
+              startIcon={
+                selectedCategory === 'all' ? (
+                  <CheckBoxIcon />
+                ) : (
+                  <CheckBoxOutlineBlankIcon />
+                )
+              }
+              sx={{
+                fontWeight: selectedCategory === 'all' ? 'bold' : 'light',
+              }}
+            >
+              전체
+            </Button>
+            {CATEGORY.depth2.map((category) => (
               <Button
                 key={category.id}
-                component={Button}
                 variant="text"
-                onClick={() => {
-                  setSelectedCategory(category.id);
-                }}
+                color="inherit"
+                onClick={() => setSelectedCategory(category.dbCode)}
+                startIcon={
+                  selectedCategory === category.dbCode ? (
+                    <CheckBoxIcon />
+                  ) : (
+                    <CheckBoxOutlineBlankIcon />
+                  )
+                }
                 sx={{
-                  backgroundColor:
-                    category.id === selectedCategory ? '#eeeeee' : '#ffffff',
-                  color:
-                    category.id === selectedCategory ? '#212121' : '#212121',
-                  fontWeight: category.id === selectedCategory ? 800 : 400,
+                  fontWeight:
+                    selectedCategory === category.dbName ? 'bold' : 'light',
                 }}
               >
                 {category.name}
               </Button>
-            </AccordionDetails>
-          ))}
+            ))}
+          </AccordionDetails>
         </Accordion>
-        <Accordion
-          expanded={expanded === `panel${1}`}
-          onChange={handleAccordionChange(`panel${1}`)}
-          sx={{
-            boxShadow: 'none',
-            borderBottom: '1px solid #bdbdbd',
-            borderRadius: '0px',
-          }}
-        >
+        <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls={`panel${1}bh-content`}
-            id={`panel${1}bh-header`}
-            sx={{ paddingLeft: 0, paddingRight: 0 }}
+            aria-controls="panel2a-content"
+            id="panel2a-header"
           >
-            <Typography variant="body1" fontWeight={800}>
+            <Typography variant="body2" fontWeight={800}>
               가격
             </Typography>
           </AccordionSummary>
-          100,000원 이하
+          <AccordionDetails>
+            {PRICE_RANGE.map((price) => (
+              <Button
+                key={price.id}
+                variant="text"
+                color="inherit"
+                onClick={() => setSelectedPrice(price.label)}
+                startIcon={
+                  selectedPrice === price.label ? (
+                    <CheckBoxIcon />
+                  ) : (
+                    <CheckBoxOutlineBlankIcon />
+                  )
+                }
+                sx={{
+                  fontWeight: selectedPrice === price.label ? 'bold' : 'light',
+                }}
+              >
+                {price.label}
+              </Button>
+            ))}
+          </AccordionDetails>
         </Accordion>
-        <Accordion
-          expanded={expanded === `panel${2}`}
-          onChange={handleAccordionChange(`panel${2}`)}
-          sx={{
-            boxShadow: 'none',
-            borderBottom: '1px solid #bdbdbd',
-            borderRadius: '0px',
-          }}
-        >
+        <Accordion>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
-            aria-controls={`panel${2}bh-content`}
-            id={`panel${2}bh-header`}
-            sx={{ paddingLeft: 0, paddingRight: 0 }}
+            aria-controls="panel3a-content"
+            id="panel3a-header"
           >
-            <Typography variant="body1" fontWeight={800}>
+            <Typography variant="body2" fontWeight={800}>
               배송료
             </Typography>
           </AccordionSummary>
-          <CheckBox /> 무료배송
+          <AccordionDetails>
+            {SHIPPING_FEE.map((fee) => (
+              <Button
+                key={fee.label}
+                variant="text"
+                color="inherit"
+                onClick={() => setSelectedShippingFee(fee.value)}
+                startIcon={
+                  selectedShippingFee === fee.value ? (
+                    <CheckBoxIcon />
+                  ) : (
+                    <CheckBoxOutlineBlankIcon />
+                  )
+                }
+                sx={{
+                  fontWeight:
+                    selectedShippingFee === fee.value ? 'bold' : 'light',
+                }}
+              >
+                {fee.label}
+              </Button>
+            ))}
+          </AccordionDetails>
         </Accordion>
       </Box>
     </Grid>
   );
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3, padding: '0px' }}>
+    <Box sx={{ flexGrow: 1, p: 3, padding: '0px', marginBottom: '120px' }}>
       <SearchSection />
       <Box
         sx={{
@@ -182,22 +273,26 @@ export function SearchPage() {
           display: 'flex',
           justifyContent: 'center',
         }}
-      >
-        <Button onClick={toggleSidebar} variant="outlined" color="inherit">
-          {isSidebarOpen ? 'Hide Sidebar' : 'Show Sidebar'}
-        </Button>
-      </Box>
+      ></Box>
 
       <StickyNavbar
-        totalProducts={sortedProducts.length}
+        totalProducts={filteredProducts.length}
         handleSort={setCurrentSortOrder}
         handleDisplayChange={handleDisplayChange}
         handleToggel={toggleSidebar}
+        isSidebarOpen={isSidebarOpen}
       />
       <Box sx={{ marginTop: '50px', maxWidth: '100%', paddingX: '20px' }}>
         <Grid container spacing={3}>
-          {isSidebarOpen && sidebarGrid}
-          <Grid item xs={isSidebarOpen ? 10 : 12}>
+          <Slide
+            direction="right"
+            in={isSidebarOpen}
+            mountOnEnter
+            unmountOnExit
+          >
+            {sidebarGrid}
+          </Slide>
+          <Grid item xs={isSidebarOpen ? 9 : 12}>
             {productGrid}
           </Grid>
         </Grid>
