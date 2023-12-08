@@ -1,6 +1,7 @@
 import axios from 'axios';
 import initCreateData from '../../src/components/seller/ProductCreate';
 import { useUserStore } from '../lib/store';
+import { IProduct } from '../type';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const REFRESH_URL = '/users/refresh';
@@ -147,13 +148,13 @@ export const api = {
       //   price: productData.price,
       //   shippingFees: productData.shippingFees,
       mainImages: productData.mainImages,
-      name: productData.title,
+      name: productData.name,
       content: productData.content,
     }),
 
   // 상품 수정
-  updateProduct: (productData: any) =>
-    axiosInstance.patch('/seller/products/{_id}', productData),
+  updateProduct: (_id: string, productData: IProduct) =>
+    axiosInstance.patch(`/seller/products/${_id}`, productData),
 
   // 상품 삭제
   deleteProduct: (id: string) => axiosInstance.delete(`/seller/products/${id}`),
@@ -167,7 +168,8 @@ export const api = {
     }),
 
   // 판매자 상품 목록 조회
-  getSellerProductInfo: () => axiosInstance.get('/seller/products/'),
+  getSellerProductInfo: (_id: number) =>
+    axiosInstance.get(`/seller/products/${_id}`),
 
   // 상품 결제
   checkOut: (orderData: any) => axiosInstance.post('/orders/', orderData),
