@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import { Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 // import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import {
@@ -32,34 +32,36 @@ const initCreateData = {
   content: '',
   createdAt: '',
   updatedAt: '',
+  quantity: 1,
+  buyQuantity: 0,
   extra: {
     isNew: true,
     isBest: true,
     category: ['H01', 'H0101'],
-    quantity: 1,
-    buyQuantity: 0,
-    order: 0,
+    sort: 0,
   },
 };
 
 export default function ProductCreate() {
-  const [productData, setProductData] = useState({
-    mainImages: [''],
-    extra: { category: ['H01', 'H0101'] },
-    price: '',
-    shippingFees: '',
-    title: '',
-    content: '',
-    quantity: '',
-  });
+  const [productData, setProductData] = useState(initCreateData);
 
   const [isValid, setIsValid] = useState(true);
-
   const [filePreview, setFilePreview] = useState([]);
+  const [productId, setProductId] = useState(0);
 
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
+
+  const getProductGo = async () => {
+    try {
+      const response = await api.getSellerProductInfo(Number(id));
+      console.log(response);
+    } catch (error) {
+      console.log('상품불러오기오류', error);
+    }
+  };
+
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
@@ -93,20 +95,14 @@ export default function ProductCreate() {
     }
     try {
       const response = await api.createProduct(productData);
-      setProductData({
-        ...productData,
-        mainImages: [],
-        extra: { category: ['H01', 'H0101'] },
-        quantity: '1',
-        price: '',
-        shippingFees: '',
-        title: '',
-        content: '',
-      });
+      setProductData(response.data.item);
+      setProductId(response.data.item._id);
     } catch (error) {
       console.error('API Error:', error);
     }
   };
+
+  console.log('productId', productId);
 
   // 업로드 버튼 클릭 시 실행되는 함수
   const handleFileUpload = async (e: React.FormEvent) => {
@@ -176,53 +172,69 @@ export default function ProductCreate() {
 
   return (
     <>
-      <form>
+      <form onSubmit={productSubmit}>
+        <InputLabel>상품사진</InputLabel>
+        <h3>이미지는 3개까지 첨부 가능합니다.</h3>
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+          onChange={handleFileUpload}
+        >
+          파일 업로드
+          <input hidden type="file" multiple accept="image/*" />
+        </Button>
+        {filePreview.map((item) => (
+          <div key={item.id}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <IconButton
+                aria-label="delete"
+                size="large"
+                onClick={() => handleFileRemove(item.id)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+            <img
+              key={item.id}
+              src={item.path}
+              alt={'File Preview'}
+              style={{ marginTop: '10px', maxWidth: '60%' }}
+            />
+          </div>
+        ))}
+        <br></br>
+        <br></br>
+        <InputLabel id="category-label">카테고리</InputLabel>
+        <Select
+          labelId="category-label"
+          id="category-select"
+          label="category"
+          value={productData.extra.category[1]}
+          onChange={(e) => handleCategory(e.target.value)}
+          sx={{ width: '100px' }}
+        >
+          {CATEGORY.depth2.map((menu) => {
+            return (
+              <MenuItem key={menu.id} value={menu.dbCode}>
+                {menu.name}
+              </MenuItem>
+            );
+          })}
+        </Select>
+        <br />
+        <br />
         <>
-          상품 사진<br></br>
-          <Button
-            component="label"
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-            onChange={handleFileUpload}
-          >
-            파일 업로드
-            <input hidden type="file" multiple accept="image/*" />
-          </Button>
-          <h3>이미지는 3개까지 첨부 가능합니다.</h3>
-          {filePreview.map((item) => (
-            <div key={item.id}>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <IconButton
-                  aria-label="delete"
-                  size="large"
-                  onClick={() => handleFileRemove(item.id)}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </Stack>
-              <img
-                key={item.id}
-                src={item.path}
-                alt={'File Preview'}
-                style={{ marginTop: '10px', maxWidth: '60%' }}
-              />
-            </div>
-          ))}
-        </>
-        <br />
-        <br />
-        카테고리:
-        <FormControl>
-          <InputLabel id="category-label">카테고리</InputLabel>
+          <InputLabel id="quantity-label">상품 품질</InputLabel>
           <Select
-            labelId="category-label"
-            id="category-select"
-            label="category"
-            value={productData.extra.category[1]}
-            onChange={(e) => handleCategory(e.target.value)}
+            labelId="quantity-label"
+            id="quantity-select"
+            label="quantity"
+            value={productData.quantity}
+            onChange={(e) => handleQuantity(e.target.value)}
             sx={{ width: '100px' }}
           >
-            {CATEGORY.depth2.map((menu) => {
+            {QUALITY.map((menu) => {
               return (
                 <MenuItem key={menu.id} value={menu.dbCode}>
                   {menu.name}
@@ -230,30 +242,6 @@ export default function ProductCreate() {
               );
             })}
           </Select>
-        </FormControl>
-        <br />
-        <br />
-        <>
-          상품 품질:
-          <FormControl>
-            <InputLabel id="quantity-label">상품 품질</InputLabel>
-            <Select
-              labelId="quantity-label"
-              id="quantity-select"
-              label="quantity"
-              value={productData.quantity}
-              onChange={(e) => handleQuantity(e.target.value)}
-              sx={{ width: '100px' }}
-            >
-              {QUALITY.map((menu) => {
-                return (
-                  <MenuItem key={menu.id} value={menu.dbCode}>
-                    {menu.name}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
         </>
         <br />
         <br />
@@ -261,9 +249,9 @@ export default function ProductCreate() {
           상품명:
           <TextField
             type="text"
-            name="title"
+            name="name"
             placeholder="상품명을 입력하세요."
-            value={productData.title}
+            value={productData.name}
             onChange={handleAllChange}
           ></TextField>
           {/* {!isValid && productData.title.length !== 0 ? (
@@ -311,12 +299,20 @@ export default function ProductCreate() {
           {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
         </>
         <br />
-        <Button type="submit" onClick={productSubmit} variant="contained">
+        <Button type="submit" variant="contained">
           등록하기
         </Button>
       </form>
       <Button type="button" onClick={handleMoveBack} variant="outlined">
         취소
+      </Button>
+      <Button type="button" variant="outlined">
+        <Link
+          to={`/products/50`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          수정하기
+        </Link>
       </Button>
     </>
   );
