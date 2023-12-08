@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   FormControl,
   FormLabel,
   TextField,
@@ -28,42 +27,45 @@ const style = {
   p: 4,
 };
 
-export default function AddressForm({
-  addressName,
-  tel,
-  name,
-  address_main,
-  address_sub,
-  handleChangeUserAddress,
-}) {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+export default function AddressForm({ getAddressInfo }) {
+  const {
+    addressName,
+    tel,
+    name,
+    address_main,
+    address_sub,
+    handleChangeUserAddress,
+    buyerInfoData,
+    submitAddressForm,
+    open,
+    handleClose,
+    handleOpen,
+  } = getAddressInfo;
+
+  console.log('buyerInfoData', buyerInfoData);
   return (
     <>
-      {
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            marginY: '1rem',
-          }}
-          height={'100px'}
-        >
-          <Typography variant="body2">등록된 배송지가 없습니다.</Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          marginY: '1rem',
+        }}
+        height={'100px'}
+      >
+        <Typography variant="body2">등록된 배송지가 없습니다.</Typography>
 
-          <Button
-            size={'small'}
-            variant="outlined"
-            sx={{ marginTop: '0.5rem' }}
-            onClick={handleOpen}
-          >
-            배송지 등록
-          </Button>
-        </Box>
-      }
+        <Button
+          size={'small'}
+          variant="outlined"
+          sx={{ marginTop: '0.5rem' }}
+          onClick={handleOpen}
+        >
+          배송지 등록
+        </Button>
+      </Box>
 
       <>
         <FormControl>
@@ -125,7 +127,7 @@ export default function AddressForm({
                 />
                 <FormLabel>연락처*</FormLabel>
                 <TextField
-                  type="text"
+                  type="number"
                   placeholder="-없이 입력"
                   id="tel"
                   value={tel}
@@ -158,7 +160,13 @@ export default function AddressForm({
                   required
                   sx={{ marginBottom: '1rem' }}
                 />
-                <Button size="large" variant="contained" fullWidth>
+                <Button
+                  type="submit"
+                  size="large"
+                  variant="contained"
+                  fullWidth
+                  onClick={submitAddressForm}
+                >
                   등록하기
                 </Button>
                 <ModalClose />
@@ -167,18 +175,19 @@ export default function AddressForm({
           </Modal>
         </FormControl>
       </>
-
-      <>
-        <TextField
-          type="text"
-          placeholder="주소를 입력해주세요"
-          onChange={(e) => {
-            handleChangeUserAddress(e.target.value);
-          }}
-          size="small"
-          fullWidth
-        />
-      </>
+      {buyerInfoData && (
+        <>
+          <TextField
+            type="text"
+            placeholder="주소를 입력해주세요"
+            onChange={(e) => {
+              handleChangeUserAddress(e.target.value);
+            }}
+            size="small"
+            fullWidth
+          />
+        </>
+      )}
     </>
   );
 }

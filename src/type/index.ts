@@ -70,7 +70,7 @@ export interface IOrderItem {
 }
 
 export interface IUserInfo {
-  _id: number;
+  id: number;
   email: string;
   name: string;
   address?: string;
