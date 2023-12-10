@@ -8,13 +8,19 @@ import {
   Card,
   CardActions,
   CardContent,
+  Container,
   Grid,
+  IconButton,
   ImageList,
   ImageListItem,
+  Snackbar,
   Typography,
 } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useCartStore, useUserStore } from '../../lib/store';
+import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,14 +28,27 @@ export default function ProductDetail() {
 
   useEffect(() => {
     fetchProduct();
+    fetchBookmark();
   }, []);
+
+  const fetchBookmark = async () => {
+    if (id) {
+      try {
+        const response = await api.getBookmark(Number(id));
+        console.log('북마크 GET: ', response.data);
+      } catch (error) {
+        console.error('API Error:', error);
+      }
+    } else {
+      console.log('id가 없습니다.');
+    }
+  };
 
   const fetchProduct = async () => {
     if (id) {
       try {
         const response = await api.getProduct(Number(id));
         setProduct(response.data.item);
-        console.log(response.data.item);
       } catch (error) {
         console.error('API Error:', error);
       }
@@ -45,26 +64,27 @@ export default function ProductDetail() {
   return (
     <Box sx={{ p: 4 }}>
       {product && (
-        <>
-          <Grid container spacing={4}>
-            <Grid item xs={12} sm={6}>
+        <Container>
+          <Grid container spacing={2}>
+            <Grid item sm={12} md={6}>
               <ProductImageGallery images={product.mainImages} />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid item sm={12} md={6}>
+              <BreadcrumbsNavBar />
               <ProductDetailsCard product={product} />
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="h2">
-                상품 설명
-              </Typography>
-            </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="h5" gutterBottom component="h2">
+              상품 설명
+            </Typography>
             <Typography
               paragraph
               dangerouslySetInnerHTML={{ __html: product.content }}
               sx={{ fontSize: '1rem', color: 'text.secondary' }}
             />
           </Grid>
-        </>
+        </Container>
       )}
     </Box>
   );
@@ -86,7 +106,7 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
         />
       </Box>
       {/* List of all images */}
-      <ImageList sx={{ width: 500 }} cols={3}>
+      <ImageList cols={3}>
         {images.map((image: string, index: number) => (
           <ImageListItem key={index}>
             <img
@@ -112,6 +132,23 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
   const { items } = useCartStore((state) => state) as ICartStore;
   const productAlreadyInCart = items.some((item) => item._id === product._id);
   const { addToCart } = useCartStore((state) => state) as ICartStore;
+  const [liked, setLiked] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [wishlistNotification, setWishlistNotification] = useState({
+    open: false,
+    message: '',
+  });
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setWishlistNotification({ ...wishlistNotification, open: false });
+  };
+
+  function handleClick() {
+    setLoading(true);
+  }
 
   const handleNotLoggedIn = () => {
     const confirmLogin = confirm(
@@ -149,12 +186,27 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
     }
   };
 
-  const addToWishlist = () => {
+  const addToWishlist = (product) => {
     if (!isLoggedIn) {
       handleNotLoggedIn();
-    } else {
-      alert('위시리스트에 추가되었습니다');
+      return;
     }
+
+    const isProductInWishlist = false;
+
+    if (isProductInWishlist) {
+      setWishlistNotification({
+        open: true,
+        message: '상품이 관심 목록에서 제거되었습니다.',
+      });
+    } else {
+      setWishlistNotification({
+        open: true,
+        message: '상품이 관심 목록에 추가되었습니다.',
+      });
+    }
+
+    setLiked((prev) => !prev);
   };
 
   return (
@@ -194,19 +246,38 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
         <Button
           size="large"
           variant="outlined"
-          color="primary"
+          color="inherit"
           onClick={perchaseProduct}
+          size="medium"
         >
-          구매하기
+          바로구매
         </Button>
         <Button
           size="large"
           variant="outlined"
-          color="primary"
+          color="inherit"
           onClick={addProductToCart}
+          size="medium"
         >
           장바구니
         </Button>
+        <IconButton onClick={() => addToWishlist(product)}>
+          {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+        </IconButton>
+        <Snackbar
+          open={wishlistNotification.open}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+        >
+          <MuiAlert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            elevation={6}
+            variant="filled"
+          >
+            {wishlistNotification.message}
+          </MuiAlert>
+        </Snackbar>
       </CardActions>
     </Card>
   );

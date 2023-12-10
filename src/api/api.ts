@@ -169,4 +169,7 @@ export const api = {
 
   // 구매자 구매 목록 조회
   getOrderProductInfo: () => axiosInstance.get('/orders/'),
+
+  // 북마크 조회
+  getBookmark: (id: string) => axiosInstance.get(`/bookmarks/products/${id}`),
 };
