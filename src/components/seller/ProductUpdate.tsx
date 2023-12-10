@@ -17,6 +17,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { api } from '../../api/api';
 import { valueToPercent } from '@mui/base';
+import { Category } from '@mui/icons-material';
 
 const initCreateData = {
   price: 0,
@@ -73,7 +74,18 @@ export default function ProductUpdate() {
   // 객체 데이터 업데이트
   // 리액트 공식 홈페이지
 
-  //   console.log('data 확인: ', selectedCategory);
+  //   console.log('data 확인: ', productData.extra?.category[1]);
+  //   console.log('data 확인: ', CATEGORY.depth2);
+
+  const findDBName = (dbCode) => {
+    const foundCategory = CATEGORY.depth2.find(
+      (Category) => Category.dbCode === dbCode,
+    );
+    return console.log(
+      '카테고리 이름',
+      foundCategory ? foundCategory.dbName : '',
+    );
+  };
 
   return (
     <>
@@ -98,11 +110,21 @@ export default function ProductUpdate() {
           id="category-select"
           label="category"
           sx={{ width: '100px' }}
+          value={productData.extra?.category[1] || ''}
+          onChange={(e) => {
+            const selectedDBCode = e.target.value;
+            const selectedDBName = findDBName(selectedDBCode);
+          }}
           //   value={selectedCategory}
           //   onChange={(e) => {
           //     handleFormChange(e.target.value);
           //   }}
         >
+          {CATEGORY.depth2.map((menu) => (
+            <MenuItem key={menu.id} value={menu.dbCode}>
+              {menu.name}
+            </MenuItem>
+          ))}
           {/* {CATEGORY.depth2.map((menu) => {
             return (
               <MenuItem key={menu.id} value={menu.dbCode}>
