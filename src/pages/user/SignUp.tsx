@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { api } from '../../api/api';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { validateEmail, validatePassword } from '../../lib/validation';
+
 import {
   TextField,
   MenuItem,
@@ -8,11 +11,19 @@ import {
   Container,
   InputAdornment,
   IconButton,
+  FormHelperText,
+  Box,
+  Typography,
+  Grid,
+  Paper,
 } from '@mui/material';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { Link, useNavigate } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { validateEmail, validatePassword } from '../../lib/validation';
+import CheckIcon from '@mui/icons-material/Check';
+import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
+import SavingsOutlinedIcon from '@mui/icons-material/SavingsOutlined';
+import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -24,6 +35,8 @@ export default function SignUpPage() {
       membershipClass: 'MC01',
     },
   });
+  const [isEmailAvailable, setIsEmailAvailable] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
@@ -34,6 +47,7 @@ export default function SignUpPage() {
     const { name, value } = event.target;
 
     if (name === 'email') {
+      setIsEmailAvailable(false);
       if (!validateEmail(value)) {
         setEmailError('유효하지 않은 이메일 형식입니다.');
       } else {
@@ -63,23 +77,91 @@ export default function SignUpPage() {
     }
   };
 
+  const checkEmailAvailability = async () => {
+    try {
+      setIsCheckingEmail(true);
+      const response = await fetch(
+        `https://localhost/api/users/email?email=${encodeURIComponent(
+          formData.email,
+        )}`,
+      );
+      const data = await response.json();
+      if (data.ok === 1) {
+        setIsEmailAvailable(true);
+        setEmailError('');
+      } else if (data.ok === 0) {
+        setIsEmailAvailable(false);
+        setEmailError(data.message || '이미 등록된 이메일입니다.');
+      }
+    } catch (error) {
+      console.error(error);
+      setEmailError('이메일 확인에 실패했습니다.');
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
   return (
-    <Container component="main" maxWidth="xs" sx={{ mt: 8 }}>
+    <Container
+      component="main"
+      maxWidth="xs"
+      sx={{ height: '100vh-114px', marginY: '100px' }}
+    >
       <Form onSubmit={handleSubmit}>
-        <TextField
-          type="email"
-          name="email"
-          label="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          error={!!emailError}
-          helperText={emailError}
-        />
+        <Box sx={{ width: '100%' }}>
+          <TextField
+            type="email"
+            name="email"
+            variant="outlined"
+            label="이메일"
+            fullWidth
+            value={formData.email}
+            onChange={handleChange}
+            required
+            error={!!emailError}
+            helperText={emailError}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="check email availability"
+                    onClick={checkEmailAvailability}
+                    edge="end"
+                    disabled={
+                      isCheckingEmail ||
+                      formData.email === '' ||
+                      !validateEmail(formData.email) ||
+                      isEmailAvailable // Disable button if email has been checked and is available
+                    }
+                  >
+                    {isCheckingEmail ? (
+                      <CircularProgress size={24} color="inherit" />
+                    ) : isEmailAvailable ? (
+                      <CheckIcon color="success" />
+                    ) : (
+                      <CheckIcon />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            FormHelperTextProps={{
+              sx: {
+                color: isEmailAvailable ? 'success.main' : '',
+              },
+            }}
+          />
+          {isEmailAvailable && !emailError && (
+            <FormHelperText sx={{ color: 'success.main' }}>
+              사용 가능한 이메일입니다.
+            </FormHelperText>
+          )}
+        </Box>
         <TextField
           name="password"
           type={showPassword ? 'text' : 'password'}
-          label="Password"
+          label="비밀번호"
+          variant="outlined"
           value={formData.password}
           onChange={handleChange}
           required
@@ -101,7 +183,8 @@ export default function SignUpPage() {
         />
         <TextField
           name="name"
-          label="Name"
+          label="이름"
+          variant="outlined"
           value={formData.name}
           onChange={handleChange}
           required
@@ -109,26 +192,81 @@ export default function SignUpPage() {
         <TextField
           name="type"
           select
-          label="Type"
+          variant="outlined"
+          label="유형"
           value={formData.type}
           onChange={handleChange}
           required
         >
-          <MenuItem value="user">User</MenuItem>
-          <MenuItem value="seller">Seller</MenuItem>
+          <MenuItem value="user">구매자</MenuItem>
+          <MenuItem value="seller">판매자</MenuItem>
         </TextField>
 
-        <SubmitButton
-          startIcon={<PersonAddIcon />}
-          variant="contained"
-          type="submit"
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'end',
+          }}
         >
-          Sign Up
-        </SubmitButton>
-        <Link to="/sign-in">
-          <Button variant="text">로그인하러 가기</Button>
-        </Link>
+          <SubmitButton
+            variant="outlined"
+            type="submit"
+            size="large"
+            sx={{ width: '100%', marginTop: '20px' }}
+            disabled={!isEmailAvailable || isCheckingEmail}
+          >
+            일반 회원가입
+          </SubmitButton>
+        </Box>
       </Form>
+
+      <Box sx={{ my: 5 }}>
+        <Typography variant="h6" gutterBottom color="text.secondary">
+          회원 가입 혜택
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 2, textAlign: 'center', height: '100px' }}
+            >
+              <LocalActivityOutlinedIcon />
+              <Typography color="text.secondary">쿠폰</Typography>
+              <Typography variant="caption" color="text.secondary">
+                등급별 쿠폰, 생일 쿠폰 등
+              </Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 2, textAlign: 'center', height: '100px' }}
+            >
+              <SavingsOutlinedIcon />
+              <Typography color="text.secondary">마일리지 적립</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 2, textAlign: 'center', height: '100px' }}
+            >
+              <ReceiptOutlinedIcon />
+              <Typography color="text.secondary">리뷰 적립</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Paper
+              variant="outlined"
+              sx={{ p: 2, textAlign: 'center', height: '100px' }}
+            >
+              <LocalShippingOutlinedIcon />
+              <Typography color="text.secondary">무료 배송 제공</Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Box>
     </Container>
   );
 }
@@ -138,7 +276,6 @@ const Form = styled.form`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  margin-top: 8vh;
 `;
 
 const SubmitButton = styled(Button)`
