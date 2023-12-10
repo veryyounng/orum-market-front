@@ -1,5 +1,5 @@
-import { Button, Input } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Button } from '@mui/material';
+import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { IProduct } from '../../type/index';
 import { CATEGORY, QUALITY } from '../../constants/index';
@@ -10,39 +10,43 @@ import {
   Select,
   MenuItem,
   TextField,
+  Typography,
+  Grid,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { api } from '../../api/api';
+import { valueToPercent } from '@mui/base';
 
-// const initData = {
-//   price: 0,
-//   shippingFees: 0,
-//   show: true,
-//   active: true,
-//   name: '',
-//   mainImages: [''],
-//   content: '',
-//   createdAt: '',
-//   updatedAt: '',
-//   quantity: 1,
-//   buyQuantity: 0,
-//   extra: {
-//     isNew: true,
-//     isBest: true,
-//     category: ['H01', 'H0101'],
-//     sort: 0,
-//   },
-// };
+const initCreateData = {
+  price: 0,
+  shippingFees: 0,
+  show: true,
+  active: true,
+  name: '',
+  mainImages: [''],
+  content: '',
+  createdAt: '',
+  updatedAt: '',
+  quantity: 1,
+  buyQuantity: 0,
+  extra: {
+    isNew: true,
+    isBest: true,
+    category: ['H01', 'H0101'],
+    sort: 0,
+  },
+};
 
 export default function ProductUpdate() {
-  //받아올 상품 id
   const { id } = useParams();
+  const [productData, setProductData] =
+    useState<Partial<IProduct>>(initCreateData);
+  const [selectedCategory, setSelectedCategory] = useState('');
 
-  const [productData, setProductData] = useState<Partial<IProduct>>({});
-  // const [productId, setProductId] = useState(50);
-
-  console.log('초기데이터', productData);
+  const handleMoveBack = () => {
+    window.history.back();
+  };
 
   useEffect(() => {
     fetchProduct();
@@ -51,9 +55,7 @@ export default function ProductUpdate() {
   const fetchProduct = async () => {
     try {
       const response = await api.getProduct(Number(id));
-      console.log('응답', response);
       setProductData(response.data.item);
-      console.log('제품데이터', productData);
     } catch (error) {
       console.log('제품불러오기실패', error);
     }
@@ -62,15 +64,17 @@ export default function ProductUpdate() {
   const updateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.updateProduct(productId!, productData);
-      //   history.pushState('/');
+      await api.updateProduct(id!, productData);
     } catch (error) {
       console.log('상품수정오류', error);
     }
   };
-  const handleMoveBack = () => {
-    window.history.back();
-  };
+
+  // 객체 데이터 업데이트
+  // 리액트 공식 홈페이지
+
+  //   console.log('data 확인: ', selectedCategory);
+
   return (
     <>
       <form onSubmit={updateSubmit}>
@@ -94,14 +98,18 @@ export default function ProductUpdate() {
           id="category-select"
           label="category"
           sx={{ width: '100px' }}
+          //   value={selectedCategory}
+          //   onChange={(e) => {
+          //     handleFormChange(e.target.value);
+          //   }}
         >
-          {CATEGORY.depth2.map((menu) => {
+          {/* {CATEGORY.depth2.map((menu) => {
             return (
               <MenuItem key={menu.id} value={menu.dbCode}>
                 {menu.name}
               </MenuItem>
             );
-          })}
+          })} */}
         </Select>
         <br />
         <br />
@@ -113,7 +121,7 @@ export default function ProductUpdate() {
               labelId="quantity-label"
               id="quantity-select"
               label="quantity"
-              value={productData.quantity}
+              value={productData.quantity || ''}
               sx={{ width: '100px' }}
             >
               {QUALITY.map((menu) => {
@@ -132,8 +140,8 @@ export default function ProductUpdate() {
           상품명:
           <TextField
             type="text"
-            name="title"
-            placeholder="상품명을 입력하세요."
+            name="name"
+            value={productData.name}
           ></TextField>
           {/* {!isValid && productData.title.length !== 0 ? (
             <div style={{ color: 'red' }}>{titleError}</div>
@@ -148,7 +156,7 @@ export default function ProductUpdate() {
           <TextField
             type="text"
             name="price"
-            value={productData.price}
+            value={productData.price || ''}
           ></TextField>
           {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
@@ -159,7 +167,7 @@ export default function ProductUpdate() {
           <TextField
             type="text"
             name="shippingFees"
-            value={productData.shippingFees}
+            value={productData.shippingFees || ''}
           ></TextField>
           {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
@@ -167,15 +175,11 @@ export default function ProductUpdate() {
         <br />
         <>
           상품 설명:
-          <TextField
-            type="text"
-            name="content"
-            placeholder="상품 설명을 입력하세요."
-            value={productData.content}
-          ></TextField>
-          {/* 상품 설명을 10글자 이상 해야합니다 */}
-          {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
+          <TextField type="text" name="content"></TextField>
         </>
+        {/* 상품 설명을 10글자 이상 해야합니다 */}
+        {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
+        <div dangerouslySetInnerHTML={{ __html: productData.content }}></div>
         <br />
         <Button type="submit" variant="contained">
           등록하기
