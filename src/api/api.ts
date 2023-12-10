@@ -79,7 +79,7 @@ axiosInstance.interceptors.response.use(
         alert('로그인이 필요한 서비스입니다.');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = '/sign-in';
       }
     } else {
       const error = response?.data?.error;

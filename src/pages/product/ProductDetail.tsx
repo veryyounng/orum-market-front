@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ICartStore, IProduct } from '../../type';
+import { ICartStore, IProduct, IUserStore } from '../../type';
 import { api } from '../../api/api';
 import {
   Box,
@@ -25,9 +25,13 @@ import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
+  const { isLoggedIn, logOut } = useUserStore() as IUserStore;
 
   useEffect(() => {
     fetchProduct();
+    if (!isLoggedIn) {
+      return;
+    }
     fetchBookmark();
   }, []);
 
