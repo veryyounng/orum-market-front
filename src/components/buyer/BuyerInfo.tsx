@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -8,6 +8,8 @@ import {
   Button,
   FormControl,
   Box,
+  Card,
+  CardContent,
 } from '@mui/material';
 import { Modal, ModalClose, ModalDialog } from '@mui/joy';
 
@@ -115,6 +117,8 @@ export default function BuyerInfo() {
     }
   };
 
+  const nextId = useRef(1);
+
   // Edit UserInfo
   const handleChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUpdateUserInfo({
@@ -166,7 +170,7 @@ export default function BuyerInfo() {
         const newAddressList = [
           ...prevAddressList,
           {
-            id: 1,
+            id: nextId.current,
             addressName: addressName,
             name: addressUserName,
             tel: addressUserTel,
@@ -174,6 +178,7 @@ export default function BuyerInfo() {
             address_sub: addressDetail,
           },
         ];
+        nextId.current += 1;
 
         setUpdateUserInfo((prevUserInfo) => {
           const newUserInfo = {
@@ -283,16 +288,43 @@ export default function BuyerInfo() {
                     flexDirection: 'column',
                     marginY: '1rem',
                   }}
-                  height={'100px'}
                 >
-                  <Typography variant="body1" sx={{ marginBottom: '0.3rem' }}>
-                    {list.addressName}
-                  </Typography>
-                  <Typography variant="body2">{list.name}</Typography>
-                  <Typography variant="body2">{list.tel}</Typography>
-                  <Typography variant="body2">
-                    {list.address_main} {list.address_sub}
-                  </Typography>
+                  <Card
+                    sx={{
+                      minWidth: '100%',
+                      boxShadow: 'none',
+                      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      flexDirection: 'rows',
+                    }}
+                  >
+                    <CardContent sx={{ padding: '0' }}>
+                      <Typography
+                        variant="body1"
+                        sx={{ marginBottom: '0.3rem' }}
+                      >
+                        {list.addressName}
+                      </Typography>
+                      <Typography variant="body2">{list.name}</Typography>
+                      <Typography variant="body2">{list.tel}</Typography>
+                      <Typography variant="body2">
+                        {list.address_main} {list.address_sub}
+                      </Typography>
+                    </CardContent>
+                    <CardContent
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'left',
+                        alignItems: 'flex-end',
+                        flexDirection: 'column',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <Button variant="contained">수정</Button>
+                      <Button variant="outlined">삭제</Button>
+                    </CardContent>
+                  </Card>
                 </Box>
               ))}
             </>
