@@ -9,9 +9,9 @@ import {
   FormControl,
   Box,
 } from '@mui/material';
+import { Modal, ModalClose, ModalDialog } from '@mui/joy';
 
 import { api } from '../../api/api';
-import { Modal, ModalClose, ModalDialog } from '@mui/joy';
 
 const Form = styled.form`
   display: flex;
@@ -103,6 +103,18 @@ export default function BuyerInfo() {
     return <>사용자 정보를 받아오지 못했습니다.</>;
   }
 
+  // add Address -> get userInfo
+  const reloadUserInfo = async () => {
+    try {
+      const response = await api.getUserInfo(userId);
+      setUserInfo(response.data.item);
+      setUpdateUserInfo(response.data.item);
+      setAddressBook([response.data.item.extra.addressBook]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // Edit UserInfo
   const handleChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUpdateUserInfo({
@@ -112,7 +124,6 @@ export default function BuyerInfo() {
   };
 
   const submitAddressForm = async (e: React.FormEvent<HTMLFormElement>) => {
-    console.log('모달 폼 눌림!');
     e.preventDefault();
 
     if (!addressName) {
@@ -185,6 +196,7 @@ export default function BuyerInfo() {
     }
 
     resetData();
+    reloadUserInfo();
     handleClose();
   };
 
@@ -194,7 +206,6 @@ export default function BuyerInfo() {
 
     try {
       await api.updateUserInfo(userId, updateUserInfo);
-      alert('내 정보가 수정되었습니다!');
     } catch (error) {
       console.log(error);
     }
@@ -262,33 +273,28 @@ export default function BuyerInfo() {
             </>
           ) : (
             <>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'left',
-                  alignItems: 'flex-start',
-                  flexDirection: 'column',
-                  marginY: '1rem',
-                }}
-                height={'100px'}
-              >
-                {userInfo.extra.address.map((list) => (
-                  <>
-                    <Typography
-                      key={list.id}
-                      variant="body1"
-                      sx={{ marginBottom: '0.3rem' }}
-                    >
-                      {list.addressName}
-                    </Typography>
-                    <Typography variant="body2">{list.name}</Typography>
-                    <Typography variant="body2">{list.tel}</Typography>
-                    <Typography variant="body2">
-                      {list.address_main} {list.address_sub}
-                    </Typography>
-                  </>
-                ))}
-              </Box>
+              {userInfo.extra.address.map((list) => (
+                <Box
+                  key={list.id}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'left',
+                    alignItems: 'flex-start',
+                    flexDirection: 'column',
+                    marginY: '1rem',
+                  }}
+                  height={'100px'}
+                >
+                  <Typography variant="body1" sx={{ marginBottom: '0.3rem' }}>
+                    {list.addressName}
+                  </Typography>
+                  <Typography variant="body2">{list.name}</Typography>
+                  <Typography variant="body2">{list.tel}</Typography>
+                  <Typography variant="body2">
+                    {list.address_main} {list.address_sub}
+                  </Typography>
+                </Box>
+              ))}
             </>
           )}
         </>
