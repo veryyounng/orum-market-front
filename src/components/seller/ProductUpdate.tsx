@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { IProduct } from '../../type/index';
 import { CATEGORY, QUALITY } from '../../constants/index';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/react-editor';
 
 import {
   FormControl,
@@ -11,13 +13,10 @@ import {
   MenuItem,
   TextField,
   Typography,
-  Grid,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { api } from '../../api/api';
-import { valueToPercent } from '@mui/base';
-import { Category } from '@mui/icons-material';
 
 const initCreateData = {
   price: 0,
@@ -41,6 +40,7 @@ const initCreateData = {
 
 export default function ProductUpdate() {
   const { id } = useParams();
+
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
 
@@ -79,8 +79,7 @@ export default function ProductUpdate() {
       foundCategory ? foundCategory.dbName : '',
     );
   };
-
-  console.log('상품품질', productData.quantity);
+  console.log(productData.content);
   return (
     <>
       <form onSubmit={updateSubmit}>
@@ -150,11 +149,6 @@ export default function ProductUpdate() {
             name="name"
             value={productData.name}
           ></TextField>
-          {/* {!isValid && productData.title.length !== 0 ? (
-            <div style={{ color: 'red' }}>{titleError}</div>
-          ) : (
-            <> </>
-          )} */}
         </>
         <br />
         <br />
@@ -182,11 +176,19 @@ export default function ProductUpdate() {
         <br />
         <>
           상품 설명:
-          <TextField type="text" name="content"></TextField>
+          {productData.content && (
+            <Editor
+              initialValue={productData.content}
+              previewStyle="vertical"
+              height="400px"
+              width="100%"
+              initialEditType="markdown"
+              useCommandShortcut={true}
+            />
+          )}
+          {/* 상품 설명을 10글자 이상 해야합니다 */}
+          {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
         </>
-        {/* 상품 설명을 10글자 이상 해야합니다 */}
-        {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
-        <div dangerouslySetInnerHTML={{ __html: productData.content }}></div>
         <br />
         <Button type="submit" variant="contained">
           등록하기
