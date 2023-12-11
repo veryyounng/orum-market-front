@@ -43,7 +43,6 @@ export default function ProductUpdate() {
   const { id } = useParams();
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
-  const [selectedCategory, setSelectedCategory] = useState('');
 
   const handleMoveBack = () => {
     window.history.back();
@@ -71,12 +70,6 @@ export default function ProductUpdate() {
     }
   };
 
-  // 객체 데이터 업데이트
-  // 리액트 공식 홈페이지
-
-  //   console.log('data 확인: ', productData.extra?.category[1]);
-  //   console.log('data 확인: ', CATEGORY.depth2);
-
   const findDBName = (dbCode) => {
     const foundCategory = CATEGORY.depth2.find(
       (Category) => Category.dbCode === dbCode,
@@ -87,6 +80,7 @@ export default function ProductUpdate() {
     );
   };
 
+  console.log('상품품질', productData.quantity);
   return (
     <>
       <form onSubmit={updateSubmit}>
@@ -115,23 +109,12 @@ export default function ProductUpdate() {
             const selectedDBCode = e.target.value;
             const selectedDBName = findDBName(selectedDBCode);
           }}
-          //   value={selectedCategory}
-          //   onChange={(e) => {
-          //     handleFormChange(e.target.value);
-          //   }}
         >
           {CATEGORY.depth2.map((menu) => (
             <MenuItem key={menu.id} value={menu.dbCode}>
               {menu.name}
             </MenuItem>
           ))}
-          {/* {CATEGORY.depth2.map((menu) => {
-            return (
-              <MenuItem key={menu.id} value={menu.dbCode}>
-                {menu.name}
-              </MenuItem>
-            );
-          })} */}
         </Select>
         <br />
         <br />
@@ -143,7 +126,9 @@ export default function ProductUpdate() {
               labelId="quantity-label"
               id="quantity-select"
               label="quantity"
-              value={productData.quantity || ''}
+              value={
+                productData.quantity >= 5 ? '2' : productData.quantity || ''
+              }
               sx={{ width: '100px' }}
             >
               {QUALITY.map((menu) => {
