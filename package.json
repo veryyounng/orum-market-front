@@ -16,6 +16,7 @@
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",
     "@mui/styled-engine-sc": "^6.0.0-alpha.6",
+    "@toast-ui/react-editor": "^3.2.3",
     "axios": "^1.6.2",
     "framer-motion": "^10.16.15",
     "mem": "^10.0.0",
