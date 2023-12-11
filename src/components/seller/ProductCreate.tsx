@@ -19,7 +19,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import path from 'path';
 // import { validateProductTitle } from '../../lib/validation';
 
 const initCreateData = {
@@ -52,15 +51,6 @@ export default function ProductCreate() {
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
   // const [titleError, setTitleError] = useState('');
-
-  const getProductGo = async () => {
-    try {
-      const response = await api.getSellerProductInfo(Number(id));
-      console.log(response);
-    } catch (error) {
-      console.log('상품불러오기오류', error);
-    }
-  };
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -305,14 +295,6 @@ export default function ProductCreate() {
       </form>
       <Button type="button" onClick={handleMoveBack} variant="outlined">
         취소
-      </Button>
-      <Button type="button" variant="outlined">
-        <Link
-          to={`/products/50`}
-          style={{ textDecoration: 'none', color: 'inherit' }}
-        >
-          수정하기
-        </Link>
       </Button>
     </>
   );
