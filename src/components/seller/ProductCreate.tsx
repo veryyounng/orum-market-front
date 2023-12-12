@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-// import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import {
   Input,
@@ -19,7 +18,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-// import { validateProductTitle } from '../../lib/validation';
+import { validateProductName } from '../../lib/validation';
 
 const initCreateData = {
   price: 0,
@@ -50,12 +49,21 @@ export default function ProductCreate() {
 
   // const [contentError, setContentError] = useState('');
   // const [numberError, setNumberError] = useState('');
-  // const [titleError, setTitleError] = useState('');
+  const [nameError, setNameError] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
+  useEffect(() => {
+    if (!validateProductName(productData.name)) {
+      setIsValid(false);
+      setNameError('상품명은 2글자 이상 입력하세요.');
+    } else {
+      setIsValid(true);
+      setNameError('');
+    }
+  }, [handleAllChange]);
 
   const handleMoveBack = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -91,8 +99,6 @@ export default function ProductCreate() {
       console.error('API Error:', error);
     }
   };
-
-  console.log('productId', productId);
 
   // 업로드 버튼 클릭 시 실행되는 함수
   const handleFileUpload = async (e: React.FormEvent) => {
@@ -244,11 +250,11 @@ export default function ProductCreate() {
             value={productData.name}
             onChange={handleAllChange}
           ></TextField>
-          {/* {!isValid && productData.title.length !== 0 ? (
-            <div style={{ color: 'red' }}>{titleError}</div>
+          {!isValid && productData.name.length !== 0 ? (
+            <div style={{ color: 'red' }}>{nameError}</div>
           ) : (
             <> </>
-          )} */}
+          )}
         </>
         <br />
         <br />
