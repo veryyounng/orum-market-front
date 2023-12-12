@@ -17,6 +17,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 import { api } from '../../api/api';
+import { CleaningServices } from '@mui/icons-material';
 
 const initCreateData = {
   price: 0,
@@ -44,6 +45,8 @@ export default function ProductUpdate() {
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
 
+  const editorRef = useRef();
+
   const handleMoveBack = () => {
     window.history.back();
   };
@@ -64,12 +67,15 @@ export default function ProductUpdate() {
   const updateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const editorInstance = editorRef.current.getInstance();
+      const updatedContent = editorInstance.getMarkdown();
+
       await api.updateProduct(id!, productData);
+      console.log('상품수정하기위해서', productData);
     } catch (error) {
       console.log('상품수정오류', error);
     }
   };
-
   const findDBName = (dbCode) => {
     const foundCategory = CATEGORY.depth2.find(
       (Category) => Category.dbCode === dbCode,
@@ -79,7 +85,14 @@ export default function ProductUpdate() {
       foundCategory ? foundCategory.dbName : '',
     );
   };
-  console.log(productData.content);
+  const contentChange = () => {
+    const editorData = editorRef.current.getInstance().getMarkdown();
+    setProductData({
+      ...productData,
+      content: editorData,
+    });
+  };
+
   return (
     <>
       <form onSubmit={updateSubmit}>
@@ -107,6 +120,13 @@ export default function ProductUpdate() {
           onChange={(e) => {
             const selectedDBCode = e.target.value;
             const selectedDBName = findDBName(selectedDBCode);
+            setProductData((prevData) => ({
+              ...prevData,
+              extra: {
+                ...prevData.extra,
+                category: ['H01', selectedDBCode],
+              },
+            }));
           }}
         >
           {CATEGORY.depth2.map((menu) => (
@@ -129,6 +149,12 @@ export default function ProductUpdate() {
                 productData.quantity >= 5 ? '2' : productData.quantity || ''
               }
               sx={{ width: '100px' }}
+              onChange={(e) => {
+                setProductData((prevData) => ({
+                  ...prevData,
+                  quantity: e.target.value,
+                }));
+              }}
             >
               {QUALITY.map((menu) => {
                 return (
@@ -148,6 +174,12 @@ export default function ProductUpdate() {
             type="text"
             name="name"
             value={productData.name}
+            onChange={(e) => {
+              setProductData((prevData) => ({
+                ...prevData,
+                name: e.target.value,
+              }));
+            }}
           ></TextField>
         </>
         <br />
@@ -158,6 +190,12 @@ export default function ProductUpdate() {
             type="text"
             name="price"
             value={productData.price || ''}
+            onChange={(e) => {
+              setProductData((prevData) => ({
+                ...prevData,
+                price: e.target.value,
+              }));
+            }}
           ></TextField>
           {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
@@ -169,6 +207,12 @@ export default function ProductUpdate() {
             type="text"
             name="shippingFees"
             value={productData.shippingFees || ''}
+            onChange={(e) => {
+              setProductData((prevData) => ({
+                ...prevData,
+                shippingFees: e.target.value,
+              }));
+            }}
           ></TextField>
           {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
         </>
@@ -178,12 +222,14 @@ export default function ProductUpdate() {
           상품 설명:
           {productData.content && (
             <Editor
+              ref={editorRef}
               initialValue={productData.content}
               previewStyle="vertical"
               height="400px"
               width="100%"
               initialEditType="markdown"
               useCommandShortcut={true}
+              onChange={contentChange}
             />
           )}
           {/* 상품 설명을 10글자 이상 해야합니다 */}
