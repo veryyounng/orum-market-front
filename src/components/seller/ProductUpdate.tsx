@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
@@ -41,7 +41,7 @@ const initCreateData = {
 
 export default function ProductUpdate() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
   const [filePreview, setFilePreview] = useState([]);
@@ -59,7 +59,6 @@ export default function ProductUpdate() {
     try {
       const response = await api.getProduct(Number(id));
       setProductData(response.data.item);
-
       setFilePreview(
         response.data.item.mainImages.map((image) => ({
           id: image.id,
@@ -71,19 +70,12 @@ export default function ProductUpdate() {
     }
   };
 
-  //   console.log(
-  //     '상품이미지 경로',
-  //     filePreview.map((item) => ({
-  //       item: item.path,
-  //     })),
-  //   );
-
   const updateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await api.updateProduct(id!, productData);
       alert('상품 수정이 완료되었습니다.');
-      window.history.back();
+      navigate(`/user/${id}/product-manager`);
     } catch (error) {
       console.log('상품수정오류', error);
     }
@@ -122,9 +114,9 @@ export default function ProductUpdate() {
           ...productData,
           mainImages: [...filePreview, ...resImgUrl],
         });
-
-        //단일파일일때
-      } else {
+      }
+      //단일파일일때
+      else {
         let fileArr = {
           id: response.data.file.name,
           path: `https://localhost:443${response.data.file.path}`,
@@ -141,6 +133,7 @@ export default function ProductUpdate() {
     }
   };
   const handleFileRemove = (idToRemove) => {
+    idToRemove.preventDefault();
     setFilePreview((prevPreview) =>
       prevPreview.filter((item) => item.id !== idToRemove),
     );
