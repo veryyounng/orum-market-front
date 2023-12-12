@@ -1,10 +1,7 @@
-import { Button } from '@mui/material';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { IProduct } from '../../type/index';
-import { CATEGORY, QUALITY } from '../../constants/index';
-import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/toastui-editor.css';
 
 import {
   FormControl,
@@ -12,12 +9,15 @@ import {
   Select,
   MenuItem,
   TextField,
-  Typography,
+  Button,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { IconButton, Stack } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
-import { CleaningServices } from '@mui/icons-material';
+import { CATEGORY, QUALITY } from '../../constants/index';
+import { IProduct } from '../../type/index';
 
 const initCreateData = {
   price: 0,
@@ -25,7 +25,7 @@ const initCreateData = {
   show: true,
   active: true,
   name: '',
-  mainImages: [''],
+  mainImages: [],
   content: '',
   createdAt: '',
   updatedAt: '',
@@ -44,7 +44,7 @@ export default function ProductUpdate() {
 
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
-
+  const [filePreview, setFilePreview] = useState([]);
   const editorRef = useRef();
 
   const handleMoveBack = () => {
@@ -59,23 +59,97 @@ export default function ProductUpdate() {
     try {
       const response = await api.getProduct(Number(id));
       setProductData(response.data.item);
+
+      setFilePreview(
+        response.data.item.mainImages.map((image) => ({
+          id: image.id,
+          path: image.path,
+        })),
+      );
     } catch (error) {
       console.log('제품불러오기실패', error);
     }
   };
 
+  //   console.log(
+  //     '상품이미지 경로',
+  //     filePreview.map((item) => ({
+  //       item: item.path,
+  //     })),
+  //   );
+
   const updateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const editorInstance = editorRef.current.getInstance();
-      const updatedContent = editorInstance.getMarkdown();
-
       await api.updateProduct(id!, productData);
-      console.log('상품수정하기위해서', productData);
+      alert('상품 수정이 완료되었습니다.');
+      window.history.back();
     } catch (error) {
       console.log('상품수정오류', error);
     }
   };
+
+  const handleFileUpload = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const fileInput = e.target.files;
+    if (!fileInput) return;
+
+    const totalFiles = filePreview.length + fileInput.length;
+
+    if (totalFiles > 3) {
+      alert('이미지는 3개까지 첨부가능합니다');
+      return;
+    }
+
+    const formData = new FormData();
+
+    for (let i = 0; i < fileInput.length; i++) {
+      formData.append('attach', fileInput[i]);
+    }
+
+    try {
+      const response = await api.uploadFile(formData);
+
+      //파일이 여러개일때
+      if (response.data.files) {
+        let fileArr = response.data.files;
+        const resImgUrl = fileArr.map((images) => ({
+          id: images.name,
+          path: `https://localhost:443${images.path}`,
+        }));
+        setFilePreview([...filePreview, ...resImgUrl]);
+        setProductData({
+          ...productData,
+          mainImages: [...filePreview, ...resImgUrl],
+        });
+
+        //단일파일일때
+      } else {
+        let fileArr = {
+          id: response.data.file.name,
+          path: `https://localhost:443${response.data.file.path}`,
+        };
+
+        setFilePreview([...filePreview, fileArr]);
+        setProductData({
+          ...productData,
+          mainImages: [...filePreview, fileArr],
+        });
+      }
+    } catch (error) {
+      console.log('사진첨부에러발생', error);
+    }
+  };
+  const handleFileRemove = (idToRemove) => {
+    setFilePreview((prevPreview) =>
+      prevPreview.filter((item) => item.id !== idToRemove),
+    );
+    setProductData((prevData) => ({
+      ...prevData,
+      mainImages: prevData.mainImages.filter((item) => item.id !== idToRemove),
+    }));
+  };
+
   const findDBName = (dbCode) => {
     const foundCategory = CATEGORY.depth2.find(
       (Category) => Category.dbCode === dbCode,
@@ -103,10 +177,30 @@ export default function ProductUpdate() {
             component="label"
             variant="contained"
             startIcon={<CloudUploadIcon />}
+            onChange={handleFileUpload}
           >
             파일 업로드
             <input hidden type="file" multiple accept="image/*" />
           </Button>
+          {filePreview.map((item) => (
+            <div key={item.id}>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <IconButton
+                  aria-label="delete"
+                  size="large"
+                  onClick={() => handleFileRemove(item.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
+              <img
+                key={item.id}
+                src={item.path}
+                alt={'File Preview'}
+                style={{ marginTop: '10px', maxWidth: '60%' }}
+              />
+            </div>
+          ))}
         </>
         <br />
         <br />
