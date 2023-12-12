@@ -95,6 +95,25 @@ export default function BuyerInfo() {
     }
   };
 
+  // Address Remove
+  const onRemove = async (listId) => {
+    const confirmAddressDelete = window.confirm('삭제하시겠습니까?');
+
+    if (confirmAddressDelete) {
+      const filterAddress = userInfo.extra.address.filter(
+        (item) => item.id !== listId,
+      );
+      console.log(filterAddress);
+
+      await api.updateUserInfo(id, {
+        extra: {
+          ...userInfo.extra,
+          address: filterAddress,
+        },
+      });
+    }
+  };
+
   return (
     <Container>
       {userInfo && (
@@ -170,7 +189,12 @@ export default function BuyerInfo() {
                 </Button>
               </Link>
               {userInfo.extra.address.map((item) => (
-                <AddressItem key={item.id} {...item} userId={id} />
+                <AddressItem
+                  key={item.id}
+                  {...item}
+                  userId={id}
+                  onRemove={onRemove}
+                />
               ))}
             </>
           )}

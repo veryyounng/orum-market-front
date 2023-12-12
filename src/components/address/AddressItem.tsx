@@ -8,6 +8,7 @@ export default function AddressItem({
   mainAddress,
   subAddress,
   tel,
+  onRemove,
 }) {
   return (
     <>
@@ -52,7 +53,9 @@ export default function AddressItem({
             }}
           >
             <Button variant="contained">수정</Button>
-            <Button variant="outlined">삭제</Button>
+            <Button variant="outlined" onClick={() => onRemove(id)}>
+              삭제
+            </Button>
           </CardContent>
         </Card>
       </Box>
