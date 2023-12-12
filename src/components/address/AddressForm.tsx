@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { Form, useLocation, useNavigate } from 'react-router-dom';
 import {
   Container,
-  Typography,
   TextField,
   FormLabel,
   Button,
@@ -17,7 +16,7 @@ import { validateTel } from '../../lib/validation';
 export default function AddressForm() {
   const navigate = useNavigate();
   const location = useLocation();
-  const userId = location?.state?.userInfo._id;
+  const userId = location?.state?.userInfo?._id;
   const uuid = uuidv4();
   const [formData, setFormData] = useState({
     addressName: '',
@@ -26,6 +25,7 @@ export default function AddressForm() {
     mainAddress: '',
     subAddress: '',
   });
+
   const [telError, setTelError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +44,12 @@ export default function AddressForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (location.state.userInfo.extra.address.length >= 3) {
+      alert('주소는 3개까지만 등록가능합니다.');
+      navigate(-1);
+      return;
+    }
 
     try {
       const updateFormData = {
@@ -71,26 +77,6 @@ export default function AddressForm() {
         <Form onSubmit={handleSubmit}>
           <FormControl>
             <Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  flexDirection: 'rows',
-                  marginY: '1rem',
-                }}
-              >
-                <Typography id="modal-modal-title" variant="h5" component="h2">
-                  주소지 입력
-                </Typography>
-                <Typography
-                  id="modal-modal-title"
-                  variant="subtitle2"
-                  component="h2"
-                >
-                  * 필수
-                </Typography>
-              </Box>
               <FormLabel>배송지명*</FormLabel>
               <TextField
                 type="text"
@@ -159,6 +145,13 @@ export default function AddressForm() {
                   variant="contained"
                   fullWidth
                   onClick={handleSubmit}
+                  disabled={
+                    !formData.addressName ||
+                    !formData.receiver ||
+                    !formData.tel ||
+                    !formData.mainAddress ||
+                    !formData.subAddress
+                  }
                 >
                   저장
                 </Button>

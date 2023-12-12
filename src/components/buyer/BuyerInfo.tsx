@@ -103,7 +103,6 @@ export default function BuyerInfo() {
       const filterAddress = userInfo.extra.address.filter(
         (item) => item.id !== listId,
       );
-      console.log(filterAddress);
 
       await api.updateUserInfo(id, {
         extra: {
@@ -165,7 +164,7 @@ export default function BuyerInfo() {
                   등록된 배송지가 없습니다.
                 </Typography>
 
-                <Link to={`/user/${id}/address-form`} state={{ userInfo }}>
+                <Link to={`/user/${id}/address-create`} state={{ userInfo }}>
                   <Button
                     size={'small'}
                     variant="outlined"
@@ -178,7 +177,7 @@ export default function BuyerInfo() {
             </>
           ) : (
             <>
-              <Link to={`/user/${id}/address-form`} state={{ userInfo }}>
+              <Link to={`/user/${id}/address-create`} state={{ userInfo }}>
                 <Button
                   size={'small'}
                   variant="outlined"
