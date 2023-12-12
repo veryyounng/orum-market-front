@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Form, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -13,10 +13,33 @@ import {
 import { api } from '../../api/api';
 import { validateTel } from '../../lib/validation';
 
-export default function AddressForm() {
+export default function AddressForm({
+  isEdit,
+  userId,
+  id,
+  addressName,
+  receiver,
+  mainAddress,
+  subAddress,
+  tel,
+}) {
+  console.log(isEdit, id);
+
+  useEffect(() => {
+    if (isEdit) {
+      setFormData({
+        addressName: addressName,
+        receiver: receiver,
+        tel: tel,
+        mainAddress: mainAddress,
+        subAddress: subAddress,
+      });
+    }
+  }, [isEdit, addressName, receiver, mainAddress, subAddress, tel]);
+
   const navigate = useNavigate();
   const location = useLocation();
-  const userId = location?.state?.userInfo?._id;
+  const user = location?.state?.userInfo?._id;
   const uuid = uuidv4();
   const [formData, setFormData] = useState({
     addressName: '',
@@ -42,7 +65,7 @@ export default function AddressForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (location.state.userInfo.extra.address.length >= 3) {
@@ -63,8 +86,32 @@ export default function AddressForm() {
         },
       };
 
-      api.updateUserInfo(userId, updateFormData);
+      api.updateUserInfo(user, updateFormData);
       alert('주소가 등록되었습니다.');
+      navigate(`/user/${user}/buyer-info`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSubmitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.getUserInfo(userId);
+      console.log(response.data.item);
+      const onEdit = response.data.item.extra.address.map((list) =>
+        list.id === id ? { ...list, ...formData } : list,
+      );
+      const updateAddressData = {
+        ...response.data.item,
+        extra: {
+          ...response.data.item.extra,
+          address: [...onEdit],
+        },
+      };
+      api.updateUserInfo(userId, updateAddressData);
+      alert('주소가 수정되었습니다.');
       navigate(`/user/${userId}/buyer-info`);
     } catch (error) {
       console.log(error);
@@ -74,7 +121,7 @@ export default function AddressForm() {
   return (
     <>
       <Container>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={!isEdit ? handleSubmitCreate : handleSubmitUpdate}>
           <FormControl>
             <Box>
               <FormLabel>배송지명*</FormLabel>
@@ -139,22 +186,24 @@ export default function AddressForm() {
                 onChange={handleChange}
               />
               <Box sx={{ display: 'flex', gap: '1rem' }}>
-                <Button
-                  type="button"
-                  size="large"
-                  variant="contained"
-                  fullWidth
-                  onClick={handleSubmit}
-                  disabled={
-                    !formData.addressName ||
-                    !formData.receiver ||
-                    !formData.tel ||
-                    !formData.mainAddress ||
-                    !formData.subAddress
-                  }
-                >
-                  저장
-                </Button>
+                <>
+                  <Button
+                    type="button"
+                    size="large"
+                    variant="contained"
+                    fullWidth
+                    onClick={!isEdit ? handleSubmitCreate : handleSubmitUpdate}
+                    disabled={
+                      !formData.addressName ||
+                      !formData.receiver ||
+                      !formData.tel ||
+                      !formData.mainAddress ||
+                      !formData.subAddress
+                    }
+                  >
+                    {!isEdit ? '저장' : '수정'}
+                  </Button>
+                </>
                 <Button
                   type="button"
                   size="large"

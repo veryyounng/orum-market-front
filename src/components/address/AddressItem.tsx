@@ -1,4 +1,5 @@
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 export default function AddressItem({
   userId,
@@ -52,7 +53,20 @@ export default function AddressItem({
               gap: '0.5rem',
             }}
           >
-            <Button variant="contained">수정</Button>
+            <Link
+              to={`/user/${userId}/address-update`}
+              state={{
+                userId,
+                id,
+                addressName,
+                receiver,
+                mainAddress,
+                subAddress,
+                tel,
+              }}
+            >
+              <Button variant="contained">수정</Button>
+            </Link>
             <Button variant="outlined" onClick={() => onRemove(id)}>
               삭제
             </Button>
