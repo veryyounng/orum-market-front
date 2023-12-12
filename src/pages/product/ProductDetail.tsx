@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ICartStore, IProduct, IUserStore } from '../../type';
+import { IProduct, IUserStore } from '../../type';
 import { api } from '../../api/api';
 import {
   Box,
@@ -19,14 +19,14 @@ import {
 import MuiAlert from '@mui/material/Alert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useCartStore, useUserStore } from '../../lib/store';
+import { useUserStore } from '../../lib/store';
 import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
 import useAddToCart from '../../hooks/useAddToCart';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
-  const { isLoggedIn, logOut } = useUserStore() as IUserStore;
+  const { isLoggedIn } = useUserStore() as IUserStore;
 
   useEffect(() => {
     fetchProduct();
@@ -97,21 +97,23 @@ export default function ProductDetail() {
 
 const ProductImageGallery = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
+  const imageContainerStyle = {
+    overflow: 'hidden', // 컨테이너 밖으로 넘어가는 이미지를 숨김
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    margin: '10px 10px',
+  };
+  const imageListStyle = {
+    width: '100%', // 이미지 리스트의 전체 너비
+    height: '100%', // 이미지 리스트의 최대 높이
+  };
 
   return (
     <Box
       sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
-      {/* Display the selected image in a larger size */}
-      <Box sx={{ marginBottom: 2 }}>
-        <img
-          src={selectedImage}
-          alt="Selected"
-          style={{ width: '100%', maxWidth: 500 }}
-        />
-      </Box>
-      {/* List of all images */}
-      <ImageList cols={3}>
+      <ImageList sx={imageListStyle} cols={3} gap={9}>
         {images.map((image: string, index: number) => (
           <ImageListItem key={index}>
             <img
@@ -120,13 +122,28 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
               loading="lazy"
               onClick={() => setSelectedImage(image)}
               style={{
+                borderRadius: '5px',
                 cursor: 'pointer',
-                border: selectedImage === image ? '2px solid orange' : '',
+                border: selectedImage === image ? '2px solid #EF5B2A' : '',
+                // 선택 안된 것들은 검은색 레이어를 덮어줌
+                filter: selectedImage === image ? '' : 'brightness(0.5)',
               }}
             />
           </ImageListItem>
         ))}
       </ImageList>
+      <Box sx={imageContainerStyle}>
+        <img
+          src={selectedImage}
+          alt="Selected-Image"
+          style={{
+            borderRadius: '5px',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </Box>
     </Box>
   );
 };
@@ -134,26 +151,22 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
 const ProductDetailsCard = ({ product }: { product: IProduct }) => {
   const { isLoggedIn } = useUserStore() as { isLoggedIn: boolean };
   const navigate = useNavigate();
-  const { items } = useCartStore((state) => state) as ICartStore;
-  const productAlreadyInCart = items.some((item) => item._id === product._id);
-  const { addToCart } = useCartStore((state) => state) as ICartStore;
   const [liked, setLiked] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [wishlistNotification, setWishlistNotification] = useState({
     open: false,
     message: '',
   });
 
-  const handleCloseSnackbar = (event, reason) => {
+  const handleCloseSnackbar = (
+    event: React.SyntheticEvent | React.MouseEvent,
+    reason?: string,
+  ) => {
     if (reason === 'clickaway') {
       return;
     }
+
     setWishlistNotification({ ...wishlistNotification, open: false });
   };
-
-  function handleClick() {
-    setLoading(true);
-  }
 
   const handleNotLoggedIn = () => {
     const confirmLogin = confirm(
@@ -165,29 +178,6 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
   };
 
   const addProductToCart = useAddToCart();
-
-  // const addProductToCart = () => {
-  //   if (!isLoggedIn) {
-  //     handleNotLoggedIn();
-  //   } else {
-  //     if (productAlreadyInCart) {
-  //       alert('이미 장바구니에 있는 상품입니다.');
-  //       return;
-  //     }
-
-  //     const confirmAddToCart = confirm('장바구니에 추가하시겠습니까?');
-
-  //     if (confirmAddToCart) {
-  //       addToCart({ ...product, quantity: 1 });
-  //       const navigateToCart = confirm(
-  //         '장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?',
-  //       );
-  //       if (navigateToCart) {
-  //         navigate('/cart');
-  //       }
-  //     }
-  //   }
-  // };
 
   const perchaseProduct = () => {
     if (!isLoggedIn) {
