@@ -13,7 +13,13 @@ export function BreadcrumbsNavBar() {
       aria-label="breadcrumb"
       style={{ marginLeft: '1rem' }}
     >
-      <Link component={RouterLink} underline="hover" color="inherit" to="/">
+      <Link
+        component={RouterLink}
+        underline="hover"
+        color="inherit"
+        to="/"
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
         <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
         Home
       </Link>

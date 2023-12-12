@@ -68,6 +68,9 @@ export default function ProductDetail() {
 
   return (
     <Box sx={{ p: 4 }}>
+      <Box sx={{ mb: 4, ml: 1 }}>
+        <BreadcrumbsNavBar />
+      </Box>
       {product && (
         <Container>
           <Grid container spacing={2}>
@@ -75,7 +78,6 @@ export default function ProductDetail() {
               <ProductImageGallery images={product.mainImages} />
             </Grid>
             <Grid item sm={12} md={6}>
-              <BreadcrumbsNavBar />
               <ProductDetailsCard product={product} />
             </Grid>
           </Grid>
