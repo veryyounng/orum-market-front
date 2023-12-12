@@ -6,27 +6,37 @@ import {
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
+  Chip,
   Container,
   Grid,
   IconButton,
   ImageList,
   ImageListItem,
   Snackbar,
+  Stack,
   Typography,
 } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import { useUserStore } from '../../lib/store';
 import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
 import useAddToCart from '../../hooks/useAddToCart';
+import VerifiedIcon from '@mui/icons-material/Verified';
+
+import { QUALITY } from '../../constants';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
   const { isLoggedIn } = useUserStore() as IUserStore;
+
+  const getQualityName = (value) => {
+    const quality = QUALITY.find((quality) => quality.value === value);
+    return quality ? quality.name : 'Unknown';
+  };
 
   useEffect(() => {
     fetchProduct();
@@ -67,30 +77,30 @@ export default function ProductDetail() {
   }
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Box sx={{ mb: 4, ml: 1 }}>
-        <BreadcrumbsNavBar />
-      </Box>
+    <Box sx={{ p: 4, mb: 5 }}>
       {product && (
         <Container>
           <Grid container spacing={2}>
-            <Grid item sm={12} md={6}>
+            <Grid item sm={12} md={8}>
+              <BreadcrumbsNavBar />
               <ProductImageGallery images={product.mainImages} />
             </Grid>
-            <Grid item sm={12} md={6}>
-              <ProductDetailsCard product={product} />
+            <Grid item sm={12} md={4}>
+              <ProductDetailsCard
+                product={product}
+                getQualityName={getQualityName}
+              />
+              <Typography variant="h5" gutterBottom component="h2" m={3}>
+                상품 설명
+              </Typography>
+              <Typography
+                paragraph
+                dangerouslySetInnerHTML={{ __html: product.content }}
+                sx={{ fontSize: '1rem', color: 'text.secondary', margin: 3 }}
+              />
             </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="h5" gutterBottom component="h2">
-              상품 설명
-            </Typography>
-            <Typography
-              paragraph
-              dangerouslySetInnerHTML={{ __html: product.content }}
-              sx={{ fontSize: '1rem', color: 'text.secondary' }}
-            />
-          </Grid>
+          <Grid item xs={12}></Grid>
         </Container>
       )}
     </Box>
@@ -113,7 +123,12 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
 
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      sx={{
+        margin: '4px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
       <ImageList sx={imageListStyle} cols={3} gap={9}>
         {images.map((image: string, index: number) => (
@@ -150,7 +165,12 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
   );
 };
 
-const ProductDetailsCard = ({ product }: { product: IProduct }) => {
+const ProductDetailsCard = ({
+  product,
+  getQualityName,
+}: {
+  product: IProduct;
+}) => {
   const { isLoggedIn } = useUserStore() as { isLoggedIn: boolean };
   const navigate = useNavigate();
   const [liked, setLiked] = useState(false);
@@ -213,76 +233,160 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
     setLiked((prev) => !prev);
   };
 
+  const generateQualityIcons = (value) => {
+    const qualityIndex = QUALITY.findIndex(
+      (quality) => quality.value === value,
+    );
+    return [...Array(qualityIndex + 1)].map((_, index) => (
+      <VerifiedIcon key={index} />
+    ));
+  };
+
   return (
     <Card
-      sx={{ maxWidth: '100%', boxShadow: 0, border: '1px solid #e0e0e0', m: 2 }}
+      sx={{
+        maxWidth: '100%',
+        boxShadow: 0,
+        mt: 3,
+        borderRadius: '10px',
+        padding: '10px',
+      }}
     >
       <CardContent>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          Seller ID: {product.seller_id}
-          <br />
-          Product ID: {product._id}
-        </Typography>
-        <Typography gutterBottom variant="h5" component="div">
+        {/* 제목 태그 */}
+        <Typography variant="h5" component="div">
           {product.name}
         </Typography>
-        <Typography variant="h6">
+        <Stack direction="row" spacing={1} my={2}>
+          <Chip label="#캠프라인" variant="outlined" />
+          <Chip label="#풀박" variant="outlined" />
+        </Stack>
+
+        {/* 가격 적립금 */}
+        <Typography variant="h6" gutterBottom>
           {product.price.toLocaleString('ko-KR')} 원
         </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mt: 2,
-          }}
-        >
-          <Typography variant="body2">
-            4.0
-            <FavoriteBorderIcon fontSize="small" />
-          </Typography>
-          <Button size="small" onClick={addToWishlist}>
-            Wishlist
-          </Button>
-        </Box>
-      </CardContent>
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          size="large"
-          variant="outlined"
-          color="inherit"
-          onClick={perchaseProduct}
-          size="medium"
-        >
-          바로구매
-        </Button>
-        <Button
-          size="large"
-          variant="outlined"
-          color="inherit"
-          onClick={() => addProductToCart(product)}
-          size="medium"
-        >
-          장바구니
-        </Button>
-        <IconButton onClick={() => addToWishlist(product)}>
-          {liked ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
-        </IconButton>
-        <Snackbar
-          open={wishlistNotification.open}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <MuiAlert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            elevation={6}
-            variant="filled"
+        <Typography variant="subtitle2" gutterBottom color="text.secondary">
+          적립포인트 {(product.price / 100).toLocaleString('ko-KR')}M
+        </Typography>
+
+        {/* 배송료 */}
+        {/* <Divider sx={{ my: 1 }} /> */}
+        <Stack direction="row" alignItems="center" spacing={2} my={3}>
+          <Box
+            sx={{
+              width: '70px',
+              textAlign: 'left',
+              mb: 0,
+            }}
           >
-            {wishlistNotification.message}
-          </MuiAlert>
-        </Snackbar>
-      </CardActions>
+            <Typography variant="body2" fontWeight={800}>
+              배송료
+            </Typography>
+          </Box>
+          <Typography variant="body2">
+            {product.shippingFees === 0
+              ? '무료배송'
+              : `${product.shippingFees.toLocaleString('ko-KR')} 원`}
+          </Typography>
+        </Stack>
+        {/* <Divider sx={{ my: 1 }} /> */}
+
+        {/* 상품 등급 */}
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Box sx={{ width: '70px', textAlign: 'left' }}>
+            <Typography variant="body2" fontWeight={800} component="legend">
+              상품 품질
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {generateQualityIcons(product.extra.sort)}
+          </Box>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontWeight={700}
+            sx={{ ml: 1 }}
+          >
+            {getQualityName(product.extra.sort)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+            {` (하<중<상<최상)`}
+          </Typography>
+        </Stack>
+
+        {/* <Divider sx={{ my: 1 }} /> */}
+
+        {/* 수량 버튼 */}
+        {/* <Box my={2}>
+          <Typography variant="subtitle1">수량</Typography>
+          <OutlinedInput
+            id="outlined-adornment-quantity"
+            value={product.quantity}
+            startAdornment={
+              <InputAdornment position="start">
+                <IconButton>
+                  <RemoveIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton>
+                  <AddIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </Box> */}
+
+        {/* 구매 장바구니 북마크 버튼 */}
+        <Stack spacing={2} direction="column" mt={5}>
+          <Button variant="contained" onClick={perchaseProduct} fullWidth>
+            바로구매
+          </Button>
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: 2,
+              borderRadius: '5px',
+            }}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<ShoppingCartOutlinedIcon />}
+              sx={{ flexGrow: 1, mr: 1 }}
+              onClick={() => addProductToCart(product)}
+            >
+              장바구니
+            </Button>
+            <IconButton
+              sx={{ ml: 1 }}
+              onClick={() => addToWishlist(product)}
+              color={liked ? 'primary' : 'default'}
+            >
+              {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+            <Snackbar
+              open={wishlistNotification.open}
+              autoHideDuration={6000}
+              onClose={handleCloseSnackbar}
+            >
+              <MuiAlert
+                onClose={handleCloseSnackbar}
+                severity="success"
+                elevation={6}
+                variant="filled"
+              >
+                {wishlistNotification.message}
+              </MuiAlert>
+            </Snackbar>
+          </Box>
+        </Stack>
+      </CardContent>
     </Card>
   );
 };
