@@ -21,42 +21,25 @@ import MuiAlert from '@mui/material/Alert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import PaymentIcon from '@mui/icons-material/Payment';
 import { useUserStore } from '../../lib/store';
 import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
 import useAddToCart from '../../hooks/useAddToCart';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 import { QUALITY } from '../../constants';
+import axios from 'axios';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<IProduct | null>(null);
   const { isLoggedIn } = useUserStore() as IUserStore;
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const authToken = localStorage.getItem('authToken');
 
   const getQualityName = (value) => {
     const quality = QUALITY.find((quality) => quality.value === value);
     return quality ? quality.name : 'Unknown';
-  };
-
-  useEffect(() => {
-    fetchProduct();
-    if (!isLoggedIn) {
-      return;
-    }
-    fetchBookmark();
-  }, []);
-
-  const fetchBookmark = async () => {
-    if (id) {
-      try {
-        const response = await api.getBookmark(Number(id));
-        console.log('북마크 GET: ', response.data);
-      } catch (error) {
-        console.error('API Error:', error);
-      }
-    } else {
-      console.log('id가 없습니다.');
-    }
   };
 
   const fetchProduct = async () => {
@@ -71,6 +54,60 @@ export default function ProductDetail() {
       console.log('id가 없습니다.');
     }
   };
+
+  const checkBookmark = async () => {
+    if (!id || !isLoggedIn) {
+      setIsBookmarked(false);
+      return;
+    }
+
+    try {
+      console.log('Bookmark ID:', id);
+      const response = await api.getBookmark(Number(id));
+      if (response.data.ok === 1) {
+        setIsBookmarked(true);
+      } else {
+        setIsBookmarked(false);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        // Handle 404 Not Found
+        setIsBookmarked(false);
+      } else {
+        // Handle other errors
+        console.error('API Error:', error.response || error.message || error);
+      }
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    if (isBookmarked) {
+      try {
+        await api.removeBookmark(Number(id));
+        setIsBookmarked(false);
+      } catch (error) {
+        console.error('Error removing bookmark:', error);
+      }
+    } else {
+      try {
+        await api.addBookmark(Number(id));
+        setIsBookmarked(true);
+      } catch (error) {
+        console.error('Error adding bookmark:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchProduct();
+      checkBookmark();
+    }
+  }, [id, isLoggedIn]);
 
   if (!product) {
     return <Typography>상품이 없습니다.</Typography>;
@@ -89,6 +126,8 @@ export default function ProductDetail() {
               <ProductDetailsCard
                 product={product}
                 getQualityName={getQualityName}
+                handleBookmark={handleBookmark}
+                isBookmarked={isBookmarked}
               />
               <Typography variant="h5" gutterBottom component="h2" m={3}>
                 상품 설명
@@ -168,6 +207,8 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
 const ProductDetailsCard = ({
   product,
   getQualityName,
+  handleBookmark,
+  isBookmarked,
 }: {
   product: IProduct;
 }) => {
@@ -231,6 +272,7 @@ const ProductDetailsCard = ({
     }
 
     setLiked((prev) => !prev);
+    handleBookmark();
   };
 
   const generateQualityIcons = (value) => {
@@ -342,7 +384,12 @@ const ProductDetailsCard = ({
 
         {/* 구매 장바구니 북마크 버튼 */}
         <Stack spacing={2} direction="column" mt={5}>
-          <Button variant="contained" onClick={perchaseProduct} fullWidth>
+          <Button
+            variant="contained"
+            startIcon={<PaymentIcon />}
+            onClick={perchaseProduct}
+            fullWidth
+          >
             바로구매
           </Button>
 
@@ -365,8 +412,8 @@ const ProductDetailsCard = ({
             </Button>
             <IconButton
               sx={{ ml: 1 }}
-              onClick={() => addToWishlist(product)}
-              color={liked ? 'primary' : 'default'}
+              onClick={() => handleBookmark(product)}
+              color={isBookmarked ? 'primary' : 'default'}
             >
               {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </IconButton>
