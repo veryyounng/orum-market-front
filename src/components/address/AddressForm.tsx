@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { Form, useLocation, useNavigate } from 'react-router-dom';
 import {
   Container,
   Typography,
@@ -8,12 +11,14 @@ import {
   Box,
 } from '@mui/material';
 
-import { useState } from 'react';
-import { Form, useNavigate } from 'react-router-dom';
+import { api } from '../../api/api';
 import { validateTel } from '../../lib/validation';
 
 export default function AddressForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const userId = location?.state?.userInfo._id;
+  const uuid = uuidv4();
   const [formData, setFormData] = useState({
     addressName: '',
     receiver: '',
@@ -37,12 +42,33 @@ export default function AddressForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  console.log(formData);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const updateFormData = {
+        ...location?.state.userInfo,
+        extra: {
+          ...location?.state.userInfo.extra,
+          address: [
+            ...location?.state.userInfo.extra.address,
+            { id: uuid, ...formData },
+          ],
+        },
+      };
+
+      api.updateUserInfo(userId, updateFormData);
+      alert('주소가 등록되었습니다.');
+      navigate(`/user/${userId}/buyer-info`);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
       <Container>
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <FormControl>
             <Box>
               <Box
@@ -132,6 +158,7 @@ export default function AddressForm() {
                   size="large"
                   variant="contained"
                   fullWidth
+                  onClick={handleSubmit}
                 >
                   저장
                 </Button>

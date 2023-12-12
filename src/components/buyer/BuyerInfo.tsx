@@ -46,7 +46,6 @@ export default function BuyerInfo() {
 
   const [userInfo, setUserInfo] = useState(initUser); // 서버에서 받아오는 유저 정보
   const [updateUserInfo, setUpdateUserInfo] = useState({}); // 새로 업데이트되는 유저 정보
-  const [addressBook, setAddressBook] = useState(initUser.extra.address);
 
   // API GET
   useEffect(() => {
@@ -60,7 +59,6 @@ export default function BuyerInfo() {
         const response = await api.getUserInfo(id);
         setUserInfo(response.data.item);
         setUpdateUserInfo(response.data.item);
-        setAddressBook([response.data.item.extra.address]);
       } catch (error) {
         console.log(error);
       }
@@ -132,7 +130,7 @@ export default function BuyerInfo() {
             배송지 관리
           </Typography>
 
-          {!addressBook[0].addressName ? (
+          {userInfo.extra.address.length == 0 ? (
             <>
               <Box
                 sx={{
@@ -148,7 +146,7 @@ export default function BuyerInfo() {
                   등록된 배송지가 없습니다.
                 </Typography>
 
-                <Link to={`/user/${id}/address-form`}>
+                <Link to={`/user/${id}/address-form`} state={{ userInfo }}>
                   <Button
                     size={'small'}
                     variant="outlined"
@@ -161,7 +159,17 @@ export default function BuyerInfo() {
             </>
           ) : (
             <>
-              {addressBook.map((item) => (
+              <Link to={`/user/${id}/address-form`} state={{ userInfo }}>
+                <Button
+                  size={'small'}
+                  variant="outlined"
+                  sx={{ marginTop: '0.5rem' }}
+                  fullWidth
+                >
+                  배송지 추가
+                </Button>
+              </Link>
+              {userInfo.extra.address.map((item) => (
                 <AddressItem key={item.id} {...item} userId={id} />
               ))}
             </>
