@@ -1,3 +1,6 @@
+
+![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)
+
 # Orum Market 🏔️
 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
 
