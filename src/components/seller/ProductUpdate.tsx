@@ -55,6 +55,7 @@ export default function ProductUpdate() {
     fetchProduct();
   }, []);
 
+  //상품 데이터 조회
   const fetchProduct = async () => {
     try {
       const response = await api.getProduct(Number(id));
@@ -70,6 +71,7 @@ export default function ProductUpdate() {
     }
   };
 
+  //상품 수정 업로드
   const updateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -81,6 +83,7 @@ export default function ProductUpdate() {
     }
   };
 
+  //파일 업로드
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
@@ -143,15 +146,7 @@ export default function ProductUpdate() {
     }));
   };
 
-  const findDBName = (dbCode) => {
-    const foundCategory = CATEGORY.depth2.find(
-      (Category) => Category.dbCode === dbCode,
-    );
-    return console.log(
-      '카테고리 이름',
-      foundCategory ? foundCategory.dbName : '',
-    );
-  };
+  //상품 설명 onChange
   const contentChange = () => {
     const editorData = editorRef.current.getInstance().getMarkdown();
     setProductData({
@@ -206,7 +201,6 @@ export default function ProductUpdate() {
           value={productData.extra?.category[1] || ''}
           onChange={(e) => {
             const selectedDBCode = e.target.value;
-            const selectedDBName = findDBName(selectedDBCode);
             setProductData((prevData) => ({
               ...prevData,
               extra: {
