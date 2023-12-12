@@ -8,8 +8,8 @@ export const validatePassword = (password: string) => {
   return password.length >= 8;
 };
 
-export const validateProductTitle = (title: string) => {
-  return title.length > 2;
+export const validateProductName = (name: string) => {
+  return name.length >= 2;
 };
 
 export const validateProductContent = (content: string) => {
