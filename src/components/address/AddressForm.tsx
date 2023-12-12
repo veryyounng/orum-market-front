@@ -1,193 +1,154 @@
 import {
-  Box,
+  Container,
+  Typography,
+  TextField,
+  FormLabel,
   Button,
   FormControl,
-  FormLabel,
-  TextField,
-  Typography,
+  Box,
 } from '@mui/material';
-import Modal from '@mui/joy/Modal';
+
 import { useState } from 'react';
-import { ModalClose, ModalDialog } from '@mui/joy';
+import { Form, useNavigate } from 'react-router-dom';
+import { validateTel } from '../../lib/validation';
 
-// export interface IUserInfoAddress {
-//   address: string;
-//   handleChangeUserAddress: (address: string) => void;
-// }
+export default function AddressForm() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    addressName: '',
+    receiver: '',
+    tel: '',
+    mainAddress: '',
+    subAddress: '',
+  });
+  const [telError, setTelError] = useState('');
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '1px solid #898989',
-  boxShadow: 24,
-  p: 4,
-};
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-export default function AddressForm({ getAddressInfo }) {
-  const {
-    addressName,
-    tel,
-    name,
-    address_main,
-    address_sub,
-    handleChangeUserAddress,
-    buyerInfoData,
-    submitAddressForm,
-    open,
-    handleClose,
-    handleOpen,
-  } = getAddressInfo;
+    if (name === 'tel') {
+      if (!validateTel(value)) {
+        setTelError('올바른 전화번호를 입력해 주세요.');
+      } else {
+        setTelError('');
+      }
+    }
 
-  console.log('buyerInfoData', buyerInfoData);
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  console.log(formData);
+
   return (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          marginY: '1rem',
-        }}
-        height={'100px'}
-      >
-        <Typography variant="body2">등록된 배송지가 없습니다.</Typography>
-
-        <Button
-          size={'small'}
-          variant="outlined"
-          sx={{ marginTop: '0.5rem' }}
-          onClick={handleOpen}
-        >
-          배송지 등록
-        </Button>
-      </Box>
-
-      <>
-        <FormControl>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <ModalDialog size="lg">
-              <Box sx={style}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    flexDirection: 'rows',
-                    marginY: '1rem',
-                  }}
+      <Container>
+        <Form>
+          <FormControl>
+            <Box>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexDirection: 'rows',
+                  marginY: '1rem',
+                }}
+              >
+                <Typography id="modal-modal-title" variant="h5" component="h2">
+                  주소지 입력
+                </Typography>
+                <Typography
+                  id="modal-modal-title"
+                  variant="subtitle2"
+                  component="h2"
                 >
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h5"
-                    component="h2"
-                  >
-                    주소지 입력
-                  </Typography>
-                  <Typography
-                    id="modal-modal-title"
-                    variant="subtitle2"
-                    component="h2"
-                  >
-                    * 필수
-                  </Typography>
-                </Box>
-                <FormLabel>배송지명*</FormLabel>
-                <TextField
-                  type="text"
-                  placeholder="배송지명을 입력하세요. ex)집, 회사 등"
-                  id="addressName"
-                  value={addressName}
-                  onChange={handleChangeUserAddress}
-                  size="small"
-                  fullWidth
-                  required
-                  sx={{ marginBottom: '1rem' }}
-                />
-                <FormLabel>이름*</FormLabel>
-                <TextField
-                  type="text"
-                  placeholder="이름"
-                  id="name"
-                  value={name}
-                  onChange={handleChangeUserAddress}
-                  size="small"
-                  fullWidth
-                  required
-                  sx={{ marginBottom: '1rem' }}
-                />
-                <FormLabel>연락처*</FormLabel>
-                <TextField
-                  type="number"
-                  placeholder="-없이 입력"
-                  id="tel"
-                  value={tel}
-                  onChange={handleChangeUserAddress}
-                  size="small"
-                  fullWidth
-                  required
-                  sx={{ marginBottom: '1rem' }}
-                />
-                <FormLabel>배송 주소*</FormLabel>
-                <TextField
-                  type="text"
-                  placeholder="예) 서울특별시 강남구 테헤란로 443 "
-                  id="address_main"
-                  value={address_main}
-                  onChange={handleChangeUserAddress}
-                  size="small"
-                  fullWidth
-                  required
-                  sx={{ marginBottom: '0.4rem' }}
-                />
-                <TextField
-                  type="text"
-                  placeholder="나머지 주소를 입력하세요 "
-                  id="address_sub"
-                  value={address_sub}
-                  onChange={handleChangeUserAddress}
-                  size="small"
-                  fullWidth
-                  required
-                  sx={{ marginBottom: '1rem' }}
-                />
+                  * 필수
+                </Typography>
+              </Box>
+              <FormLabel>배송지명*</FormLabel>
+              <TextField
+                type="text"
+                value={formData?.addressName}
+                placeholder="배송지명을 입력하세요. ex)집, 회사 등"
+                name="addressName"
+                size="small"
+                fullWidth
+                required
+                sx={{ marginBottom: '1rem' }}
+                onChange={handleChange}
+              />
+              <FormLabel>수령인*</FormLabel>
+              <TextField
+                type="text"
+                value={formData?.receiver}
+                placeholder="이름"
+                name="receiver"
+                size="small"
+                fullWidth
+                required
+                sx={{ marginBottom: '1rem' }}
+                onChange={handleChange}
+              />
+              <FormLabel>연락처*</FormLabel>
+              <TextField
+                type="tel"
+                value={formData?.tel}
+                placeholder="-없이 입력"
+                name="tel"
+                size="small"
+                fullWidth
+                required
+                sx={{ marginBottom: '1rem' }}
+                onChange={handleChange}
+                error={!!telError}
+                helperText={telError}
+              />
+              <FormLabel>배송 주소*</FormLabel>
+              <TextField
+                type="text"
+                value={formData?.mainAddress}
+                placeholder="예) 서울특별시 강남구 테헤란로 443 "
+                name="mainAddress"
+                size="small"
+                fullWidth
+                required
+                sx={{ marginBottom: '0.4rem' }}
+                onChange={handleChange}
+              />
+              <TextField
+                type="text"
+                value={formData?.subAddress}
+                placeholder="나머지 주소를 입력하세요 "
+                name="subAddress"
+                size="small"
+                fullWidth
+                required
+                sx={{ marginBottom: '1rem' }}
+                onChange={handleChange}
+              />
+              <Box sx={{ display: 'flex', gap: '1rem' }}>
                 <Button
-                  type="submit"
+                  type="button"
                   size="large"
                   variant="contained"
                   fullWidth
-                  onClick={submitAddressForm}
                 >
-                  등록하기
+                  저장
                 </Button>
-                <ModalClose />
+                <Button
+                  type="button"
+                  size="large"
+                  variant="outlined"
+                  fullWidth
+                  onClick={() => navigate(-1)}
+                >
+                  취소
+                </Button>
               </Box>
-            </ModalDialog>
-          </Modal>
-        </FormControl>
-      </>
-      {buyerInfoData && (
-        <>
-          <TextField
-            type="text"
-            placeholder="주소를 입력해주세요"
-            onChange={(e) => {
-              handleChangeUserAddress(e.target.value);
-            }}
-            size="small"
-            fullWidth
-          />
-        </>
-      )}
+            </Box>
+          </FormControl>
+        </Form>
+      </Container>
     </>
   );
 }
