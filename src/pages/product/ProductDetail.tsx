@@ -21,6 +21,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useCartStore, useUserStore } from '../../lib/store';
 import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
+import useAddToCart from '../../hooks/useAddToCart';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -163,23 +164,30 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
     }
   };
 
-  const addProductToCart = () => {
-    if (!isLoggedIn) {
-      handleNotLoggedIn();
-    } else {
-      if (productAlreadyInCart) {
-        alert('이미 장바구니에 있는 상품입니다.');
-        return;
-      }
-      addToCart({ ...product, quantity: 1 });
-      const confirmAddToCart = confirm(
-        '장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?',
-      );
-      if (confirmAddToCart) {
-        navigate('/cart');
-      }
-    }
-  };
+  const addProductToCart = useAddToCart();
+
+  // const addProductToCart = () => {
+  //   if (!isLoggedIn) {
+  //     handleNotLoggedIn();
+  //   } else {
+  //     if (productAlreadyInCart) {
+  //       alert('이미 장바구니에 있는 상품입니다.');
+  //       return;
+  //     }
+
+  //     const confirmAddToCart = confirm('장바구니에 추가하시겠습니까?');
+
+  //     if (confirmAddToCart) {
+  //       addToCart({ ...product, quantity: 1 });
+  //       const navigateToCart = confirm(
+  //         '장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?',
+  //       );
+  //       if (navigateToCart) {
+  //         navigate('/cart');
+  //       }
+  //     }
+  //   }
+  // };
 
   const perchaseProduct = () => {
     if (!isLoggedIn) {
@@ -260,7 +268,7 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
           size="large"
           variant="outlined"
           color="inherit"
-          onClick={addProductToCart}
+          onClick={() => addProductToCart(product)}
           size="medium"
         >
           장바구니
