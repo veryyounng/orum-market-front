@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import {
   Container,
@@ -6,14 +6,12 @@ import {
   TextField,
   FormLabel,
   Button,
-  FormControl,
   Box,
-  Card,
-  CardContent,
 } from '@mui/material';
-import { Modal, ModalClose, ModalDialog } from '@mui/joy';
 
 import { api } from '../../api/api';
+import { Link } from 'react-router-dom';
+import AddressItem from '../address/AddressItem';
 
 const Form = styled.form`
   display: flex;
@@ -34,66 +32,35 @@ const initUser = {
       {
         id: 1,
         addressName: '',
-        tel: 0,
-        name: '',
-        address_main: '',
-        address_sub: '',
+        receiver: '',
+        tel: '',
+        mainAddress: '',
+        subAddress: '',
       },
     ],
   },
 };
 
 export default function BuyerInfo() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleOpen = () => setIsModalOpen(true);
-  const handleClose = () => setIsModalOpen(false);
-  const userId = localStorage.getItem('_id');
+  const id = localStorage.getItem('_id');
+
   const [userInfo, setUserInfo] = useState(initUser); // 서버에서 받아오는 유저 정보
   const [updateUserInfo, setUpdateUserInfo] = useState({}); // 새로 업데이트되는 유저 정보
-  const [updateAddressList, setUpdateAddressList] = useState([]);
   const [addressBook, setAddressBook] = useState(initUser.extra.address);
-
-  // input 상태값 저장
-  const [addressName, setAddressName] = useState('');
-  const [addressUserName, setAddressUserName] = useState('');
-  const [addressUserTel, setAddressUserTel] = useState(0);
-  const [addressMain, setAddressMain] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
-
-  // Add Address input error
-  const [addressNameError, setAddressNameError] = useState('');
-  const [addressUserNameError, setAddressUserNameError] = useState('');
-  const [addressUserTelError, setAddressUserTelError] = useState('');
-  const [addressMainError, setAddressMainError] = useState('');
-  const [addressDetailError, setAddressDetailError] = useState('');
-
-  const resetData = () => {
-    setUpdateUserInfo(userInfo); // 주소지 등록안하고 취소했을 때 받아온 데이터로 reset
-    setAddressName('');
-    setAddressUserName('');
-    setAddressUserTel(0);
-    setAddressMain('');
-    setAddressDetail('');
-    setAddressNameError('');
-    setAddressUserNameError('');
-    setAddressUserTelError('');
-    setAddressMainError('');
-    setAddressDetailError('');
-  };
 
   // API GET
   useEffect(() => {
-    if (!userId) {
+    if (!id) {
       console.log('ID가 유효하지 않습니다.');
       return;
     }
 
     const fetchUserInfo = async () => {
       try {
-        const response = await api.getUserInfo(userId);
+        const response = await api.getUserInfo(id);
         setUserInfo(response.data.item);
         setUpdateUserInfo(response.data.item);
-        setAddressBook([response.data.item.extra.addressBook]);
+        setAddressBook([response.data.item.extra.address]);
       } catch (error) {
         console.log(error);
       }
@@ -105,21 +72,7 @@ export default function BuyerInfo() {
     return <>사용자 정보를 받아오지 못했습니다.</>;
   }
 
-  // add Address -> get userInfo
-  const reloadUserInfo = async () => {
-    try {
-      const response = await api.getUserInfo(userId);
-      setUserInfo(response.data.item);
-      setUpdateUserInfo(response.data.item);
-      setAddressBook([response.data.item.extra.addressBook]);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const nextId = useRef(1);
-
-  // Edit UserInfo
+  // userInfo update name
   const handleChangeUserName = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUpdateUserInfo({
       ...updateUserInfo,
@@ -127,90 +80,18 @@ export default function BuyerInfo() {
     });
   };
 
-  const submitAddressForm = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!addressName) {
-      setAddressNameError('배송지명을 입력해주세요.');
-      return;
-    } else {
-      setAddressNameError('');
-    }
-
-    if (!addressUserName) {
-      setAddressUserNameError('수령인 이름을 입력해주세요.');
-      return;
-    } else {
-      setAddressUserNameError('');
-    }
-
-    if (!addressUserTel) {
-      setAddressUserTelError('전화번호를 입력해주세요.');
-      return;
-    } else {
-      setAddressUserTelError('');
-    }
-
-    if (!addressMain) {
-      setAddressMainError('주소를 입력해주세요.');
-      return;
-    } else {
-      setAddressMainError('');
-    }
-
-    if (!addressDetail) {
-      setAddressDetailError('상세주소를 입력해주세요.');
-      return;
-    } else {
-      setAddressDetailError('');
-    }
-
-    try {
-      setUpdateAddressList((prevAddressList) => {
-        const newAddressList = [
-          ...prevAddressList,
-          {
-            id: nextId.current,
-            addressName: addressName,
-            name: addressUserName,
-            tel: addressUserTel,
-            address_main: addressMain,
-            address_sub: addressDetail,
-          },
-        ];
-        nextId.current += 1;
-
-        setUpdateUserInfo((prevUserInfo) => {
-          const newUserInfo = {
-            ...prevUserInfo,
-            extra: {
-              ...prevUserInfo.extra,
-              address: newAddressList,
-            },
-          };
-
-          api.updateUserInfo(userId, newUserInfo);
-
-          return newUserInfo;
-        });
-
-        return newAddressList;
-      });
-    } catch (error) {
-      console.log(error);
-    }
-
-    resetData();
-    reloadUserInfo();
-    handleClose();
-  };
-
   // userInfo update
   const handleUpdateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const confirmUpdateUserInfo = window.confirm(
+      '내 정보 변경사항을 저장하시겠습니까?',
+    );
 
     try {
-      await api.updateUserInfo(userId, updateUserInfo);
+      if (confirmUpdateUserInfo) {
+        await api.updateUserInfo(id, updateUserInfo);
+        alert('내 정보가 수정되었습니다.');
+      }
     } catch (error) {
       console.log(error);
     }
@@ -243,14 +124,15 @@ export default function BuyerInfo() {
             />
 
             <Button type="submit" variant="contained" size="large">
-              내 정보 수정하기
+              정보 수정
             </Button>
           </Form>
 
-          <Typography variant="body1" sx={{ marginTop: '1rem' }}>
-            기본 배송지
+          <Typography variant="h4" sx={{ marginTop: '4rem' }}>
+            배송지 관리
           </Typography>
-          {userInfo.extra.address.length < 1 ? (
+
+          {!addressBook[0].addressName ? (
             <>
               <Box
                 sx={{
@@ -266,208 +148,26 @@ export default function BuyerInfo() {
                   등록된 배송지가 없습니다.
                 </Typography>
 
-                <Button
-                  size={'small'}
-                  variant="outlined"
-                  sx={{ marginTop: '0.5rem' }}
-                  onClick={handleOpen}
-                >
-                  배송지 등록
-                </Button>
+                <Link to={`/user/${id}/address-form`}>
+                  <Button
+                    size={'small'}
+                    variant="outlined"
+                    sx={{ marginTop: '0.5rem' }}
+                  >
+                    배송지 추가
+                  </Button>
+                </Link>
               </Box>
             </>
           ) : (
             <>
-              {userInfo.extra.address.map((list) => (
-                <Box
-                  key={list.id}
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'left',
-                    alignItems: 'flex-start',
-                    flexDirection: 'column',
-                    marginY: '1rem',
-                  }}
-                >
-                  <Card
-                    sx={{
-                      minWidth: '100%',
-                      boxShadow: 'none',
-                      borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      flexDirection: 'rows',
-                    }}
-                  >
-                    <CardContent sx={{ padding: '0' }}>
-                      <Typography
-                        variant="body1"
-                        sx={{ marginBottom: '0.3rem' }}
-                      >
-                        {list.addressName}
-                      </Typography>
-                      <Typography variant="body2">{list.name}</Typography>
-                      <Typography variant="body2">{list.tel}</Typography>
-                      <Typography variant="body2">
-                        {list.address_main} {list.address_sub}
-                      </Typography>
-                    </CardContent>
-                    <CardContent
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'left',
-                        alignItems: 'flex-end',
-                        flexDirection: 'column',
-                        gap: '0.5rem',
-                      }}
-                    >
-                      <Button variant="contained">수정</Button>
-                      <Button variant="outlined">삭제</Button>
-                    </CardContent>
-                  </Card>
-                </Box>
+              {addressBook.map((item) => (
+                <AddressItem key={item.id} {...item} userId={id} />
               ))}
             </>
           )}
         </>
       )}
-
-      <>
-        {/* 모달 */}
-        <Form onSubmit={submitAddressForm}>
-          <FormControl>
-            <Modal
-              open={isModalOpen}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
-              <ModalDialog size="lg">
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    width: 400,
-                    bgcolor: 'background.paper',
-                    border: '1px solid #898989',
-                    boxShadow: 24,
-                    p: 4,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      flexDirection: 'rows',
-                      marginY: '1rem',
-                    }}
-                  >
-                    <Typography
-                      id="modal-modal-title"
-                      variant="h5"
-                      component="h2"
-                    >
-                      주소지 입력
-                    </Typography>
-                    <Typography
-                      id="modal-modal-title"
-                      variant="subtitle2"
-                      component="h2"
-                    >
-                      * 필수
-                    </Typography>
-                  </Box>
-
-                  <FormLabel>배송지명*</FormLabel>
-                  <TextField
-                    type="text"
-                    placeholder="배송지명을 입력하세요. ex)집, 회사 등"
-                    name="addressName"
-                    onChange={(e) => setAddressName(e.target.value)}
-                    size="small"
-                    fullWidth
-                    required
-                    sx={{ marginBottom: '1rem' }}
-                    error={!!addressNameError}
-                    helperText={addressNameError}
-                  />
-                  <FormLabel>수령인*</FormLabel>
-                  <TextField
-                    type="text"
-                    placeholder="이름"
-                    name="name"
-                    onChange={(e) => setAddressUserName(e.target.value)}
-                    size="small"
-                    fullWidth
-                    required
-                    sx={{ marginBottom: '1rem' }}
-                    error={!!addressUserNameError}
-                    helperText={addressUserNameError}
-                  />
-                  <FormLabel>연락처*</FormLabel>
-                  <TextField
-                    type="tel"
-                    placeholder="-없이 입력"
-                    name="tel"
-                    onChange={(e) =>
-                      setAddressUserTel(
-                        (e.target.value = e.target.value.replace(
-                          /[^0-9]/g,
-                          '',
-                        )),
-                      )
-                    }
-                    size="small"
-                    fullWidth
-                    required
-                    sx={{ marginBottom: '1rem' }}
-                    error={!!addressUserTelError}
-                    helperText={addressUserTelError}
-                  />
-                  <FormLabel>배송 주소*</FormLabel>
-                  <TextField
-                    type="text"
-                    placeholder="예) 서울특별시 강남구 테헤란로 443 "
-                    name="address_main"
-                    onChange={(e) => setAddressMain(e.target.value)}
-                    size="small"
-                    fullWidth
-                    required
-                    sx={{ marginBottom: '0.4rem' }}
-                    error={!!addressMainError}
-                    helperText={addressMainError}
-                  />
-                  <TextField
-                    type="text"
-                    placeholder="나머지 주소를 입력하세요 "
-                    name="address_sub"
-                    onChange={(e) => setAddressDetail(e.target.value)}
-                    size="small"
-                    fullWidth
-                    required
-                    sx={{ marginBottom: '1rem' }}
-                    error={!!addressDetailError}
-                    helperText={addressDetailError}
-                  />
-                  <Button
-                    type="button"
-                    size="large"
-                    variant="contained"
-                    fullWidth
-                    onClick={submitAddressForm}
-                  >
-                    등록하기
-                  </Button>
-                  <ModalClose onClick={resetData} />
-                </Box>
-              </ModalDialog>
-            </Modal>
-          </FormControl>
-        </Form>
-      </>
     </Container>
   );
 }
