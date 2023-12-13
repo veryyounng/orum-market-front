@@ -38,7 +38,7 @@ export default function ProductUpdate() {
       const response = await api.getProduct(Number(id));
       const mainImagesWithId = response.data.item.mainImages.map(
         (image, index) => ({
-          id: image.id || index.toString(),
+          img_id: image.id || index.toString(),
           path: image.path || image,
         }),
       );
@@ -92,7 +92,7 @@ export default function ProductUpdate() {
       if (response.data.files) {
         let fileArr = response.data.files;
         const resImgUrl = fileArr.map((images) => ({
-          id: images.name,
+          img_id: images.name,
           path: `https://localhost:443${images.path}`,
         }));
         setFilePreview([...filePreview, ...resImgUrl]);
@@ -104,7 +104,7 @@ export default function ProductUpdate() {
       //단일파일일때
       else {
         let fileArr = {
-          id: response.data.file.name,
+          img_id: response.data.file.name,
           path: `https://localhost:443${response.data.file.path}`,
         };
 
@@ -125,11 +125,13 @@ export default function ProductUpdate() {
   ) => {
     e.preventDefault();
     setFilePreview((prevPreview) =>
-      prevPreview.filter((item) => item.id !== idToRemove),
+      prevPreview.filter((item) => item.img_id !== idToRemove),
     );
     setProductData((prevData) => ({
       ...prevData,
-      mainImages: prevData.mainImages.filter((item) => item.id !== idToRemove),
+      mainImages: prevData.mainImages.filter(
+        (item) => item.img_id !== idToRemove,
+      ),
     }));
   };
 
@@ -158,20 +160,20 @@ export default function ProductUpdate() {
             <input hidden type="file" multiple accept="image/*" />
           </Button>
           {filePreview.map((item) => (
-            <div key={item.id}>
+            <div key={item.img_id}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <IconButton
                   aria-label="delete"
                   size="large"
                   onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                    handleFileRemove(e, item.id)
+                    handleFileRemove(e, item.img_id)
                   }
                 >
                   <DeleteIcon />
                 </IconButton>
               </Stack>
               <img
-                key={item.id}
+                key={item.img_id}
                 src={item.path}
                 alt={'File Preview'}
                 style={{ marginTop: '10px', maxWidth: '60%' }}
