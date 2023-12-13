@@ -28,10 +28,6 @@ export default function ProductUpdate() {
   const [filePreview, setFilePreview] = useState([]);
   const editorRef = useRef();
 
-  const handleMoveBack = () => {
-    navigate(-1);
-  };
-
   useEffect(() => {
     fetchProduct();
   }, []);
@@ -46,18 +42,11 @@ export default function ProductUpdate() {
           path: image.path || image,
         }),
       );
-      console.log(mainImagesWithId);
+
       setProductData({
         ...response.data.item,
         mainImages: mainImagesWithId,
       });
-
-      //   setFilePreview(
-      //     response.data.item.mainImages.map((image) => ({
-      //       id: image.id,
-      //       path: image.path,
-      //     })),
-      //   );
 
       setFilePreview(mainImagesWithId);
     } catch (error) {
@@ -129,7 +118,12 @@ export default function ProductUpdate() {
       console.log('사진첨부에러발생', error);
     }
   };
-  const handleFileRemove = (idToRemove) => {
+  //이미지 삭제 로직
+  const handleFileRemove = (
+    e: React.MouseEvent<HTMLButtonElement>,
+    idToRemove,
+  ) => {
+    e.preventDefault();
     setFilePreview((prevPreview) =>
       prevPreview.filter((item) => item.id !== idToRemove),
     );
@@ -138,7 +132,7 @@ export default function ProductUpdate() {
       mainImages: prevData.mainImages.filter((item) => item.id !== idToRemove),
     }));
   };
-  console.log('삭제됐는지', filePreview);
+
   //상품 설명 onChange
   const contentChange = () => {
     const editorData = editorRef.current.getInstance().getMarkdown();
@@ -169,7 +163,9 @@ export default function ProductUpdate() {
                 <IconButton
                   aria-label="delete"
                   size="large"
-                  onClick={() => handleFileRemove(item.id)}
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                    handleFileRemove(e, item.id)
+                  }
                 >
                   <DeleteIcon />
                 </IconButton>
@@ -314,7 +310,7 @@ export default function ProductUpdate() {
           등록하기
         </Button>
       </form>
-      <Button type="button" variant="outlined" onClick={handleMoveBack}>
+      <Button type="button" variant="outlined" onClick={() => navigate(-1)}>
         취소
       </Button>
     </>
