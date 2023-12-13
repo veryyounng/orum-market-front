@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, Link as RouterLink } from 'react-router-dom';
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -12,8 +11,15 @@ export function BreadcrumbsNavBar() {
     <Breadcrumbs
       separator={<NavigateNextIcon fontSize="small" />}
       aria-label="breadcrumb"
+      style={{ marginLeft: '1rem' }}
     >
-      <Link component={RouterLink} underline="hover" color="inherit" to="/">
+      <Link
+        component={RouterLink}
+        underline="hover"
+        color="inherit"
+        to="/"
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
         <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
         Home
       </Link>

@@ -124,23 +124,23 @@ export const CATEGORY = {
 export const QUALITY = [
   {
     id: 1,
-    name: '최상',
-    dbCode: 1,
+    name: '하급',
+    value: 1,
   },
   {
     id: 2,
-    name: '상',
-    dbCode: 2,
+    name: '중급',
+    value: 2,
   },
   {
     id: 3,
-    name: '중',
-    dbCode: 3,
+    name: '상급',
+    value: 3,
   },
   {
     id: 4,
-    name: '하',
-    dbCode: 4,
+    name: '최상급',
+    value: 4,
   },
 ];
 

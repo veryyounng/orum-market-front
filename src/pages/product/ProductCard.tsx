@@ -11,7 +11,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentIcon from '@mui/icons-material/Payment';
 import { IProduct } from '../../type';
 import { Link } from 'react-router-dom';
-import { useAddToCart } from '../../hooks/useAddToCart';
+import useAddToCart from '../../hooks/useAddToCart';
 
 interface ProductCardProps {
   product: IProduct;

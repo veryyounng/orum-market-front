@@ -15,6 +15,7 @@ export interface IProduct {
     quantity: number;
     buyQuantity: number;
     order: number;
+    sort: number;
   };
   createdAt: string;
   updatedAt: string;
