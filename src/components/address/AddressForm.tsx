@@ -23,8 +23,6 @@ export default function AddressForm({
   subAddress,
   tel,
 }) {
-  console.log(isEdit, id);
-
   useEffect(() => {
     if (isEdit) {
       setFormData({
