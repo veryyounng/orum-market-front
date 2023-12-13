@@ -25,6 +25,7 @@ export default function BuyerInfo() {
 
   const [userInfo, setUserInfo] = useState(null);
   const [updateUserInfo, setUpdateUserInfo] = useState({});
+  const [isCreateAddress, setIsCreateAddress] = useState(false);
   const [isEditAddress, setIsEditAddress] = useState(false);
   const [addressData, setAddressData] = useState({
     addressName: '',
@@ -147,109 +148,197 @@ export default function BuyerInfo() {
 
   return (
     <Container>
-      {userInfo && !isEditAddress && (
+      {userInfo &&
+        !isCreateAddress &&
+        !isEditAddress &&(
+          <>
+            <Typography variant="h4">내 정보 수정</Typography>
+            <Form onSubmit={handleUpdateUserInfo}>
+              <FormLabel>이메일</FormLabel>
+              <TextField
+                type="email"
+                value={userInfo.email}
+                variant="outlined"
+                size="small"
+                fullWidth
+                required
+                disabled
+              />
+              <FormLabel>이름</FormLabel>
+              <TextField
+                type="text"
+                value={updateUserInfo.name || ''}
+                onChange={handleChangeUserName}
+                size="small"
+                fullWidth
+                required
+              />
+
+              <Button type="submit" variant="contained" size="large">
+                정보 수정
+              </Button>
+            </Form>
+            <br />
+            <br />
+            {!userInfo.extra.address && <>주소록이 비어있습니다.</>}
+            {userInfo?.extra?.address?.length === 0 && (
+              <>주소록이 비어있습니다.</>
+            )}
+
+            {userInfo.extra.address && (
+              <>
+                {userInfo.extra.address.map((list) => (
+                  // 주소록 목록 테이블 형태로 출력
+                  <Box
+                    key={list.id}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      border: '1px solid #ccc',
+                      padding: '0.5rem',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="h6" fontWeight={700}>
+                        배송지명: {list.addressName}
+                      </Typography>
+                      <Typography variant="body1">
+                        메인주소: {list.mainAddress}
+                        <br></br>
+                        상세주소: {list.subAddress}
+                      </Typography>
+                      <Typography variant="body2">
+                        수령인: {list.receiver}
+                        <br></br>
+                        전화번호: {list.tel}
+                      </Typography>
+                    </Box>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      gap={1}
+                    >
+                      <Button
+                        onClick={() => setIsEditAddress(true)}
+                        variant="contained"
+                        size="medium"
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        onClick={() => handleRemoveAddress(list.id)}
+                        variant="contained"
+                        size="medium"
+                      >
+                        삭제
+                      </Button>
+                    </Box>
+                  </Box>
+                ))}
+              </>
+            )}
+
+            <Box>
+              <Button
+                onClick={() => setIsCreateAddress(true)}
+                variant="contained"
+                size="large"
+              >
+                주소록 추가하기
+              </Button>
+            </Box>
+          </>,
+        )}
+      {userInfo && isCreateAddress && (
         <>
-          <Typography variant="h4">내 정보 수정</Typography>
-          <Form onSubmit={handleUpdateUserInfo}>
-            <FormLabel>이메일</FormLabel>
-            <TextField
-              type="email"
-              value={userInfo.email}
-              variant="outlined"
-              size="small"
-              fullWidth
-              required
-              disabled
-            />
-            <FormLabel>이름</FormLabel>
+          <Typography variant="h6" fontWeight={700} mb={3}>
+            주소록 추가하기
+          </Typography>
+          <form onSubmit={(e) => handleSubmitAddress(e)}>
+            <FormLabel>배송지명*</FormLabel>
             <TextField
               type="text"
-              value={updateUserInfo.name || ''}
-              onChange={handleChangeUserName}
+              value={addressData?.addressName || ''}
+              placeholder="배송지명을 입력하세요. ex)집, 회사 등"
+              name="addressName"
               size="small"
               fullWidth
               required
+              sx={{ marginBottom: '1rem' }}
+              onChange={handleChangeAddress}
             />
-
-            <Button type="submit" variant="contained" size="large">
-              정보 수정
-            </Button>
-          </Form>
-          <br />
-          <br />
-          {!userInfo.extra.address && <>주소록이 비어있습니다.</>}
-          {userInfo?.extra?.address?.length === 0 && (
-            <>주소록이 비어있습니다.</>
-          )}
-
-          {userInfo.extra.address && (
-            <>
-              {userInfo.extra.address.map((list) => (
-                // 주소록 목록 테이블 형태로 출력
-                <Box
-                  key={list.id}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    border: '1px solid #ccc',
-                    padding: '0.5rem',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  <Box>
-                    <Typography variant="h6" fontWeight={700}>
-                      배송지명: {list.addressName}
-                    </Typography>
-                    <Typography variant="body1">
-                      메인주소: {list.mainAddress}
-                      <br></br>
-                      상세주소: {list.subAddress}
-                    </Typography>
-                    <Typography variant="body2">
-                      수령인: {list.receiver}
-                      <br></br>
-                      전화번호: {list.tel}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    {/* 수정하기 기능 추후 작업 */}
-                    {/* <Button
-                      onClick={() => setIsEditAddress(true)}
-                      variant="contained"
-                      size="small"
-                    >
-                      수정
-                    </Button> */}
-                    <Button
-                      onClick={() => handleRemoveAddress(list.id)}
-                      variant="contained"
-                      size="small"
-                    >
-                      삭제
-                    </Button>
-                  </Box>
-                </Box>
-              ))}
-            </>
-          )}
-
-          <Box>
-            <Button
-              onClick={() => setIsEditAddress(true)}
-              variant="contained"
-              size="large"
-            >
-              주소록 추가하기
-            </Button>
-          </Box>
+            <FormLabel>수령인*</FormLabel>
+            <TextField
+              type="text"
+              value={addressData?.receiver || ''}
+              placeholder="이름"
+              name="receiver"
+              size="small"
+              fullWidth
+              required
+              sx={{ marginBottom: '1rem' }}
+              onChange={handleChangeAddress}
+            />
+            <FormLabel>연락처*</FormLabel>
+            <TextField
+              type="tel"
+              value={addressData?.tel || ''}
+              placeholder="-없이 입력"
+              name="tel"
+              size="small"
+              fullWidth
+              required
+              sx={{ marginBottom: '1rem' }}
+              onChange={handleChangeAddress}
+            />
+            <FormLabel>배송 주소*</FormLabel>
+            <TextField
+              type="text"
+              value={addressData?.mainAddress || ''}
+              placeholder="예) 서울특별시 강남구 테헤란로 443 "
+              name="mainAddress"
+              size="small"
+              fullWidth
+              required
+              sx={{ marginBottom: '0.4rem' }}
+              onChange={handleChangeAddress}
+            />
+            <TextField
+              type="text"
+              value={addressData?.subAddress || ''}
+              placeholder="나머지 주소를 입력하세요 "
+              name="subAddress"
+              size="small"
+              fullWidth
+              required
+              sx={{ marginBottom: '1rem' }}
+              onChange={handleChangeAddress}
+            />
+            <Box sx={{ display: 'flex', flexDirection: 'row' }} gap={3} my={3}>
+              <Button type="submit" size="large" variant="contained" fullWidth>
+                저장
+              </Button>
+              <Button
+                onClick={() => setIsCreateAddress(false)}
+                variant="outlined"
+                size="large"
+                fullWidth
+              >
+                취소
+              </Button>
+            </Box>
+          </form>
         </>
       )}
       {userInfo && isEditAddress && (
         <>
           <Typography variant="h6" fontWeight={700} mb={3}>
-            주소록 추가하기
+            주소록 수정하기
           </Typography>
           <form onSubmit={(e) => handleSubmitAddress(e)}>
             <FormLabel>배송지명*</FormLabel>
