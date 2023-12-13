@@ -46,6 +46,8 @@ const initCreateData = {
 };
 
 export default function ProductCreate() {
+  const userId = localStorage.getItem('_id');
+
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initCreateData);
   const [isValid, setIsValid] = useState(true);
@@ -123,7 +125,8 @@ export default function ProductCreate() {
     try {
       const response = await api.createProduct(productData);
       setProductData(response.data.item);
-      //   setProductId(response.data.item._id);
+      alert('판매 상품 등록이 완료되었습니다.');
+      navigate(`/user/${userId}/product-manager`);
     } catch (error) {
       console.error('API Error:', error);
     }
