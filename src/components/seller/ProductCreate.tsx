@@ -1,23 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+
 import {
-  Input,
   TextField,
   Select,
   MenuItem,
   InputLabel,
-  FormControl,
   Button,
   Stack,
   IconButton,
 } from '@mui/material';
-// import { CleaningServices } from '@mui/icons-material';
+
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
+import { IProduct } from '../../type';
+
 import {
   validateProductName,
   validateProductContent,
@@ -46,17 +46,19 @@ const initCreateData = {
 };
 
 export default function ProductCreate() {
-  const [productData, setProductData] = useState(initCreateData);
-
+  const [productData, setProductData] =
+    useState<Partial<IProduct>>(initCreateData);
   const [isValid, setIsValid] = useState(true);
   const [filePreview, setFilePreview] = useState([]);
-  const [productId, setProductId] = useState(0);
 
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
   const [shippingFeesError, setShippingFeesError] = useState('');
   const [contentError, setContentError] = useState('');
 
+  const navigate = useNavigate();
+
+  //가격, 배송료, 상품명, 상품 설명 상태값 업데이트
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
@@ -91,18 +93,19 @@ export default function ProductCreate() {
     }
   }, [handleAllChange]);
 
+  //뒤로가기
   const handleMoveBack = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    window.history.back();
+    navigate(-1);
   };
-
+  //카테고리 상태값 업데이트
   const handleCategory = (categorySelected: string) => {
     setProductData({
       ...productData,
       extra: { category: ['H01', categorySelected] },
     });
   };
-
+  //품질 상태값 업데이트
   function handleQuantity(quantitySelected: string) {
     setProductData({
       ...productData,
@@ -120,13 +123,13 @@ export default function ProductCreate() {
     try {
       const response = await api.createProduct(productData);
       setProductData(response.data.item);
-      setProductId(response.data.item._id);
+      //   setProductId(response.data.item._id);
     } catch (error) {
       console.error('API Error:', error);
     }
   };
 
-  // 업로드 버튼 클릭 시 실행되는 함수
+  // 파일 업로드
   const handleFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
@@ -178,10 +181,9 @@ export default function ProductCreate() {
       console.log('사진첨부에러발생', error);
     }
   };
-
+  //파일 삭제
   const handleFileRemove = (indexToRemove) => {
     let updatedFilePreview = [...filePreview];
-    // updatedFilePreview.splice(indexToRemove, 1);
     updatedFilePreview = updatedFilePreview.filter(
       (item) => item.id !== indexToRemove,
     );
