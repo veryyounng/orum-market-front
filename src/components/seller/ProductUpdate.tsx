@@ -18,32 +18,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
 import { IProduct } from '../../type/index';
-
-const initCreateData = {
-  price: 0,
-  shippingFees: 0,
-  show: true,
-  active: true,
-  name: '',
-  mainImages: [],
-  content: '',
-  createdAt: '',
-  updatedAt: '',
-  quantity: 1,
-  buyQuantity: 0,
-  extra: {
-    isNew: true,
-    isBest: true,
-    category: ['H01', 'H0101'],
-    sort: 0,
-  },
-};
+import { initProductData } from '../../lib/initProductData';
 
 export default function ProductUpdate() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [productData, setProductData] =
-    useState<Partial<IProduct>>(initCreateData);
+    useState<Partial<IProduct>>(initProductData);
   const [filePreview, setFilePreview] = useState([]);
   const editorRef = useRef();
 
