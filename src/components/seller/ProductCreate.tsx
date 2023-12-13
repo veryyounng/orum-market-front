@@ -261,7 +261,7 @@ export default function ProductCreate() {
           >
             {QUALITY.map((menu) => {
               return (
-                <MenuItem key={menu.id} value={menu.dbCode}>
+                <MenuItem key={menu.id} value={menu.value}>
                   {menu.name}
                 </MenuItem>
               );
