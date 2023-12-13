@@ -13,11 +13,9 @@ import {
   IconButton,
   ImageList,
   ImageListItem,
-  Snackbar,
   Stack,
   Typography,
 } from '@mui/material';
-import MuiAlert from '@mui/material/Alert';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -28,16 +26,16 @@ import useAddToCart from '../../hooks/useAddToCart';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 import { QUALITY } from '../../constants';
-import axios from 'axios';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const userId = localStorage.getItem('_id');
+  const [bookmarkId, setBookmarkId] = useState<string | null>(null);
   const [product, setProduct] = useState<IProduct | null>(null);
   const { isLoggedIn } = useUserStore() as IUserStore;
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const authToken = localStorage.getItem('authToken');
 
-  const getQualityName = (value) => {
+  const getQualityName = (value: string | number) => {
     const quality = QUALITY.find((quality) => quality.value === value);
     return quality ? quality.name : 'Unknown';
   };
@@ -66,16 +64,18 @@ export default function ProductDetail() {
       const response = await api.getBookmark(Number(id));
       if (response.data.ok === 1) {
         setIsBookmarked(true);
+        setBookmarkId(response.data.item._id);
       } else {
         setIsBookmarked(false);
       }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        // Handle 404 Not Found
+      if ((error as any).response && (error as any).response.status === 404) {
         setIsBookmarked(false);
       } else {
-        // Handle other errors
-        console.error('API Error:', error.response || error.message || error);
+        console.error(
+          'API Error:',
+          (error as any).response || (error as any).message || error,
+        );
       }
     }
   };
@@ -87,15 +87,18 @@ export default function ProductDetail() {
 
     if (isBookmarked) {
       try {
-        await api.removeBookmark(Number(id));
+        await api.removeBookmark(Number(bookmarkId));
         setIsBookmarked(false);
+        alert('북마크가 삭제되었습니다.');
       } catch (error) {
         console.error('Error removing bookmark:', error);
       }
     } else {
       try {
-        await api.addBookmark(Number(id));
+        const response = await api.addBookmark(Number(id), Number(userId));
         setIsBookmarked(true);
+        alert('북마크가 추가되었습니다.');
+        setBookmarkId(response.data.item._id);
       } catch (error) {
         console.error('Error adding bookmark:', error);
       }
@@ -103,8 +106,8 @@ export default function ProductDetail() {
   };
 
   useEffect(() => {
+    fetchProduct();
     if (isLoggedIn) {
-      fetchProduct();
       checkBookmark();
     }
   }, [id, isLoggedIn]);
@@ -149,15 +152,15 @@ export default function ProductDetail() {
 const ProductImageGallery = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
   const imageContainerStyle = {
-    overflow: 'hidden', // 컨테이너 밖으로 넘어가는 이미지를 숨김
+    overflow: 'hidden',
     position: 'relative',
     width: '100%',
     height: '100%',
     margin: '10px 10px',
   };
   const imageListStyle = {
-    width: '100%', // 이미지 리스트의 전체 너비
-    height: '100%', // 이미지 리스트의 최대 높이
+    width: '100%',
+    height: '100%',
   };
 
   return (
@@ -181,7 +184,6 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
                 borderRadius: '5px',
                 cursor: 'pointer',
                 border: selectedImage === image ? '2px solid #EF5B2A' : '',
-                // 선택 안된 것들은 검은색 레이어를 덮어줌
                 filter: selectedImage === image ? '' : 'brightness(0.5)',
               }}
             />
@@ -204,32 +206,21 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
   );
 };
 
-const ProductDetailsCard = ({
+interface IProductDetailsCard {
+  product: IProduct;
+  getQualityName: (value: string | number) => string;
+  handleBookmark: () => Promise<void>;
+  isBookmarked: boolean;
+}
+
+const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
   product,
   getQualityName,
   handleBookmark,
   isBookmarked,
-}: {
-  product: IProduct;
 }) => {
   const { isLoggedIn } = useUserStore() as { isLoggedIn: boolean };
   const navigate = useNavigate();
-  const [liked, setLiked] = useState(false);
-  const [wishlistNotification, setWishlistNotification] = useState({
-    open: false,
-    message: '',
-  });
-
-  const handleCloseSnackbar = (
-    event: React.SyntheticEvent | React.MouseEvent,
-    reason?: string,
-  ) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setWishlistNotification({ ...wishlistNotification, open: false });
-  };
 
   const handleNotLoggedIn = () => {
     const confirmLogin = confirm(
@@ -251,31 +242,7 @@ const ProductDetailsCard = ({
     }
   };
 
-  const addToWishlist = (product) => {
-    if (!isLoggedIn) {
-      handleNotLoggedIn();
-      return;
-    }
-
-    const isProductInWishlist = false;
-
-    if (isProductInWishlist) {
-      setWishlistNotification({
-        open: true,
-        message: '상품이 관심 목록에서 제거되었습니다.',
-      });
-    } else {
-      setWishlistNotification({
-        open: true,
-        message: '상품이 관심 목록에 추가되었습니다.',
-      });
-    }
-
-    setLiked((prev) => !prev);
-    handleBookmark();
-  };
-
-  const generateQualityIcons = (value) => {
+  const generateQualityIcons = (value: number) => {
     const qualityIndex = QUALITY.findIndex(
       (quality) => quality.value === value,
     );
@@ -313,7 +280,6 @@ const ProductDetailsCard = ({
         </Typography>
 
         {/* 배송료 */}
-        {/* <Divider sx={{ my: 1 }} /> */}
         <Stack direction="row" alignItems="center" spacing={2} my={3}>
           <Box
             sx={{
@@ -332,13 +298,12 @@ const ProductDetailsCard = ({
               : `${product.shippingFees.toLocaleString('ko-KR')} 원`}
           </Typography>
         </Stack>
-        {/* <Divider sx={{ my: 1 }} /> */}
 
         {/* 상품 등급 */}
         <Stack direction="row" alignItems="center" spacing={2}>
           <Box sx={{ width: '70px', textAlign: 'left' }}>
             <Typography variant="body2" fontWeight={800} component="legend">
-              상품 품질
+              품질
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -356,8 +321,6 @@ const ProductDetailsCard = ({
             {` (하<중<상<최상)`}
           </Typography>
         </Stack>
-
-        {/* <Divider sx={{ my: 1 }} /> */}
 
         {/* 수량 버튼 */}
         {/* <Box my={2}>
@@ -412,25 +375,11 @@ const ProductDetailsCard = ({
             </Button>
             <IconButton
               sx={{ ml: 1 }}
-              onClick={() => handleBookmark(product)}
+              onClick={() => handleBookmark()}
               color={isBookmarked ? 'primary' : 'default'}
             >
-              {liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+              {isBookmarked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
             </IconButton>
-            <Snackbar
-              open={wishlistNotification.open}
-              autoHideDuration={6000}
-              onClose={handleCloseSnackbar}
-            >
-              <MuiAlert
-                onClose={handleCloseSnackbar}
-                severity="success"
-                elevation={6}
-                variant="filled"
-              >
-                {wishlistNotification.message}
-              </MuiAlert>
-            </Snackbar>
           </Box>
         </Stack>
       </CardContent>

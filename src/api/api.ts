@@ -176,13 +176,15 @@ export const api = {
   getOrderProductInfo: () => axiosInstance.get('/orders/'),
 
   // 북마크 조회
-  getBookmark: (id: number) => axiosInstance.get(`/bookmarks/products/${id}`),
+  getBookmark: (product_id: number) =>
+    axiosInstance.get(`/bookmarks/products/${product_id}`),
 
   // 북마크 추가
-  addBookmark: (product_id: number) => {
-    return axiosInstance.post(`/bookmarks`, { product_id });
+  addBookmark: (product_id: number, user_id: number) => {
+    return axiosInstance.post(`/bookmarks`, { product_id, user_id });
   },
 
   // 북마크 제거
-  removeBookmark: (id: number) => axiosInstance.delete(`/bookmarks/${id}`),
+  removeBookmark: (bookmark_id: number) =>
+    axiosInstance.delete(`/bookmarks/${bookmark_id}`),
 };
