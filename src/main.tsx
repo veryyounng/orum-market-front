@@ -79,14 +79,6 @@ const router = createBrowserRouter([
         path: '/user/:id/seller-orderlist',
         element: <SellerOrderList />,
       },
-      {
-        path: '/user/:id/address-create',
-        element: <AddressCreate />,
-      },
-      {
-        path: '/user/:id/address-update',
-        element: <AddressUpdate />,
-      },
     ],
   },
 ]);
