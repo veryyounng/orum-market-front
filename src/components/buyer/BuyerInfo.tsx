@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 
 import { api } from '../../api/api';
-import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
 const Form = styled.form`
@@ -20,26 +19,6 @@ const Form = styled.form`
   width: 100%;
   gap: 0.5rem;
 `;
-
-// const initUser = {
-//   id: 0,
-//   email: '',
-//   name: '',
-//   address: '',
-//   extra: {
-//     membershipClass: '',
-//     address: [
-//       {
-//         id: 1,
-//         addressName: '',
-//         receiver: '',
-//         tel: '',
-//         mainAddress: '',
-//         subAddress: '',
-//       },
-//     ],
-//   },
-// };
 
 export default function BuyerInfo() {
   const userId = localStorage.getItem('_id');
@@ -54,8 +33,6 @@ export default function BuyerInfo() {
     mainAddress: '',
     subAddress: '',
   });
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) {
@@ -135,9 +112,6 @@ export default function BuyerInfo() {
     }
   };
 
-  console.log(userInfo, 'userinfo');
-  console.log(addressData, 'addressData');
-
   // delete address
   const handleRemoveAddress = async (addressId) => {
     const confirmRemoveAddress =
@@ -201,11 +175,15 @@ export default function BuyerInfo() {
               정보 수정
             </Button>
           </Form>
-          -------- <br></br>
-          {userInfo.extra.address.length === 0 && <>주소록이 비어있습니다.</>}
-          {userInfo.extra.address.length > 0 && (
+          <br />
+          <br />
+          {!userInfo.extra.address && <>주소록이 비어있습니다.</>}
+          {userInfo?.extra?.address?.length === 0 && (
+            <>주소록이 비어있습니다.</>
+          )}
+
+          {userInfo.extra.address && (
             <>
-              주소록이 있습니다.
               {userInfo.extra.address.map((list) => (
                 // 주소록 목록 테이블 형태로 출력
                 <Box
@@ -256,7 +234,7 @@ export default function BuyerInfo() {
               ))}
             </>
           )}
-          <br></br> -------
+
           <Box>
             <Button
               onClick={() => setIsEditAddress(true)}
