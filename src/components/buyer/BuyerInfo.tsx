@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import {
   Container,
   Typography,
@@ -11,22 +10,15 @@ import {
 
 import { api } from '../../api/api';
 import { v4 as uuidv4 } from 'uuid';
-
-const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin-top: 20px;
-  width: 100%;
-  gap: 0.5rem;
-`;
+import AddressForm from '../address/AddressForm';
 
 export default function BuyerInfo() {
   const userId = localStorage.getItem('_id');
-
   const [userInfo, setUserInfo] = useState(null);
   const [updateUserInfo, setUpdateUserInfo] = useState({});
   const [isCreateAddress, setIsCreateAddress] = useState(false);
   const [isEditAddress, setIsEditAddress] = useState(false);
+  const [selectAddressId, setSelectAddressId] = useState('');
   const [addressData, setAddressData] = useState({
     addressName: '',
     receiver: '',
@@ -42,8 +34,21 @@ export default function BuyerInfo() {
     subAddress: '',
   });
 
-  console.log("수정 데이터 뽑아오기", addressEditData);
 
+  const resetData = (reset: boolean) => {
+    if(reset) {
+      setAddressData({
+        addressName: '',
+        receiver: '',
+        tel: '',
+        mainAddress: '',
+        subAddress: '',
+    });
+      setIsCreateAddress(false);
+    } else {
+      setIsEditAddress(false)
+    }
+  }
 
   useEffect(() => {
     if (!userId) {
@@ -118,7 +123,7 @@ export default function BuyerInfo() {
       window.location.reload();
     } catch (error) {
       console.error(error);
-      alert('주소 업데이트에 실패했습니다.');
+      alert('주소 등록에 실패했습니다.');
     }
   }; 
 
@@ -155,20 +160,52 @@ export default function BuyerInfo() {
   const handleEditAddress = (editAddressId) => {
     setIsEditAddress(true);
     const selectAddress = userInfo.extra.address.find((item) => item.id === editAddressId);
-    console.log("수정 데이터 뽑아오기", selectAddress);
-    
-    if(selectAddress) {
+ 
       setAddressEditData({
-        
+        ...selectAddress,
+        addressName: selectAddress.addressName,
+        receiver: selectAddress.receiver,
+        tel: selectAddress.tel,
+        mainAddress: selectAddress.mainAddress,
+        subAddress: selectAddress.subAddress,
       })
-    }
 
-  
-    
+      setSelectAddressId(editAddressId);
   }
 
-   
+  const handleChangeEditAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAddressEditData({
+      ...addressEditData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  
+  const handleSubmitEditAddress = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
+    try{
+      const response = await api.getUserInfo(userId);
+      const onEdit = response.data.item.extra.address.map((list) =>
+        list.id === selectAddressId ? { ...list, ...addressEditData } : list,
+        );
+
+      console.log('id값',selectAddressId, "변환값",  onEdit);
+
+      const updateAddressData = {
+        ...response.data.item,
+        extra: {
+          ...response.data.item.extra,
+          address: [...onEdit],
+        },
+      };
+      api.updateUserInfo(userId, updateAddressData);
+      alert('주소가 수정되었습니다.');
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+      alert('주소 수정에 실패했습니다.');
+    }
+  }
 
   if (!userInfo) {
     return <>사용자 정보를 받아오지 못했습니다.</>;
@@ -181,7 +218,7 @@ export default function BuyerInfo() {
         !isEditAddress &&(
           <>
             <Typography variant="h4">내 정보 수정</Typography>
-            <Form onSubmit={handleUpdateUserInfo}>
+            <form onSubmit={handleUpdateUserInfo}>
               <FormLabel>이메일</FormLabel>
               <TextField
                 type="email"
@@ -205,7 +242,7 @@ export default function BuyerInfo() {
               <Button type="submit" variant="contained" size="large">
                 정보 수정
               </Button>
-            </Form>
+            </form>
             <br />
             <br />
             {!userInfo.extra.address && <>주소록이 비어있습니다.</>}
@@ -284,164 +321,12 @@ export default function BuyerInfo() {
         )}
       {userInfo && isCreateAddress && (
         <>
-          <Typography variant="h6" fontWeight={700} mb={3}>
-            주소록 추가하기
-          </Typography>
-          <form onSubmit={(e) => handleSubmitAddress(e)}>
-            <FormLabel>배송지명*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.addressName || ''}
-              placeholder="배송지명을 입력하세요. ex)집, 회사 등"
-              name="addressName"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>수령인*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.receiver || ''}
-              placeholder="이름"
-              name="receiver"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>연락처*</FormLabel>
-            <TextField
-              type="tel"
-              value={addressData?.tel || ''}
-              placeholder="-없이 입력"
-              name="tel"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>배송 주소*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.mainAddress || ''}
-              placeholder="예) 서울특별시 강남구 테헤란로 443 "
-              name="mainAddress"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '0.4rem' }}
-              onChange={handleChangeAddress}
-            />
-            <TextField
-              type="text"
-              value={addressData?.subAddress || ''}
-              placeholder="나머지 주소를 입력하세요 "
-              name="subAddress"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <Box sx={{ display: 'flex', flexDirection: 'row' }} gap={3} my={3}>
-              <Button type="submit" size="large" variant="contained" fullWidth>
-                저장
-              </Button>
-              <Button
-                onClick={() => setIsCreateAddress(false)}
-                variant="outlined"
-                size="large"
-                fullWidth
-              >
-                취소
-              </Button>
-            </Box>
-          </form>
-        </>
+        <AddressForm data={addressData} func={handleChangeAddress} setData={resetData} submit={handleSubmitAddress} title={'주소록 추가하기'} reset={true} />
+      </>
       )}
       {userInfo && isEditAddress && (
         <>
-          <Typography variant="h6" fontWeight={700} mb={3}>
-            주소록 수정하기
-          </Typography>
-          <form onSubmit={(e) => handleSubmitAddress(e)}>
-            <FormLabel>배송지명*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.addressName || ''}
-              placeholder="배송지명을 입력하세요. ex)집, 회사 등"
-              name="addressName"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>수령인*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.receiver || ''}
-              placeholder="이름"
-              name="receiver"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>연락처*</FormLabel>
-            <TextField
-              type="tel"
-              value={addressData?.tel || ''}
-              placeholder="-없이 입력"
-              name="tel"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <FormLabel>배송 주소*</FormLabel>
-            <TextField
-              type="text"
-              value={addressData?.mainAddress || ''}
-              placeholder="예) 서울특별시 강남구 테헤란로 443 "
-              name="mainAddress"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '0.4rem' }}
-              onChange={handleChangeAddress}
-            />
-            <TextField
-              type="text"
-              value={addressData?.subAddress || ''}
-              placeholder="나머지 주소를 입력하세요 "
-              name="subAddress"
-              size="small"
-              fullWidth
-              required
-              sx={{ marginBottom: '1rem' }}
-              onChange={handleChangeAddress}
-            />
-            <Box sx={{ display: 'flex', flexDirection: 'row' }} gap={3} my={3}>
-              <Button type="submit" size="large" variant="contained" fullWidth>
-                저장
-              </Button>
-              <Button
-                onClick={() => setIsEditAddress(false)}
-                variant="outlined"
-                size="large"
-                fullWidth
-              >
-                취소
-              </Button>
-            </Box>
-          </form>
+          <AddressForm data={addressEditData} func={handleChangeEditAddress} setData={setIsEditAddress} submit={handleSubmitEditAddress} title={'주소록 수정하기'} reset={false} />
         </>
       )}
     </Container>
