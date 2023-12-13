@@ -54,8 +54,8 @@ export default function ProductUpdate() {
     }
   };
 
-  //상품 수정 업로드
-  const updateSubmit = async (e: React.FormEvent) => {
+  //전체 form submit
+  const updateAllDataSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await api.updateProduct(id!, productData);
@@ -66,8 +66,8 @@ export default function ProductUpdate() {
     }
   };
 
-  //파일 업로드
-  const handleFileUpload = async (e: React.FormEvent) => {
+  //파일 업로드를 눌렀을때 실행
+  const clickFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
     if (!fileInput) return;
@@ -146,7 +146,7 @@ export default function ProductUpdate() {
 
   return (
     <>
-      <form onSubmit={updateSubmit}>
+      <form onSubmit={updateAllDataSubmit}>
         <>
           <InputLabel>상품사진</InputLabel>
           <h3>이미지는 3개까지 첨부 가능합니다.</h3>
@@ -154,7 +154,7 @@ export default function ProductUpdate() {
             component="label"
             variant="contained"
             startIcon={<CloudUploadIcon />}
-            onChange={handleFileUpload}
+            onChange={clickFileUpload}
           >
             파일 업로드
             <input hidden type="file" multiple accept="image/*" />
