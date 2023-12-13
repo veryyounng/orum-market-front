@@ -28,10 +28,6 @@ export default function ProductUpdate() {
   const [filePreview, setFilePreview] = useState([]);
   const editorRef = useRef();
 
-  const handleMoveBack = () => {
-    navigate(-1);
-  };
-
   useEffect(() => {
     fetchProduct();
   }, []);
@@ -117,7 +113,6 @@ export default function ProductUpdate() {
     }
   };
   const handleFileRemove = (idToRemove) => {
-    idToRemove.preventDefault();
     setFilePreview((prevPreview) =>
       prevPreview.filter((item) => item.id !== idToRemove),
     );
@@ -302,7 +297,7 @@ export default function ProductUpdate() {
           등록하기
         </Button>
       </form>
-      <Button type="button" variant="outlined" onClick={handleMoveBack}>
+      <Button type="button" variant="outlined" onClick={() => navigate(-1)}>
         취소
       </Button>
     </>
