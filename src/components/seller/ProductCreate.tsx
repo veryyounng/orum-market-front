@@ -115,8 +115,8 @@ export default function ProductCreate() {
     });
   }
 
-  //상품데이터 등록하기
-  const productSubmit = async (e: React.FormEvent) => {
+  //상품데이터 form submit
+  const productAllSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid) {
       alert('양식이 올바르지 않습니다.');
@@ -133,7 +133,7 @@ export default function ProductCreate() {
   };
 
   // 파일 업로드
-  const handleFileUpload = async (e: React.FormEvent) => {
+  const clickFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     const fileInput = e.target.files;
     if (!fileInput) return;
@@ -158,7 +158,7 @@ export default function ProductCreate() {
       if (response.data.files) {
         let fileArr = response.data.files;
         const resImgUrl = fileArr.map((images) => ({
-          id: images.name,
+          img_id: images.name,
           path: `https://localhost:443${images.path}`,
         }));
         setFilePreview([...filePreview, ...resImgUrl]);
@@ -170,7 +170,7 @@ export default function ProductCreate() {
         //단일파일일 때
       } else {
         let fileArr = {
-          id: response.data.file.name,
+          img_id: response.data.file.name,
           path: `https://localhost:443${response.data.file.path}`,
         };
 
@@ -188,7 +188,7 @@ export default function ProductCreate() {
   const handleFileRemove = (indexToRemove) => {
     let updatedFilePreview = [...filePreview];
     updatedFilePreview = updatedFilePreview.filter(
-      (item) => item.id !== indexToRemove,
+      (item) => item.img_id !== indexToRemove,
     );
     setFilePreview(updatedFilePreview);
 
@@ -200,31 +200,31 @@ export default function ProductCreate() {
 
   return (
     <>
-      <form onSubmit={productSubmit}>
+      <form onSubmit={productAllSubmit}>
         <InputLabel>상품사진</InputLabel>
         <h3>이미지는 3개까지 첨부 가능합니다.</h3>
         <Button
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
-          onChange={handleFileUpload}
+          onChange={clickFileUpload}
         >
           파일 업로드
           <input hidden type="file" multiple accept="image/*" />
         </Button>
         {filePreview.map((item) => (
-          <div key={item.id}>
+          <div key={item.img_id}>
             <Stack direction="row" alignItems="center" spacing={1}>
               <IconButton
                 aria-label="delete"
                 size="large"
-                onClick={() => handleFileRemove(item.id)}
+                onClick={() => handleFileRemove(item.img_id)}
               >
                 <DeleteIcon />
               </IconButton>
             </Stack>
             <img
-              key={item.id}
+              key={item.img_id}
               src={item.path}
               alt={'File Preview'}
               style={{ marginTop: '10px', maxWidth: '60%' }}
