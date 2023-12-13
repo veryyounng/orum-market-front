@@ -29,7 +29,7 @@ export default function ProductUpdate() {
   const editorRef = useRef();
 
   const handleMoveBack = () => {
-    window.history.back();
+    navigate(-1);
   };
 
   useEffect(() => {
