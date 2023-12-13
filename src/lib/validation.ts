@@ -13,18 +13,14 @@ export const validateProductName = (name: string) => {
 };
 
 export const validateProductContent = (content: string) => {
-  return content.length > 11;
+  return content.length >= 10;
 };
 
-export const validateProductPrice = (price: number) => {
-  return Number.isInteger(price);
+export const validateProductPrice = (price: number | string): boolean => {
+  const numricPrice = typeof price === 'string' ? parseFloat(price) : price;
+  return Number.isInteger(numricPrice);
 };
 
 export const validateProductShippingFees = (shippingFees: number) => {
   return shippingFees % 1 === 0;
-};
-
-export const validateMainImages = (images: string): string[] => {
-  const imageArray = images.split(',').map((image) => image.trim());
-  return imageArray;
 };
