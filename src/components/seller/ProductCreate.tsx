@@ -18,7 +18,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import { validateProductName } from '../../lib/validation';
+import {
+  validateProductName,
+  validateProductContent,
+  validateProductPrice,
+  validateProductShippingFees,
+} from '../../lib/validation';
 
 const initCreateData = {
   price: 0,
@@ -47,14 +52,17 @@ export default function ProductCreate() {
   const [filePreview, setFilePreview] = useState([]);
   const [productId, setProductId] = useState(0);
 
-  // const [contentError, setContentError] = useState('');
-  // const [numberError, setNumberError] = useState('');
   const [nameError, setNameError] = useState('');
+  const [priceError, setPriceError] = useState('');
+  const [shippingFeesError, setShippingFeesError] = useState('');
+  const [contentError, setContentError] = useState('');
 
   const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setProductData((prev) => ({ ...prev, [name]: value }));
   };
+
+  //상품 등록 유효성 검사
   useEffect(() => {
     if (!validateProductName(productData.name)) {
       setIsValid(false);
@@ -62,6 +70,24 @@ export default function ProductCreate() {
     } else {
       setIsValid(true);
       setNameError('');
+    }
+    if (!validateProductPrice(productData.price)) {
+      setIsValid(false);
+      setPriceError('상품 가격은 정수로 입력하세요.');
+    } else {
+      setPriceError('');
+    }
+    if (!validateProductShippingFees(productData.shippingFees)) {
+      setIsValid(false);
+      setShippingFeesError('배송비는 정수로 입력하세요.');
+    } else {
+      setShippingFeesError('');
+    }
+    if (!validateProductContent(productData.content)) {
+      setIsValid(false);
+      setContentError('상품 설명을 10글자 이상 입력하세요.');
+    } else {
+      setContentError('');
     }
   }, [handleAllChange]);
 
@@ -122,7 +148,7 @@ export default function ProductCreate() {
     try {
       const response = await api.uploadFile(formData);
 
-      //파일이 여러개일때
+      //파일이 여러개일 때
       if (response.data.files) {
         let fileArr = response.data.files;
         const resImgUrl = fileArr.map((images) => ({
@@ -135,7 +161,7 @@ export default function ProductCreate() {
           mainImages: [...filePreview, ...resImgUrl],
         });
 
-        //단일파일일때
+        //단일파일일 때
       } else {
         let fileArr = {
           id: response.data.file.name,
@@ -152,6 +178,7 @@ export default function ProductCreate() {
       console.log('사진첨부에러발생', error);
     }
   };
+
   const handleFileRemove = (indexToRemove) => {
     let updatedFilePreview = [...filePreview];
     // updatedFilePreview.splice(indexToRemove, 1);
@@ -266,7 +293,7 @@ export default function ProductCreate() {
             value={productData.price}
             onChange={handleAllChange}
           ></TextField>
-          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
+          {!isValid ? <div style={{ color: 'red' }}>{priceError}</div> : <></>}
         </>
         <br />
         <br />
@@ -278,7 +305,9 @@ export default function ProductCreate() {
             value={productData.shippingFees}
             onChange={handleAllChange}
           ></TextField>
-          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
+          {shippingFeesError && (
+            <div style={{ color: 'red' }}>{shippingFeesError}</div>
+          )}
         </>
         <br />
         <br />
@@ -291,8 +320,11 @@ export default function ProductCreate() {
             value={productData.content}
             onChange={handleAllChange}
           ></TextField>
-          {/* 상품 설명을 10글자 이상 해야합니다 */}
-          {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
+          {!isValid && productData.content.length > 0 ? (
+            <div style={{ color: 'red' }}>{contentError}</div>
+          ) : (
+            <></>
+          )}
         </>
         <br />
         <Button type="submit" variant="contained">
