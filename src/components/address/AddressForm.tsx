@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { Form, useLocation, useNavigate } from 'react-router-dom';
+import { Form, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   TextField,
@@ -13,31 +13,12 @@ import {
 import { api } from '../../api/api';
 import { validateTel } from '../../lib/validation';
 
-export default function AddressForm({
-  isEdit,
-  userId,
-  id,
-  addressName,
-  receiver,
-  mainAddress,
-  subAddress,
-  tel,
-}) {
-  useEffect(() => {
-    if (isEdit) {
-      setFormData({
-        addressName: addressName,
-        receiver: receiver,
-        tel: tel,
-        mainAddress: mainAddress,
-        subAddress: subAddress,
-      });
-    }
-  }, [isEdit, addressName, receiver, mainAddress, subAddress, tel]);
-
+export default function AddressForm({ userInfo, isEdit, id, userId }) {
   const navigate = useNavigate();
   const location = useLocation();
   const user = location?.state?.userInfo?._id;
+  // const { id } = useParams<{ id: string }>();
+  console.log(user, 'userid', userId);
   const uuid = uuidv4();
   const [formData, setFormData] = useState({
     addressName: '',
@@ -65,30 +46,35 @@ export default function AddressForm({
 
   const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const add = location?.state.userInfo.extra.address;
 
-    if (location.state.userInfo.extra.address.length >= 3) {
+    // 3개 이상 주소 등록 방지
+    if (add && add.length >= 3) {
       alert('주소는 3개까지만 등록가능합니다.');
       navigate(-1);
       return;
     }
 
-    try {
-      const updateFormData = {
-        ...location?.state.userInfo,
-        extra: {
-          ...location?.state.userInfo.extra,
-          address: [
-            ...location?.state.userInfo.extra.address,
-            { id: uuid, ...formData },
-          ],
-        },
-      };
+    // 주소가 없거나 3개 미만일 때, 주소 등록
+    if (!add || add.length < 3) {
+      try {
+        const updateFormData = {
+          ...location?.state.userInfo,
+          extra: {
+            ...location?.state.userInfo.extra,
+            address: [
+              ...location?.state.userInfo.extra.address,
+              { id: uuid, ...formData },
+            ],
+          },
+        };
 
-      api.updateUserInfo(user, updateFormData);
-      alert('주소가 등록되었습니다.');
-      navigate(`/user/${user}/buyer-info`);
-    } catch (error) {
-      console.log(error);
+        api.updateUserInfo(user, updateFormData);
+        alert('주소가 등록되었습니다.');
+        navigate(`/user/${user}/buyer-info`);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -96,7 +82,7 @@ export default function AddressForm({
     e.preventDefault();
 
     try {
-      const response = await api.getUserInfo(userId);
+      const response = await api.getUserInfo(userInfo.userId);
       console.log(response.data.item);
       const onEdit = response.data.item.extra.address.map((list) =>
         list.id === id ? { ...list, ...formData } : list,
@@ -108,9 +94,9 @@ export default function AddressForm({
           address: [...onEdit],
         },
       };
-      api.updateUserInfo(userId, updateAddressData);
+      api.updateUserInfo(userInfo.userId, updateAddressData);
       alert('주소가 수정되었습니다.');
-      navigate(`/user/${userId}/buyer-info`);
+      navigate(`/user/${userInfo.userId}/buyer-info`);
     } catch (error) {
       console.log(error);
     }
@@ -191,13 +177,13 @@ export default function AddressForm({
                     variant="contained"
                     fullWidth
                     onClick={!isEdit ? handleSubmitCreate : handleSubmitUpdate}
-                    disabled={
-                      !formData.addressName ||
-                      !formData.receiver ||
-                      !formData.tel ||
-                      !formData.mainAddress ||
-                      !formData.subAddress
-                    }
+                    // disabled={
+                    //   !formData.addressName ||
+                    //   !formData.receiver ||
+                    //   !formData.tel ||
+                    //   !formData.mainAddress ||
+                    //   !formData.subAddress
+                    // }
                   >
                     {!isEdit ? '저장' : '수정'}
                   </Button>
