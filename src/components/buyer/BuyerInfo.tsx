@@ -34,6 +34,16 @@ export default function BuyerInfo() {
     mainAddress: '',
     subAddress: '',
   });
+  const [addressEditData, setAddressEditData] = useState({
+    addressName: '',
+    receiver: '',
+    tel: '',
+    mainAddress: '',
+    subAddress: '',
+  });
+
+  console.log("수정 데이터 뽑아오기", addressEditData);
+
 
   useEffect(() => {
     if (!userId) {
@@ -46,7 +56,6 @@ export default function BuyerInfo() {
         const response = await api.getUserInfo(userId);
         setUserInfo(response.data.item);
         setUpdateUserInfo(response.data.item);
-        console.log(response.data.item);
       } catch (error) {
         console.log(error);
       }
@@ -111,7 +120,7 @@ export default function BuyerInfo() {
       console.error(error);
       alert('주소 업데이트에 실패했습니다.');
     }
-  };
+  }; 
 
   // delete address
   const handleRemoveAddress = async (addressId) => {
@@ -141,6 +150,25 @@ export default function BuyerInfo() {
       }
     }
   };
+
+  // Edit Address
+  const handleEditAddress = (editAddressId) => {
+    setIsEditAddress(true);
+    const selectAddress = userInfo.extra.address.find((item) => item.id === editAddressId);
+    console.log("수정 데이터 뽑아오기", selectAddress);
+    
+    if(selectAddress) {
+      setAddressEditData({
+        
+      })
+    }
+
+  
+    
+  }
+
+   
+
 
   if (!userInfo) {
     return <>사용자 정보를 받아오지 못했습니다.</>;
@@ -224,7 +252,7 @@ export default function BuyerInfo() {
                       gap={1}
                     >
                       <Button
-                        onClick={() => setIsEditAddress(true)}
+                        onClick={() => handleEditAddress(list.id)}
                         variant="contained"
                         size="medium"
                       >
