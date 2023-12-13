@@ -176,4 +176,17 @@ export const api = {
 
   // 구매자 구매 목록 조회
   getOrderProductInfo: () => axiosInstance.get('/orders/'),
+
+  // 북마크 조회
+  getBookmark: (product_id: number) =>
+    axiosInstance.get(`/bookmarks/products/${product_id}`),
+
+  // 북마크 추가
+  addBookmark: (product_id: number, user_id: number) => {
+    return axiosInstance.post(`/bookmarks`, { product_id, user_id });
+  },
+
+  // 북마크 제거
+  removeBookmark: (bookmark_id: number) =>
+    axiosInstance.delete(`/bookmarks/${bookmark_id}`),
 };
