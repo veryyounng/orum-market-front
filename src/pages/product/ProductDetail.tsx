@@ -1,35 +1,50 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ICartStore, IProduct } from '../../type';
+import { IProduct, IUserStore } from '../../type';
 import { api } from '../../api/api';
 import {
   Box,
   Button,
   Card,
-  CardActions,
   CardContent,
+  Chip,
+  Container,
   Grid,
+  IconButton,
   ImageList,
   ImageListItem,
+  Stack,
   Typography,
 } from '@mui/material';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useCartStore, useUserStore } from '../../lib/store';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import PaymentIcon from '@mui/icons-material/Payment';
+import { useUserStore } from '../../lib/store';
+import { BreadcrumbsNavBar } from '../../components/BreadcrumbsNavBar';
+import useAddToCart from '../../hooks/useAddToCart';
+import VerifiedIcon from '@mui/icons-material/Verified';
+
+import { QUALITY } from '../../constants';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
+  const userId = localStorage.getItem('_id');
+  const [bookmarkId, setBookmarkId] = useState<string | null>(null);
   const [product, setProduct] = useState<IProduct | null>(null);
+  const { isLoggedIn } = useUserStore() as IUserStore;
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchProduct();
-  }, []);
+  const getQualityName = (value: string | number) => {
+    const quality = QUALITY.find((quality) => quality.value === value);
+    return quality ? quality.name : 'Unknown';
+  };
 
   const fetchProduct = async () => {
     if (id) {
       try {
         const response = await api.getProduct(Number(id));
         setProduct(response.data.item);
-        console.log(response.data.item);
       } catch (error) {
         console.error('API Error:', error);
       }
@@ -38,33 +53,97 @@ export default function ProductDetail() {
     }
   };
 
+  const checkBookmark = async () => {
+    if (!id || !isLoggedIn) {
+      setIsBookmarked(false);
+      return;
+    }
+
+    try {
+      console.log('Bookmark ID:', id);
+      const response = await api.getBookmark(Number(id));
+      if (response.data.ok === 1) {
+        setIsBookmarked(true);
+        setBookmarkId(response.data.item._id);
+      } else {
+        setIsBookmarked(false);
+      }
+    } catch (error) {
+      if ((error as any).response && (error as any).response.status === 404) {
+        setIsBookmarked(false);
+      } else {
+        console.error(
+          'API Error:',
+          (error as any).response || (error as any).message || error,
+        );
+      }
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (!isLoggedIn) {
+      return;
+    }
+
+    if (isBookmarked) {
+      try {
+        await api.removeBookmark(Number(bookmarkId));
+        setIsBookmarked(false);
+        alert('북마크가 삭제되었습니다.');
+      } catch (error) {
+        console.error('Error removing bookmark:', error);
+      }
+    } else {
+      try {
+        const response = await api.addBookmark(Number(id), Number(userId));
+        setIsBookmarked(true);
+        alert('북마크가 추가되었습니다.');
+        setBookmarkId(response.data.item._id);
+      } catch (error) {
+        console.error('Error adding bookmark:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchProduct();
+    if (isLoggedIn) {
+      checkBookmark();
+    }
+  }, [id, isLoggedIn]);
+
   if (!product) {
     return <Typography>상품이 없습니다.</Typography>;
   }
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: 4, mb: 5 }}>
       {product && (
-        <>
-          <Grid container spacing={4}>
-            <Grid item xs={12} sm={6}>
+        <Container>
+          <Grid container spacing={2}>
+            <Grid item sm={12} md={8}>
+              <BreadcrumbsNavBar />
               <ProductImageGallery images={product.mainImages} />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <ProductDetailsCard product={product} />
-            </Grid>
-            <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom component="h2">
+            <Grid item sm={12} md={4}>
+              <ProductDetailsCard
+                product={product}
+                getQualityName={getQualityName}
+                handleBookmark={handleBookmark}
+                isBookmarked={isBookmarked}
+              />
+              <Typography variant="h5" gutterBottom component="h2" m={3}>
                 상품 설명
               </Typography>
+              <Typography
+                paragraph
+                dangerouslySetInnerHTML={{ __html: product.content }}
+                sx={{ fontSize: '1rem', color: 'text.secondary', margin: 3 }}
+              />
             </Grid>
-            <Typography
-              paragraph
-              dangerouslySetInnerHTML={{ __html: product.content }}
-              sx={{ fontSize: '1rem', color: 'text.secondary' }}
-            />
           </Grid>
-        </>
+          <Grid item xs={12}></Grid>
+        </Container>
       )}
     </Box>
   );
@@ -72,21 +151,28 @@ export default function ProductDetail() {
 
 const ProductImageGallery = ({ images }: { images: string[] }) => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
+  const imageContainerStyle = {
+    overflow: 'hidden',
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    margin: '10px 10px',
+  };
+  const imageListStyle = {
+    width: '100%',
+    height: '100%',
+  };
 
   return (
     <Box
-      sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      sx={{
+        margin: '4px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
     >
-      {/* Display the selected image in a larger size */}
-      <Box sx={{ marginBottom: 2 }}>
-        <img
-          src={selectedImage}
-          alt="Selected"
-          style={{ width: '100%', maxWidth: 500 }}
-        />
-      </Box>
-      {/* List of all images */}
-      <ImageList sx={{ width: 500 }} cols={3}>
+      <ImageList sx={imageListStyle} cols={3} gap={9}>
         {images.map((image: string, index: number) => (
           <ImageListItem key={index}>
             <img
@@ -95,23 +181,46 @@ const ProductImageGallery = ({ images }: { images: string[] }) => {
               loading="lazy"
               onClick={() => setSelectedImage(image)}
               style={{
+                borderRadius: '5px',
                 cursor: 'pointer',
-                border: selectedImage === image ? '2px solid orange' : '',
+                border: selectedImage === image ? '2px solid #EF5B2A' : '',
+                filter: selectedImage === image ? '' : 'brightness(0.5)',
               }}
             />
           </ImageListItem>
         ))}
       </ImageList>
+      <Box sx={imageContainerStyle}>
+        <img
+          src={selectedImage}
+          alt="Selected-Image"
+          style={{
+            borderRadius: '5px',
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </Box>
     </Box>
   );
 };
 
-const ProductDetailsCard = ({ product }: { product: IProduct }) => {
+interface IProductDetailsCard {
+  product: IProduct;
+  getQualityName: (value: string | number) => string;
+  handleBookmark: () => Promise<void>;
+  isBookmarked: boolean;
+}
+
+const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
+  product,
+  getQualityName,
+  handleBookmark,
+  isBookmarked,
+}) => {
   const { isLoggedIn } = useUserStore() as { isLoggedIn: boolean };
   const navigate = useNavigate();
-  const { items } = useCartStore((state) => state) as ICartStore;
-  const productAlreadyInCart = items.some((item) => item._id === product._id);
-  const { addToCart } = useCartStore((state) => state) as ICartStore;
 
   const handleNotLoggedIn = () => {
     const confirmLogin = confirm(
@@ -122,23 +231,7 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
     }
   };
 
-  const addProductToCart = () => {
-    if (!isLoggedIn) {
-      handleNotLoggedIn();
-    } else {
-      if (productAlreadyInCart) {
-        alert('이미 장바구니에 있는 상품입니다.');
-        return;
-      }
-      addToCart({ ...product, quantity: 1 });
-      const confirmAddToCart = confirm(
-        '장바구니에 추가되었습니다. 장바구니로 이동하시겠습니까?',
-      );
-      if (confirmAddToCart) {
-        navigate('/cart');
-      }
-    }
-  };
+  const addProductToCart = useAddToCart();
 
   const perchaseProduct = () => {
     if (!isLoggedIn) {
@@ -149,65 +242,147 @@ const ProductDetailsCard = ({ product }: { product: IProduct }) => {
     }
   };
 
-  const addToWishlist = () => {
-    if (!isLoggedIn) {
-      handleNotLoggedIn();
-    } else {
-      alert('위시리스트에 추가되었습니다');
-    }
+  const generateQualityIcons = (value: number) => {
+    const qualityIndex = QUALITY.findIndex(
+      (quality) => quality.value === value,
+    );
+    return [...Array(qualityIndex + 1)].map((_, index) => (
+      <VerifiedIcon key={index} />
+    ));
   };
 
   return (
     <Card
-      sx={{ maxWidth: '100%', boxShadow: 0, border: '1px solid #e0e0e0', m: 2 }}
+      sx={{
+        maxWidth: '100%',
+        boxShadow: 0,
+        mt: 3,
+        borderRadius: '10px',
+        padding: '10px',
+      }}
     >
       <CardContent>
-        <Typography variant="subtitle1" color="text.secondary" gutterBottom>
-          Seller ID: {product.seller_id}
-          <br />
-          Product ID: {product._id}
-        </Typography>
-        <Typography gutterBottom variant="h5" component="div">
+        {/* 제목 태그 */}
+        <Typography variant="h5" component="div">
           {product.name}
         </Typography>
-        <Typography variant="h6">
+        <Stack direction="row" spacing={1} my={2}>
+          <Chip label="#캠프라인" variant="outlined" />
+          <Chip label="#풀박" variant="outlined" />
+        </Stack>
+
+        {/* 가격 적립금 */}
+        <Typography variant="h6" gutterBottom>
           {product.price.toLocaleString('ko-KR')} 원
         </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            mt: 2,
-          }}
-        >
+        <Typography variant="subtitle2" gutterBottom color="text.secondary">
+          적립포인트 {(product.price / 100).toLocaleString('ko-KR')}M
+        </Typography>
+
+        {/* 배송료 */}
+        <Stack direction="row" alignItems="center" spacing={2} my={3}>
+          <Box
+            sx={{
+              width: '70px',
+              textAlign: 'left',
+              mb: 0,
+            }}
+          >
+            <Typography variant="body2" fontWeight={800}>
+              배송료
+            </Typography>
+          </Box>
           <Typography variant="body2">
-            4.0
-            <FavoriteBorderIcon fontSize="small" />
+            {product.shippingFees === 0
+              ? '무료배송'
+              : `${product.shippingFees.toLocaleString('ko-KR')} 원`}
           </Typography>
-          <Button size="small" onClick={addToWishlist}>
-            Wishlist
+        </Stack>
+
+        {/* 상품 등급 */}
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Box sx={{ width: '70px', textAlign: 'left' }}>
+            <Typography variant="body2" fontWeight={800} component="legend">
+              품질
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {generateQualityIcons(product.extra.sort)}
+          </Box>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            fontWeight={700}
+            sx={{ ml: 1 }}
+          >
+            {getQualityName(product.extra.sort)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+            {` (하<중<상<최상)`}
+          </Typography>
+        </Stack>
+
+        {/* 수량 버튼 */}
+        {/* <Box my={2}>
+          <Typography variant="subtitle1">수량</Typography>
+          <OutlinedInput
+            id="outlined-adornment-quantity"
+            value={product.quantity}
+            startAdornment={
+              <InputAdornment position="start">
+                <IconButton>
+                  <RemoveIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton>
+                  <AddIcon />
+                </IconButton>
+              </InputAdornment>
+            }
+          />
+        </Box> */}
+
+        {/* 구매 장바구니 북마크 버튼 */}
+        <Stack spacing={2} direction="column" mt={5}>
+          <Button
+            variant="contained"
+            startIcon={<PaymentIcon />}
+            onClick={perchaseProduct}
+            fullWidth
+          >
+            바로구매
           </Button>
-        </Box>
+
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              mt: 2,
+              borderRadius: '5px',
+            }}
+          >
+            <Button
+              variant="outlined"
+              startIcon={<ShoppingCartOutlinedIcon />}
+              sx={{ flexGrow: 1, mr: 1 }}
+              onClick={() => addProductToCart(product)}
+            >
+              장바구니
+            </Button>
+            <IconButton
+              sx={{ ml: 1 }}
+              onClick={() => handleBookmark()}
+              color={isBookmarked ? 'primary' : 'default'}
+            >
+              {isBookmarked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            </IconButton>
+          </Box>
+        </Stack>
       </CardContent>
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          size="large"
-          variant="outlined"
-          color="primary"
-          onClick={perchaseProduct}
-        >
-          구매하기
-        </Button>
-        <Button
-          size="large"
-          variant="outlined"
-          color="primary"
-          onClick={addProductToCart}
-        >
-          장바구니
-        </Button>
-      </CardActions>
     </Card>
   );
 };
