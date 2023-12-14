@@ -21,6 +21,8 @@ import SignUpPage from './pages/user/SignUp.tsx';
 import { CategoryList } from './pages/product/CategoryList.tsx';
 import { SearchPage } from './pages/product/SearchPage.tsx';
 import CheckOut from './pages/user/CheckOut.tsx';
+import AddressCreate from './components/address/AddressCreate.tsx';
+import AddressUpdate from './components/address/AddressUpdate.tsx';
 
 const router = createBrowserRouter([
   {
