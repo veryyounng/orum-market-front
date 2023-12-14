@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
-import { CATEGORY } from '../../constants/index';
+import { CATEGORY, QUALITY } from '../../constants/index';
 import { Link } from 'react-router-dom';
 
 export default function ProductManager() {
@@ -168,7 +168,10 @@ export default function ProductManager() {
                     />
                   </TableCell>
                   <TableCell align="center">{rows.name}</TableCell>
-                  <TableCell align="center">{rows.quantity}</TableCell>
+                  <TableCell align="center">
+                    {QUALITY.find((quality) => quality.value === rows.quantity)
+                      ?.name || '상급'}
+                  </TableCell>
                   <TableCell align="center">
                     {rows.price.toLocaleString()}원
                   </TableCell>
