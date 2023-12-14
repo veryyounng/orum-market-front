@@ -20,17 +20,65 @@ import { CATEGORY, QUALITY } from '../../constants/index';
 import { IProduct } from '../../type/index';
 import { initProductData } from '../../lib/initProductData';
 
+import {
+  validateProductName,
+  validateProductContent,
+  validateProductPrice,
+  validateProductShippingFees,
+} from '../../lib/validation';
+
 export default function ProductUpdate() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [productData, setProductData] =
     useState<Partial<IProduct>>(initProductData);
   const [filePreview, setFilePreview] = useState([]);
+  const [isValid, setIsValid] = useState(true);
+  const [nameError, setNameError] = useState('');
+  const [priceError, setPriceError] = useState('');
+  const [shippingFeesError, setShippingFeesError] = useState('');
+  const [contentError, setContentError] = useState('');
+
   const editorRef = useRef();
 
   useEffect(() => {
     fetchProduct();
   }, []);
+
+  useEffect(() => {
+    if (!validateProductName(productData.name)) {
+      setIsValid(false);
+      setNameError('상품명은 2글자 이상 입력하세요.');
+    } else {
+      setIsValid(true);
+      setNameError('');
+    }
+    if (!validateProductPrice(productData.price)) {
+      setIsValid(false);
+      setPriceError('상품 가격은 정수로 입력하세요.');
+    } else {
+      setPriceError('');
+    }
+    if (!validateProductShippingFees(productData.shippingFees)) {
+      setIsValid(false);
+      setShippingFeesError('배송비는 정수로 입력하세요.');
+    } else {
+      setShippingFeesError('');
+    }
+    if (!validateProductContent(productData.content)) {
+      setIsValid(false);
+      setContentError('상품 설명을 10글자 이상 입력하세요.');
+    } else {
+      setContentError('');
+    }
+  }, [productData]);
+
+  //뒤로가기
+  const handleMoveBack = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate(-1);
+  };
 
   //상품 데이터 조회
   const fetchProduct = async () => {
@@ -230,7 +278,7 @@ export default function ProductUpdate() {
             >
               {QUALITY.map((menu) => {
                 return (
-                  <MenuItem key={menu.id} value={menu.dbCode}>
+                  <MenuItem key={menu.id} value={menu.value}>
                     {menu.name}
                   </MenuItem>
                 );
@@ -253,6 +301,11 @@ export default function ProductUpdate() {
               }));
             }}
           ></TextField>
+          {!isValid && productData.name.length !== 0 ? (
+            <div style={{ color: 'red' }}>{nameError}</div>
+          ) : (
+            <> </>
+          )}
         </>
         <br />
         <br />
@@ -269,7 +322,7 @@ export default function ProductUpdate() {
               }));
             }}
           ></TextField>
-          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
+          {!isValid ? <div style={{ color: 'red' }}>{priceError}</div> : <></>}
         </>
         <br />
         <br />
@@ -286,7 +339,9 @@ export default function ProductUpdate() {
               }));
             }}
           ></TextField>
-          {/* {numberError && <div style={{ color: 'red' }}>{numberError}</div>} */}
+          {shippingFeesError && (
+            <div style={{ color: 'red' }}>{shippingFeesError}</div>
+          )}
         </>
         <br />
         <br />
@@ -304,15 +359,18 @@ export default function ProductUpdate() {
               onChange={contentChange}
             />
           )}
-          {/* 상품 설명을 10글자 이상 해야합니다 */}
-          {/* {contentError && <div style={{ color: 'red' }}>{contentError}</div>} */}
+          {!isValid && productData.content.length > 0 ? (
+            <div style={{ color: 'red' }}>{contentError}</div>
+          ) : (
+            <></>
+          )}
         </>
         <br />
         <Button type="submit" variant="contained">
           등록하기
         </Button>
       </form>
-      <Button type="button" variant="outlined" onClick={() => navigate(-1)}>
+      <Button type="button" variant="outlined" onClick={handleMoveBack}>
         취소
       </Button>
     </>

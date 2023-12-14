@@ -8,16 +8,17 @@ export const validatePassword = (password: string) => {
   return password.length >= 8;
 };
 
-export const validateProductTitle = (title: string) => {
-  return title.length > 2;
+export const validateProductName = (name: string) => {
+  return name.length >= 2;
 };
 
 export const validateProductContent = (content: string) => {
-  return content.length > 11;
+  return content.length >= 10;
 };
 
-export const validateProductPrice = (price: number) => {
-  return Number.isInteger(price);
+export const validateProductPrice = (price: number | string): boolean => {
+  const numricPrice = typeof price === 'string' ? parseFloat(price) : price;
+  return Number.isInteger(numricPrice);
 };
 
 export const validateProductShippingFees = (shippingFees: number) => {
