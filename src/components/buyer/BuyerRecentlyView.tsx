@@ -21,7 +21,7 @@ export default function BuyerRecentlyView() {
           <StyledCard key={product._id}>
             <CardActionArea component={Link} to={`/product/${product._id}`}>
               <ProductImage
-                image={product.mainImages[0]}
+                image={product.mainImages[0].path}
                 title={product.name}
               />
               <ProductDetails>

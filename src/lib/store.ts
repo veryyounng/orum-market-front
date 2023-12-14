@@ -4,7 +4,7 @@ import {
   ICartStore,
   ISearchState,
   IProduct,
-  IRecentlyViewdStore,
+  IRecentlyViewedStore,
 } from '../type';
 import { persist } from 'zustand/middleware';
 
@@ -81,7 +81,7 @@ export const useRecentViewProductStore = create(
     (set) => ({
       viewItems: [],
       addRecentViewProduct: (recentlyItem: IProduct) => {
-        set((state: IRecentlyViewdStore) => {
+        set((state: IRecentlyViewedStore) => {
           const checkingSameIndex = state.viewItems.findIndex(
             (item) => item._id === recentlyItem._id,
           );

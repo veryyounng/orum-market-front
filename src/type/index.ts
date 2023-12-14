@@ -95,7 +95,7 @@ export interface ISearchState {
   setSearchResult: (result: any[]) => void;
 }
 
-export interface IRecentlyViewdStore {
+export interface IRecentlyViewedStore {
   viewdItems: IProduct[];
   addRecentViewProduct: (newItem: IProduct) => void;
 }
