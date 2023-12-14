@@ -24,8 +24,3 @@ export const validateProductPrice = (price: number | string): boolean => {
 export const validateProductShippingFees = (shippingFees: number) => {
   return shippingFees % 1 === 0;
 };
-
-export const validateMainImages = (images: string): string[] => {
-  const imageArray = images.split(',').map((image) => image.trim());
-  return imageArray;
-};
