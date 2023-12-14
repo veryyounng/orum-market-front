@@ -14,8 +14,11 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.18",
+    "@mui/joy": "^5.0.0-beta.17",
     "@mui/material": "^5.14.18",
     "@mui/styled-engine-sc": "^6.0.0-alpha.6",
+    "@types/uuid": "^9.0.7",
+    "@toast-ui/react-editor": "^3.2.3",
     "axios": "^1.6.2",
     "framer-motion": "^10.16.15",
     "mem": "^10.0.0",
@@ -23,6 +26,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.20.0",
     "styled-components": "^6.1.1",
+    "uuid": "^9.0.1",
     "zustand": "^4.4.6"
   },
   "devDependencies": {

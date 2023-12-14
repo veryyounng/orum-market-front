@@ -8,23 +8,24 @@ export const validatePassword = (password: string) => {
   return password.length >= 8;
 };
 
-export const validateProductTitle = (title: string) => {
-  return title.length > 2;
+export const validateProductName = (name: string) => {
+  return name.length >= 2;
 };
 
 export const validateProductContent = (content: string) => {
-  return content.length > 11;
+  return content.length >= 10;
 };
 
-export const validateProductPrice = (price: number) => {
-  return Number.isInteger(price);
+export const validateProductPrice = (price: number | string): boolean => {
+  const numricPrice = typeof price === 'string' ? parseFloat(price) : price;
+  return Number.isInteger(numricPrice);
 };
 
 export const validateProductShippingFees = (shippingFees: number) => {
   return shippingFees % 1 === 0;
 };
 
-export const validateMainImages = (images: string): string[] => {
-  const imageArray = images.split(',').map((image) => image.trim());
-  return imageArray;
+export const validateTel = (tel: string) => {
+  const validTelRegex = /^01([0|1|6|7|8|9])([0-9]{3,4})([0-9]{4})$/;
+  return validTelRegex.test(tel);
 };
