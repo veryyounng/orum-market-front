@@ -168,8 +168,7 @@ export const api = {
     }),
 
   // 판매자 상품 목록 조회
-  getSellerProductInfo: (_id: number) =>
-    axiosInstance.get(`/seller/products/${_id}`),
+  getSellerProductInfo: () => axiosInstance.get(`/seller/products/`),
 
   // 상품 결제
   checkOut: (orderData: any) => axiosInstance.post('/orders/', orderData),
