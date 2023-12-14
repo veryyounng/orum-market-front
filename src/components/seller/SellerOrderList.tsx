@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import {
@@ -26,7 +26,6 @@ import { CATEGORY, QUALITY } from '../../constants/index';
 
 export default function SellerOrderList() {
   const _id = localStorage.getItem('_id');
-  const { id } = useParams();
 
   const [productList, setProductList] = useState<IProduct[]>([]);
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
