@@ -68,23 +68,3 @@ export const useSearchStore = create<ISearchState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSearchResult: (result) => set({ searchResult: result }),
 }));
-
-// 사용자 주소 상태 관리 store
-export const useUserAddressStore = create(
-  persist(
-    (set) => ({
-      addressName: '',
-      tel: 0,
-      name: '',
-      address: '',
-      updateAddressName: (addressName) =>
-        set(() => ({ addressName: addressName })),
-      updateTel: (Tel) => set(() => ({ Tel: Tel })),
-      updateName: (name) => set(() => ({ name: name })),
-      updateAddress: (address) => set(() => ({ address: address })),
-    }),
-    {
-      name: 'address',
-    },
-  ),
-);
