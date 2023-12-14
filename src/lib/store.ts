@@ -1,5 +1,11 @@
 import { create } from 'zustand';
-import { ICartItem, ICartStore, ISearchState } from '../type';
+import {
+  ICartItem,
+  ICartStore,
+  ISearchState,
+  IProduct,
+  IRecentlyViewdStore,
+} from '../type';
 import { persist } from 'zustand/middleware';
 
 // 로그인 상태 관리 store
@@ -68,3 +74,33 @@ export const useSearchStore = create<ISearchState>((set) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSearchResult: (result) => set({ searchResult: result }),
 }));
+
+// 최근 본 상품 store
+export const useRecentViewProductStore = create(
+  persist(
+    (set) => ({
+      viewItems: [],
+      addRecentViewProduct: (recentlyItem: IProduct) => {
+        set((state: IRecentlyViewdStore) => {
+          const checkingSameIndex = state.viewItems.findIndex(
+            (item) => item._id === recentlyItem._id,
+          );
+          if (checkingSameIndex !== -1) {
+            return state;
+          } else {
+            const updateViewItems = [
+              recentlyItem,
+              ...state.viewItems.slice(0, 9),
+            ];
+            return {
+              viewItems: updateViewItems,
+            };
+          }
+        });
+      },
+    }),
+    {
+      name: 'recentlyViewed',
+    },
+  ),
+);
