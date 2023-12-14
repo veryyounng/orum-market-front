@@ -14,8 +14,6 @@ export default function BuyerRecentlyView() {
   const getData = localStorage.getItem('recentlyViewed');
   const viewItems = JSON.parse(getData).state.viewItems;
 
-  console.log('상품 목록', viewItems);
-
   return (
     <>
       <Container>
