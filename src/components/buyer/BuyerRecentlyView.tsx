@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardMedia,
@@ -11,8 +12,21 @@ import {
 import { Link } from 'react-router-dom';
 
 export default function BuyerRecentlyView() {
-  const getData = localStorage.getItem('recentlyViewed');
-  const viewItems = JSON.parse(getData).state.viewItems;
+  const getData = localStorage?.getItem('recentlyViewed');
+  const viewItems = JSON.parse(getData)?.state?.viewItems;
+
+  if (!viewItems || viewItems?.length === 0) {
+    return (
+      <>
+        <Typography variant="h6">최근 본 상품이 없습니다.</Typography>
+        <Link to={`/`}>
+          <Button type="button" variant="outlined" size="medium">
+            상품 보러 가기
+          </Button>
+        </Link>
+      </>
+    );
+  }
 
   return (
     <>
