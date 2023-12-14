@@ -4,9 +4,6 @@ import {
   CardActionArea,
   CardMedia,
   Container,
-  Grid,
-  Grow,
-  IconButton,
   Typography,
   styled,
 } from '@mui/material';
@@ -23,7 +20,7 @@ export default function BuyerRecentlyView() {
     <>
       <Container>
         {viewItems.map((product) => (
-          <StyledCard>
+          <StyledCard key={product._id}>
             <CardActionArea component={Link} to={`/product/${product._id}`}>
               <ProductImage
                 image={product.mainImages[0]}
