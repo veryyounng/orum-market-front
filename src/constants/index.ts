@@ -32,7 +32,7 @@ export const DASHBOARD_MENU = {
   seller: [
     {
       id: 1,
-      title: '판매자 대시보드',
+      title: '판매 상품 관리',
       url: `/user/${_id}/seller-orderlist`,
     },
     {
@@ -42,7 +42,7 @@ export const DASHBOARD_MENU = {
     },
     {
       id: 3,
-      title: '상품 관리',
+      title: '주문 상태 관리',
       url: `/user/${_id}/product-manager`,
     },
   ],

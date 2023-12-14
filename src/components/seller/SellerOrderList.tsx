@@ -9,7 +9,6 @@ import {
   TableRow,
   TableCell,
   Paper,
-  ToggleButton,
   Typography,
   Box,
   Button,
@@ -18,7 +17,6 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
 
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
@@ -31,7 +29,6 @@ export default function SellerOrderList() {
   const [productList, setProductList] = useState<IProduct[]>([]);
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
-  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     fetchSellerProduct();
@@ -46,11 +43,10 @@ export default function SellerOrderList() {
   }
   const fetchSellerProduct = async () => {
     try {
-      console.log('판매자 id', _id);
       const response = await api.getSellerProductInfo();
       console.log('상품데이터 조회', response);
       const getMatchItem = response.data.item.filter(
-        (id: IProduct) => id.seller_id === Number(_id),
+        (product: IProduct) => product.seller_id === Number(_id),
       );
       setProductList(getMatchItem);
     } catch (error) {
@@ -167,12 +163,21 @@ export default function SellerOrderList() {
                   </TableCell>
                   <TableCell align="center">
                     <img
-                      src={`${rows.mainImages[0]}`}
+                      src={`${rows.mainImages[0].path}`}
                       alt="main-Image"
-                      style={{ width: '80px' }}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        objectFit: 'cover',
+                        borderRadius: '5px',
+                      }}
                     />
                   </TableCell>
-                  <TableCell align="center">{rows.name}</TableCell>
+                  <TableCell align="center">
+                    <Link to={`http://localhost:5173/product/${rows._id}`}>
+                      {rows.name}
+                    </Link>
+                  </TableCell>
                   <TableCell align="center">
                     {QUALITY.find((quality) => quality.value === rows.quantity)
                       ?.name || '상급'}
@@ -190,6 +195,16 @@ export default function SellerOrderList() {
                         gap: 1,
                       }}
                     ></Box>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Link
+                      to={`/user/${rows._id}/product-update`}
+                      state={{ productId: `${rows._id}` }}
+                    >
+                      <Button type="button" variant="contained">
+                        수정하기
+                      </Button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
