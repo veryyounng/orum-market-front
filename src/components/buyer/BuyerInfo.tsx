@@ -189,8 +189,6 @@ export default function BuyerInfo() {
         list.id === selectAddressId ? { ...list, ...addressEditData } : list,
         );
 
-      console.log('id값',selectAddressId, "변환값",  onEdit);
-
       const updateAddressData = {
         ...response.data.item,
         extra: {
