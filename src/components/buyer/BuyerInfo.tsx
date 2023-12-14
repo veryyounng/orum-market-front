@@ -196,7 +196,7 @@ export default function BuyerInfo() {
           address: [...onEdit],
         },
       };
-      api.updateUserInfo(userId, updateAddressData);
+      await api.updateUserInfo(userId, updateAddressData);
       alert('주소가 수정되었습니다.');
       window.location.reload();
     } catch (error) {
