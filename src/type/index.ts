@@ -83,3 +83,8 @@ export interface ISearchState {
   setSearchQuery: (query: string) => void;
   setSearchResult: (result: any[]) => void;
 }
+
+export interface IRecentlyViewdStore {
+  viewdItems: IProduct[];
+  addRecentViewProduct: (newItem: IProduct) => void;
+}
