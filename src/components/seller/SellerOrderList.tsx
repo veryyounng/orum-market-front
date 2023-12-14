@@ -16,7 +16,9 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  ToggleButton,
 } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 
 import { api } from '../../api/api';
 import { IProduct } from '../../type';
@@ -29,6 +31,7 @@ export default function SellerOrderList() {
   const [productList, setProductList] = useState<IProduct[]>([]);
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
+  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     fetchSellerProduct();
@@ -43,8 +46,7 @@ export default function SellerOrderList() {
   }
   const fetchSellerProduct = async () => {
     try {
-      const response = await api.getSellerProductInfo();
-      console.log('상품데이터 조회', response);
+      const response = await api.getProductList();
       const getMatchItem = response.data.item.filter(
         (product: IProduct) => product.seller_id === Number(_id),
       );
@@ -53,7 +55,6 @@ export default function SellerOrderList() {
       console.log('판매 상품 조회 실패', error);
     }
   };
-
   useEffect(() => {
     let sorted = [...productList];
     switch (sortOrder) {
@@ -137,6 +138,8 @@ export default function SellerOrderList() {
                 <TableCell align="center">상품명</TableCell>
                 <TableCell align="center">품질</TableCell>
                 <TableCell align="center">가격</TableCell>
+                <TableCell align="center">배송료</TableCell>
+                <TableCell align="center">공개여부</TableCell>
                 <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
@@ -179,13 +182,32 @@ export default function SellerOrderList() {
                     </Link>
                   </TableCell>
                   <TableCell align="center">
-                    {QUALITY.find((quality) => quality.value === rows.quantity)
-                      ?.name || '상급'}
+                    {rows.extra.sort
+                      ? QUALITY.find(
+                          (quality) => quality.value === rows.extra.sort,
+                        )?.name
+                      : QUALITY.find(
+                          (quality) => quality.value === rows.quantity,
+                        )?.name || 'Unknown Quality'}
                   </TableCell>
                   <TableCell align="center">
                     {rows.price.toLocaleString()}원
                   </TableCell>
-
+                  <TableCell align="center">
+                    {rows.shippingFees.toLocaleString()}원
+                  </TableCell>
+                  <TableCell align="center">
+                    <ToggleButton
+                      value="check"
+                      selected={isShow}
+                      size={'small'}
+                      onChange={() => {
+                        setIsShow(!rows.show);
+                      }}
+                    >
+                      <CheckIcon />
+                    </ToggleButton>
+                  </TableCell>
                   <TableCell align="center">
                     <Box
                       sx={{
