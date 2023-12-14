@@ -1,5 +1,6 @@
 import axios from 'axios';
 import initCreateData from '../../src/components/seller/ProductCreate';
+import { IProduct } from '../type';
 import { useUserStore } from '../lib/store';
 import { IProduct } from '../type';
 
