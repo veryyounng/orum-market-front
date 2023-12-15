@@ -1,26 +1,92 @@
-import { TextField } from '@mui/material';
-
-export interface IUserInfoAddress {
-  address: string;
-  handleChangeUserAddress: (address: string) => void;
-}
+import { Typography, TextField, FormLabel, Button, Box } from '@mui/material';
 
 export default function AddressForm({
-  address,
-  handleChangeUserAddress,
-}: IUserInfoAddress) {
+  data,
+  func,
+  setData,
+  submit,
+  title,
+  reset,
+}) {
   return (
     <>
-      <TextField
-        type="text"
-        placeholder="주소를 입력해주세요"
-        value={address}
-        onChange={(e) => {
-          handleChangeUserAddress(e.target.value);
-        }}
-        size="small"
-        fullWidth
-      />
+      <Typography variant="h6" fontWeight={700} mb={3}>
+        {title}
+      </Typography>
+      <form onSubmit={(e) => submit(e)}>
+        <FormLabel>배송지명*</FormLabel>
+        <TextField
+          type="text"
+          value={data?.addressName || ''}
+          placeholder="배송지명을 입력하세요. ex)집, 회사 등"
+          name="addressName"
+          size="small"
+          fullWidth
+          required
+          sx={{ marginBottom: '1rem' }}
+          onChange={func}
+        />
+        <FormLabel>수령인*</FormLabel>
+        <TextField
+          type="text"
+          value={data?.receiver || ''}
+          placeholder="이름"
+          name="receiver"
+          size="small"
+          fullWidth
+          required
+          sx={{ marginBottom: '1rem' }}
+          onChange={func}
+        />
+        <FormLabel>연락처*</FormLabel>
+        <TextField
+          type="tel"
+          value={data?.tel || ''}
+          placeholder="-없이 입력"
+          name="tel"
+          size="small"
+          fullWidth
+          required
+          sx={{ marginBottom: '1rem' }}
+          onChange={func}
+        />
+        <FormLabel>배송 주소*</FormLabel>
+        <TextField
+          type="text"
+          value={data?.mainAddress || ''}
+          placeholder="예) 서울특별시 강남구 테헤란로 443 "
+          name="mainAddress"
+          size="small"
+          fullWidth
+          required
+          sx={{ marginBottom: '0.4rem' }}
+          onChange={func}
+        />
+        <TextField
+          type="text"
+          value={data?.subAddress || ''}
+          placeholder="나머지 주소를 입력하세요 "
+          name="subAddress"
+          size="small"
+          fullWidth
+          required
+          sx={{ marginBottom: '1rem' }}
+          onChange={func}
+        />
+        <Box sx={{ display: 'flex', flexDirection: 'row' }} gap={3} my={3}>
+          <Button type="submit" size="large" variant="contained" fullWidth>
+            저장
+          </Button>
+          <Button
+            onClick={() => setData(reset)}
+            variant="outlined"
+            size="large"
+            fullWidth
+          >
+            취소
+          </Button>
+        </Box>
+      </form>
     </>
   );
 }

@@ -113,7 +113,7 @@ export const api = {
   signIn: (credentials: any) => axiosInstance.post('/users/login', credentials),
 
   // 유저 정보 조회
-  getUserInfo: (_id: any) => axiosInstance.get(`/users/${_id}`, _id),
+  getUserInfo: (_id: any) => axiosInstance.get(`/users/${_id}`),
 
   // 유저 정보 수정
   updateUserInfo: (_id: any, userData: any) =>

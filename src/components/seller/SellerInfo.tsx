@@ -22,7 +22,7 @@ const Form = styled.form`
 export default function SellerInfo() {
   const userId = localStorage.getItem('_id');
   const [sellerInfoData, setSellerInfoData] = useState<IUserInfo>({
-    _id: 0,
+    id: 0,
     email: '',
     name: '',
     address: '',
@@ -54,7 +54,7 @@ export default function SellerInfo() {
         const response = await api.getUserInfo(userId);
         setSellerInfoData({
           ...sellerInfoData,
-          _id: response.data.item._id,
+          id: response.data.item._id,
           email: response.data.item.email,
           name: response.data.item.name,
         });
