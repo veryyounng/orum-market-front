@@ -125,7 +125,7 @@ export default function SellerOrderList() {
           </Select>
         </FormControl>
         <TableContainer component={Paper}>
-          <Table aria-label="구매내역">
+          <Table aria-label="판매내역">
             <TableHead>
               <TableRow>
                 <TableCell align="center">

@@ -78,6 +78,7 @@ export default function ProductManager() {
     setSortedProductList(sorted);
   }, [productList, sortOrder]);
 
+  //   console.log('카테고리', productList[0].products[0].extra.category[1]);
   if (productList.length === 0) {
     return (
       <>
@@ -87,7 +88,6 @@ export default function ProductManager() {
       </>
     );
   }
-
   return (
     <>
       <Box
@@ -114,7 +114,7 @@ export default function ProductManager() {
           </Select>
         </FormControl>
         <TableContainer component={Paper}>
-          <Table aria-label="구매내역">
+          <Table aria-label="판매내역">
             <TableHead>
               <TableRow>
                 <TableCell align="center">
@@ -126,23 +126,36 @@ export default function ProductManager() {
                 <TableCell align="center">상품명</TableCell>
                 <TableCell align="center">가격</TableCell>
                 <TableCell align="center">배송상태</TableCell>
-
                 <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {sortedProductList.map((rows) => (
-                <TableRow key={rows}>
+                <TableRow key={rows._id}>
                   <TableCell align="center">
                     <Typography variant="body2" color="text.secondary">
                       {formatDate(rows.createdAt)}
                     </Typography>
                     ({rows._id})
                   </TableCell>
+                  <TableCell align="center">
+                    {/* {CATEGORY.depth2
+                      .filter(
+                        (category) =>
+                          category.dbCode ===
+                          rows.products[0].extra.category[1],
+                      )
+                      .map((categoryName) => (
+                        <Typography key={categoryName.id} variant="body2">
+                          {categoryName.name}
+                        </Typography>
+                      ))} */}
+                  </TableCell>
                   <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
-                  <TableCell align="center"></TableCell>
+                  <TableCell align="center">{rows.products[0].name}</TableCell>
+                  <TableCell align="center">
+                    {rows.products[0].price.toLocaleString()}원
+                  </TableCell>
                   <TableCell align="center">
                     {ORDER_STATE.codes.find(
                       (state) => state.code === orderList[0]?.state,
