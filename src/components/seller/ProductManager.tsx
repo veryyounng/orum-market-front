@@ -38,30 +38,16 @@ export default function ProductManager() {
   }
 
   useEffect(() => {
-    const fetchSellerProductData = async () => {
+    const getOrderCondition = async () => {
       try {
-        const response = await api.getProductList();
-        const getMatchItem = response.data.item.filter(
-          (id: IProduct) => id.seller_id === Number(_id),
-        );
-        setProductList(getMatchItem);
+        const response = await api.getOrderCondition();
+        console.log('판매상품의 주문상태 불러오기', response);
+        setProductList(response.data.item);
       } catch (error) {
-        console.log('상품 목록 조회에 실패했습니다', error);
+        console.log('판매자의 주문상태 불러오기', error);
       }
     };
-    fetchSellerProductData();
-  }, []);
-
-  useEffect(() => {
-    const getOrderProductInfo = async () => {
-      try {
-        const response = await api.getOrderProductInfo();
-        setOrderList(response.data.item);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    getOrderProductInfo();
+    getOrderCondition();
   }, []);
 
   // SORT 정렬
@@ -96,13 +82,8 @@ export default function ProductManager() {
     return (
       <>
         <Typography variant="h3" sx={{ marginBottom: '1rem' }}>
-          등록된 물품이 없습니다.
+          주문된 상품이 존재하지 않습니다.
         </Typography>
-        <Link to={`/user/${_id}/product-create`}>
-          <Button type="button" variant="contained" size="large">
-            물품 등록하러 가기
-          </Button>
-        </Link>
       </>
     );
   }
@@ -151,45 +132,17 @@ export default function ProductManager() {
             </TableHead>
             <TableBody>
               {sortedProductList.map((rows) => (
-                <TableRow key={rows._id}>
+                <TableRow key={rows}>
                   <TableCell align="center">
                     <Typography variant="body2" color="text.secondary">
                       {formatDate(rows.createdAt)}
                     </Typography>
                     ({rows._id})
                   </TableCell>
-                  <TableCell align="center">
-                    {CATEGORY.depth2
-                      .filter(
-                        (category) =>
-                          category.dbCode === rows.extra.category[1],
-                      )
-                      .map((categoryName) => (
-                        <Typography key={categoryName.id} variant="body2">
-                          {categoryName.name}
-                        </Typography>
-                      ))}
-                  </TableCell>
-                  <TableCell align="center">
-                    <img
-                      src={`${rows.mainImages[0].path}`}
-                      alt="main-Image"
-                      style={{
-                        width: '80px',
-                        height: '80px',
-                        objectFit: 'cover',
-                        borderRadius: '5px',
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Link to={`http://localhost:5173/product/${rows._id}`}>
-                      {rows.name}
-                    </Link>
-                  </TableCell>
-                  <TableCell align="center">
-                    {rows.price.toLocaleString()}원
-                  </TableCell>
+                  <TableCell align="center"></TableCell>
+                  <TableCell align="center"></TableCell>
+                  <TableCell align="center"></TableCell>
+                  <TableCell align="center"></TableCell>
                   <TableCell align="center">
                     {ORDER_STATE.codes.find(
                       (state) => state.code === orderList[0]?.state,
