@@ -12,8 +12,8 @@ import {
 import { Link } from 'react-router-dom';
 
 export default function BuyerRecentlyView() {
-  const getData = localStorage?.getItem('recentlyViewed');
-  const viewItems = JSON.parse(getData)?.state?.viewItems;
+  const recentlyViewedItems = localStorage?.getItem('recentlyViewed');
+  const viewItems = JSON.parse(recentlyViewedItems)?.state?.viewItems;
 
   if (!viewItems || viewItems?.length === 0) {
     return (

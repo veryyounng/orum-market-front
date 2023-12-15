@@ -88,12 +88,12 @@ export const useRecentViewProductStore = create(
           if (checkingSameIndex !== -1) {
             return state;
           } else {
-            const updateViewItems = [
+            const recentlyUpdateViewItems = [
               recentlyItem,
               ...state.viewItems.slice(0, 9),
             ];
             return {
-              viewItems: updateViewItems,
+              viewItems: recentlyUpdateViewItems,
             };
           }
         });
