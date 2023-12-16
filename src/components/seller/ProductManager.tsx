@@ -148,7 +148,9 @@ export default function ProductManager() {
                 <TableCell align="center">카테고리</TableCell>
                 <TableCell align="center">이미지</TableCell>
                 <TableCell align="center">상품명</TableCell>
+                <TableCell align="center">품질</TableCell>
                 <TableCell align="center">가격</TableCell>
+                <TableCell align="center">배송료</TableCell>
                 <TableCell align="center">배송상태</TableCell>
                 <TableCell align="center"></TableCell>
               </TableRow>
@@ -160,7 +162,7 @@ export default function ProductManager() {
                     <Typography variant="body2" color="text.secondary">
                       {formatDate(rows.createdAt)}
                     </Typography>
-                    ({rows._id})
+                    ({rows.products[0]._id})
                   </TableCell>
                   <TableCell align="center">
                     {/* {CATEGORY.depth2
@@ -177,8 +179,12 @@ export default function ProductManager() {
                   </TableCell>
                   <TableCell align="center"></TableCell>
                   <TableCell align="center">{rows.products[0].name}</TableCell>
+                  <TableCell align="center"></TableCell>
                   <TableCell align="center">
                     {rows.products[0].price.toLocaleString()}원
+                  </TableCell>
+                  <TableCell align="center">
+                    {rows.cost.shippingFees.toLocaleString()}원
                   </TableCell>
                   <TableCell align="center">
                     {getOrderStateLabel(rows.products[0]._id) || '주문없음'}
