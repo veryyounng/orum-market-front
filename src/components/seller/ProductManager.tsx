@@ -8,7 +8,6 @@ import {
   Paper,
   Typography,
   Box,
-  Button,
   Select,
   MenuItem,
   InputLabel,
@@ -22,11 +21,13 @@ import { CATEGORY, QUALITY, ORDER_STATE } from '../../constants/index';
 import { Link } from 'react-router-dom';
 
 export default function ProductManager() {
-  const _id = localStorage.getItem('_id');
   const [productList, setProductList] = useState<IProduct[]>([]);
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
   const [orderList, setOrderList] = useState<IOrderItem[]>([]);
+  const [productOrderStates, setProductOrderStates] = useState<
+    Record<string, string>
+  >({});
 
   // 날짜 변환 함수
   function formatDate(dateString: string) {
@@ -38,16 +39,26 @@ export default function ProductManager() {
   }
 
   useEffect(() => {
-    const getOrderCondition = async () => {
+    const getOrderState = async () => {
       try {
-        const response = await api.getOrderCondition();
+        const response = await api.getOrderState();
         console.log('판매상품의 주문상태 불러오기', response);
-        setProductList(response.data.item);
+        const orderState = response.data.item;
+        setProductList(orderState);
+        const orderStatesMap: Record<string, string> = {};
+        orderState.forEach((orderItem: IOrderItem) => {
+          orderItem.products.forEach((product) => {
+            orderStatesMap[product._id] = orderItem.state;
+          });
+        });
+
+        setProductOrderStates(orderStatesMap);
+        setOrderList(orderState);
       } catch (error) {
         console.log('판매자의 주문상태 불러오기', error);
       }
     };
-    getOrderCondition();
+    getOrderState();
   }, []);
 
   // SORT 정렬
@@ -78,7 +89,6 @@ export default function ProductManager() {
     setSortedProductList(sorted);
   }, [productList, sortOrder]);
 
-  //   console.log('카테고리', productList[0].products[0].extra.category[1]);
   if (productList.length === 0) {
     return (
       <>
@@ -88,6 +98,20 @@ export default function ProductManager() {
       </>
     );
   }
+  const getOrderStateLabel = (productId) => {
+    const orderItem = orderList.find((order) =>
+      order.products.some((product) => product._id === productId),
+    );
+
+    if (orderItem) {
+      const orderStateCode = ORDER_STATE.codes.find(
+        (code) => code.code === orderItem.state,
+      );
+      return orderStateCode ? orderStateCode.value : 'Unknown Order State';
+    }
+
+    return '주문 없음';
+  };
   return (
     <>
       <Box
@@ -157,9 +181,7 @@ export default function ProductManager() {
                     {rows.products[0].price.toLocaleString()}원
                   </TableCell>
                   <TableCell align="center">
-                    {ORDER_STATE.codes.find(
-                      (state) => state.code === orderList[0]?.state,
-                    )?.value || 'Unknown State'}
+                    {getOrderStateLabel(rows.products[0]._id) || '주문없음'}
                   </TableCell>
                   <Box
                     sx={{
