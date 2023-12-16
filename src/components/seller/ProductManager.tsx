@@ -112,6 +112,10 @@ export default function ProductManager() {
 
     return '주문 없음';
   };
+  const getQualityName = (quantity) => {
+    const qualityItem = QUALITY.find((q) => q.value === quantity);
+    return qualityItem ? qualityItem.name : 'Unknown Quality';
+  };
   return (
     <>
       <Box
@@ -145,7 +149,7 @@ export default function ProductManager() {
                   등록일자
                   <br /> (등록번호)
                 </TableCell>
-                <TableCell align="center">카테고리</TableCell>
+
                 <TableCell align="center">이미지</TableCell>
                 <TableCell align="center">상품명</TableCell>
                 <TableCell align="center">품질</TableCell>
@@ -164,22 +168,20 @@ export default function ProductManager() {
                     </Typography>
                     ({rows.products[0]._id})
                   </TableCell>
+
                   <TableCell align="center">
-                    {/* {CATEGORY.depth2
-                      .filter(
-                        (category) =>
-                          category.dbCode ===
-                          rows.products[0].extra.category[1],
-                      )
-                      .map((categoryName) => (
-                        <Typography key={categoryName.id} variant="body2">
-                          {categoryName.name}
-                        </Typography>
-                      ))} */}
+                    <img
+                      key={rows.products[0].image.img_id}
+                      src={rows.products[0].image.path}
+                      alt={'File Preview'}
+                      style={{ marginTop: '10px', maxWidth: '60%' }}
+                    />
                   </TableCell>
-                  <TableCell align="center"></TableCell>
                   <TableCell align="center">{rows.products[0].name}</TableCell>
-                  <TableCell align="center"></TableCell>
+                  <TableCell align="center">
+                    {' '}
+                    {getQualityName(rows.products[0].quantity)}
+                  </TableCell>
                   <TableCell align="center">
                     {rows.products[0].price.toLocaleString()}원
                   </TableCell>
