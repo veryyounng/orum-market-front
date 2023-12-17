@@ -179,9 +179,12 @@ export const api = {
   //판매자 주문 목록 조회
   getOrderState: () => axiosInstance.get('seller/orders/'),
 
-  //판매자 주문상태 관리
-  updateOrderState: (product_id: number) =>
-    axiosInstance.patch(`/seller/orders/${product_id}`, product_id),
+  //판매자 주문상태 수정
+  updateOrderState: (product_id: number, selectedOrderState: any) =>
+    axiosInstance.patch(`/seller/orders/${product_id}`, {
+      product_id,
+      selectedOrderState,
+    }),
 
   // 북마크 조회
   getBookmark: (product_id: number) =>

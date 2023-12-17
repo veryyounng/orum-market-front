@@ -12,6 +12,7 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Button,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -42,7 +43,6 @@ export default function ProductManager() {
     const getOrderState = async () => {
       try {
         const response = await api.getOrderState();
-        console.log('판매상품의 주문상태 불러오기', response);
         const orderState = response.data.item;
         setProductList(orderState);
         const orderStatesMap: Record<string, string> = {};
@@ -55,7 +55,7 @@ export default function ProductManager() {
         setProductOrderStates(orderStatesMap);
         setOrderList(orderState);
       } catch (error) {
-        console.log('판매자의 주문상태 불러오기', error);
+        console.log('판매자의 주문상태 조회 실패', error);
       }
     };
     getOrderState();
@@ -116,6 +116,16 @@ export default function ProductManager() {
     const qualityItem = QUALITY.find((q) => q.value === quantity);
     return qualityItem ? qualityItem.name : 'Unknown Quality';
   };
+
+  const updateOrderState = async (product_id, selectedOrderState) => {
+    // e.preventDefault();
+    try {
+      await api.updateOrderState(product_id, selectedOrderState);
+    } catch (error) {
+      console.log('상품 배송상태 수정 오류', error);
+    }
+  };
+
   return (
     <>
       <Box
@@ -157,6 +167,7 @@ export default function ProductManager() {
                 <TableCell align="center">배송료</TableCell>
                 <TableCell align="center">배송상태</TableCell>
                 <TableCell align="center"></TableCell>
+                <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -174,7 +185,12 @@ export default function ProductManager() {
                       key={rows.products[0].image.img_id}
                       src={rows.products[0].image.path}
                       alt={'File Preview'}
-                      style={{ marginTop: '10px', maxWidth: '60%' }}
+                      style={{
+                        width: '80px',
+                        height: '80px',
+                        objectFit: 'cover',
+                        borderRadius: '5px',
+                      }}
                     />
                   </TableCell>
                   <TableCell align="center">{rows.products[0].name}</TableCell>
@@ -189,7 +205,24 @@ export default function ProductManager() {
                     {rows.cost.shippingFees.toLocaleString()}원
                   </TableCell>
                   <TableCell align="center">
-                    {getOrderStateLabel(rows.products[0]._id) || '주문없음'}
+                    <Select
+                      label="주문 상태"
+                      value={getOrderStateLabel(rows.products[0]._id)}
+                      onChange={(e) =>
+                        updateOrderState(rows.products[0]._id, e.target.value)
+                      }
+                    >
+                      {ORDER_STATE.codes.map((state) => (
+                        <MenuItem key={state.code} value={state.value}>
+                          {state.value}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button type="button" variant="contained">
+                      수정하기
+                    </Button>
                   </TableCell>
                   <Box
                     sx={{
