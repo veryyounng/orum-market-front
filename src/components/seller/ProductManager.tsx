@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 
 import { api } from '../../api/api';
 import { IProduct, IOrderItem } from '../../type';
-import { CATEGORY, QUALITY, ORDER_STATE } from '../../constants/index';
+import { QUALITY, ORDER_STATE } from '../../constants/index';
 import { Link } from 'react-router-dom';
 
 export default function ProductManager() {
@@ -26,9 +26,6 @@ export default function ProductManager() {
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
   const [orderList, setOrderList] = useState<IOrderItem[]>([]);
-  const [productOrderStates, setProductOrderStates] = useState<
-    Record<string, string>
-  >({});
 
   // 날짜 변환 함수
   function formatDate(dateString: string) {
@@ -45,14 +42,6 @@ export default function ProductManager() {
         const response = await api.getOrderState();
         const orderState = response.data.item;
         setProductList(orderState);
-        const orderStatesMap: Record<string, string> = {};
-        orderState.forEach((orderItem: IOrderItem) => {
-          orderItem.products.forEach((product) => {
-            orderStatesMap[product._id] = orderItem.state;
-          });
-        });
-
-        setProductOrderStates(orderStatesMap);
         setOrderList(orderState);
       } catch (error) {
         console.log('판매자의 주문상태 조회 실패', error);
@@ -98,34 +87,50 @@ export default function ProductManager() {
       </>
     );
   }
-  const getOrderStateLabel = (productId) => {
-    const orderItem = orderList.find((order) =>
-      order.products.some((product) => product._id === productId),
-    );
 
-    if (orderItem) {
-      const orderStateCode = ORDER_STATE.codes.find(
-        (code) => code.code === orderItem.state,
-      );
-      return orderStateCode ? orderStateCode.value : 'Unknown Order State';
-    }
-
-    return '주문 없음';
-  };
   const getQualityName = (quantity) => {
     const qualityItem = QUALITY.find((q) => q.value === quantity);
     return qualityItem ? qualityItem.name : 'Unknown Quality';
   };
 
-  const updateOrderState = async (product_id, selectedOrderState) => {
-    // e.preventDefault();
+  const handleOrderStateChange = (product_id, selectedOrderState) => {
+    const updatedOrderList = orderList.map((order) => {
+      if (order.products.some((product) => product._id === product_id)) {
+        console.log('orderlist', orderList);
+        console.log('selectedOrderState', selectedOrderState);
+        return {
+          ...order,
+          state: selectedOrderState,
+        };
+      }
+      return order;
+    });
+    setOrderList(updatedOrderList);
+    setSortedProductList(updatedOrderList);
+  };
+
+  const updateOderState = async (product_id) => {
     try {
-      await api.updateOrderState(product_id, selectedOrderState);
+      const selectedProduct = sortedProductList.find(
+        (product) => product.products[0]._id === product_id,
+      );
+
+      if (selectedProduct) {
+        await api.updateOrderState(
+          selectedProduct.products[0]._id,
+          selectedProduct.state,
+        );
+
+        console.log('데이터 수정 버튼 누르면 들어오는지', product_id);
+        alert('해당 상품의 배송 상태가 수정되었습니다.');
+      } else {
+        console.log('상품을 찾을 수 없습니다.');
+      }
     } catch (error) {
       console.log('상품 배송상태 수정 오류', error);
     }
   };
-
+  console.log('주문 상태값', orderList);
   return (
     <>
       <Box
@@ -204,23 +209,31 @@ export default function ProductManager() {
                   <TableCell align="center">
                     {rows.cost.shippingFees.toLocaleString()}원
                   </TableCell>
+
                   <TableCell align="center">
                     <Select
                       label="주문 상태"
-                      value={getOrderStateLabel(rows.products[0]._id)}
+                      value={rows.state}
                       onChange={(e) =>
-                        updateOrderState(rows.products[0]._id, e.target.value)
+                        handleOrderStateChange(
+                          rows.products[0]._id,
+                          e.target.value,
+                        )
                       }
                     >
                       {ORDER_STATE.codes.map((state) => (
-                        <MenuItem key={state.code} value={state.value}>
+                        <MenuItem key={state.code} value={state.code}>
                           {state.value}
                         </MenuItem>
                       ))}
                     </Select>
                   </TableCell>
                   <TableCell align="center">
-                    <Button type="button" variant="contained">
+                    <Button
+                      type="button"
+                      variant="contained"
+                      onClick={() => updateOderState(rows.products[0]._id)}
+                    >
                       수정하기
                     </Button>
                   </TableCell>

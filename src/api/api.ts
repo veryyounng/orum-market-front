@@ -180,10 +180,10 @@ export const api = {
   getOrderState: () => axiosInstance.get('seller/orders/'),
 
   //판매자 주문상태 수정
-  updateOrderState: (product_id: number, selectedOrderState: any) =>
+  updateOrderState: (product_id: number, state: any) =>
     axiosInstance.patch(`/seller/orders/${product_id}`, {
       product_id,
-      selectedOrderState,
+      state,
     }),
 
   // 북마크 조회
