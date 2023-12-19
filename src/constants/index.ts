@@ -33,7 +33,7 @@ export const DASHBOARD_MENU = {
     {
       id: 1,
       title: '판매 상품 관리',
-      url: `/user/${_id}/seller-orderlist`,
+      url: `/user/${_id}/product-manager`,
     },
     {
       id: 2,
@@ -42,8 +42,8 @@ export const DASHBOARD_MENU = {
     },
     {
       id: 3,
-      title: '주문 상태 관리',
-      url: `/user/${_id}/product-manager`,
+      title: '주문 관리',
+      url: `/user/${_id}/seller-order-manager`,
     },
   ],
 };

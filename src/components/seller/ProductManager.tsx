@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
 import {
   TableContainer,
   Table,
@@ -13,35 +16,44 @@ import {
   InputLabel,
   FormControl,
   Button,
+  ToggleButton,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import CheckIcon from '@mui/icons-material/Check';
 
 import { api } from '../../api/api';
 import { IProduct, IOrderItem } from '../../type';
 import { QUALITY, ORDER_STATE } from '../../constants/index';
-import { Link } from 'react-router-dom';
+import formatDate from '../../lib/formatDate';
 
 export default function ProductManager() {
+  const _id = localStorage.getItem('_id');
+
   const [productList, setProductList] = useState<IProduct[]>([]);
   const [sortedProductList, setSortedProductList] = useState<IProduct[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
+  const [isShow, setIsShow] = useState(false);
   const [orderList, setOrderList] = useState<IOrderItem[]>([]);
 
-  // 날짜 변환 함수
-  function formatDate(dateString: string) {
-    return new Intl.DateTimeFormat('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }).format(new Date(dateString));
-  }
+  useEffect(() => {
+    getSellerProductInfo();
+  }, []);
+
+  const getSellerProductInfo = async () => {
+    try {
+      const response = await api.getSellerProductInfo();
+      const getMatchItem = response.data.item;
+      setProductList(getMatchItem);
+    } catch (error) {
+      console.log('판매 상품 조회 실패', error);
+    }
+  };
 
   useEffect(() => {
     const getOrderState = async () => {
       try {
         const response = await api.getOrderState();
         const orderState = response.data.item;
-        setProductList(orderState);
+        // setProductList(orderState);
         setOrderList(orderState);
       } catch (error) {
         console.log('판매자의 주문상태 조회 실패', error);
@@ -50,7 +62,6 @@ export default function ProductManager() {
     getOrderState();
   }, []);
 
-  // SORT 정렬
   useEffect(() => {
     let sorted = [...productList];
     switch (sortOrder) {
@@ -88,51 +99,25 @@ export default function ProductManager() {
     );
   }
 
-  const getQualityName = (quantity) => {
-    const qualityItem = QUALITY.find((q) => q.value === quantity);
-    return qualityItem ? qualityItem.name : 'Unknown Quality';
-  };
+  const getOrderStateLabel = (productId) => {
+    const orderItem = orderList.find((order) =>
+      order.products.some((product) => product._id === productId),
+    );
 
-  const handleOrderStateChange = (product_id, selectedOrderState) => {
-    const updatedOrderList = orderList.map((order) => {
-      if (order.products.some((product) => product._id === product_id)) {
-        console.log('orderlist', orderList);
-        console.log('selectedOrderState', selectedOrderState);
-        return {
-          ...order,
-          state: selectedOrderState,
-        };
-      }
-      return order;
-    });
-    setOrderList(updatedOrderList);
-    setSortedProductList(updatedOrderList);
-  };
-
-  const updateOderState = async (product_id) => {
-    try {
-      const selectedProduct = sortedProductList.find(
-        (product) => product.products[0]._id === product_id,
+    if (orderItem) {
+      const orderStateCode = ORDER_STATE.codes.find(
+        (code) => code.code === orderItem.state,
       );
-
-      if (selectedProduct) {
-        await api.updateOrderState(
-          selectedProduct.products[0]._id,
-          selectedProduct.state,
-        );
-
-        console.log('데이터 수정 버튼 누르면 들어오는지', product_id);
-        alert('해당 상품의 배송 상태가 수정되었습니다.');
-      } else {
-        console.log('상품을 찾을 수 없습니다.');
-      }
-    } catch (error) {
-      console.log('상품 배송상태 수정 오류', error);
+      return orderStateCode ? orderStateCode.value : 'Unknown Order State';
     }
+
+    return '판매중';
   };
-  console.log('주문 상태값', orderList);
   return (
     <>
+      <Link to={`/user/${_id}/product-create`}>
+        <Button variant="contained">등록하기</Button>
+      </Link>
       <Box
         sx={{
           display: 'flex',
@@ -169,9 +154,8 @@ export default function ProductManager() {
                 <TableCell align="center">상품명</TableCell>
                 <TableCell align="center">품질</TableCell>
                 <TableCell align="center">가격</TableCell>
-                <TableCell align="center">배송료</TableCell>
-                <TableCell align="center">배송상태</TableCell>
-                <TableCell align="center"></TableCell>
+                <TableCell align="center">주문상태</TableCell>
+                <TableCell align="center">공개여부</TableCell>
                 <TableCell align="center"></TableCell>
               </TableRow>
             </TableHead>
@@ -182,14 +166,13 @@ export default function ProductManager() {
                     <Typography variant="body2" color="text.secondary">
                       {formatDate(rows.createdAt)}
                     </Typography>
-                    ({rows.products[0]._id})
+                    ({rows._id})
                   </TableCell>
 
                   <TableCell align="center">
                     <img
-                      key={rows.products[0].image.img_id}
-                      src={rows.products[0].image.path}
-                      alt={'File Preview'}
+                      src={`${rows.mainImages[0].path}`}
+                      alt={`${rows.mainImages[0].id}`}
                       style={{
                         width: '80px',
                         height: '80px',
@@ -198,53 +181,56 @@ export default function ProductManager() {
                       }}
                     />
                   </TableCell>
-                  <TableCell align="center">{rows.products[0].name}</TableCell>
                   <TableCell align="center">
-                    {' '}
-                    {getQualityName(rows.products[0].quantity)}
+                    <Link to={`/product/${rows._id}`}>{rows.name}</Link>
                   </TableCell>
                   <TableCell align="center">
-                    {rows.products[0].price.toLocaleString()}원
+                    {rows.extra.sort
+                      ? QUALITY.find(
+                          (quality) => quality.value === rows.extra.sort,
+                        )?.name
+                      : QUALITY.find(
+                          (quality) => quality.value === rows.quantity,
+                        )?.name || 'Unknown Quality'}
                   </TableCell>
                   <TableCell align="center">
-                    {rows.cost.shippingFees.toLocaleString()}원
+                    {rows.price.toLocaleString()}원
                   </TableCell>
-
                   <TableCell align="center">
-                    <Select
-                      label="주문 상태"
-                      value={rows.state}
-                      onChange={(e) =>
-                        handleOrderStateChange(
-                          rows.products[0]._id,
-                          e.target.value,
-                        )
-                      }
+                    {getOrderStateLabel(rows._id) || ''}
+                  </TableCell>
+                  <TableCell align="center">
+                    <ToggleButton
+                      value="check"
+                      selected={isShow}
+                      size={'small'}
+                      onChange={() => {
+                        setIsShow(!rows.show);
+                      }}
                     >
-                      {ORDER_STATE.codes.map((state) => (
-                        <MenuItem key={state.code} value={state.code}>
-                          {state.value}
-                        </MenuItem>
-                      ))}
-                    </Select>
+                      <CheckIcon />
+                    </ToggleButton>
                   </TableCell>
                   <TableCell align="center">
-                    <Button
-                      type="button"
-                      variant="contained"
-                      onClick={() => updateOderState(rows.products[0]._id)}
-                    >
-                      수정하기
-                    </Button>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 1,
+                      }}
+                    ></Box>
                   </TableCell>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: 1,
-                    }}
-                  ></Box>
+                  <TableCell align="center">
+                    <Link
+                      to={`/user/${rows._id}/product-update`}
+                      state={{ productId: `${rows._id}` }}
+                    >
+                      <Button type="button" variant="contained">
+                        수정하기
+                      </Button>
+                    </Link>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
