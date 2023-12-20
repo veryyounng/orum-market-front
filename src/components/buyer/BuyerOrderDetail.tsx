@@ -25,8 +25,6 @@ export default function OrderListTable() {
   const orderId = location.state.productId;
   const [orderDetail, setOrderDetail] = useState({});
 
-  console.log('location', location);
-
   // 구매자 구매 목록 상세조회
   useEffect(() => {
     const fetchBuyerOrderList = async () => {
@@ -39,8 +37,6 @@ export default function OrderListTable() {
     };
     fetchBuyerOrderList();
   }, []);
-
-  console.log('상태', orderDetail);
 
   const orderState = (list: string) =>
     ORDER_STATE.codes
@@ -203,7 +199,7 @@ export default function OrderListTable() {
             </TableHead>
             <TableBody>
               {orderDetail?.products?.map((list) => (
-                <TableRow key={list.id}>
+                <TableRow key={list._id}>
                   <TableCell align="center">
                     <CardMedia
                       component="img"
@@ -236,7 +232,7 @@ export default function OrderListTable() {
           <>
             <Card sx={{ marginBottom: '20px', boxShadow: 'none' }}>
               {orderDetail?.products?.map((list) => (
-                <OrderProductList>
+                <OrderProductList key={list._id}>
                   <CardMedia
                     component="img"
                     height="180"

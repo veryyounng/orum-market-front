@@ -42,15 +42,14 @@ export default function OrderListTable({
           >
             {stateValue.value}
           </Typography>
-          <OrderReviewBox>
-            {stateValue.value === '배송 완료' ? (
-              <Button variant="outlined" size="small" fullWidth>
-                별점평가
-              </Button>
-            ) : (
-              ''
-            )}
-          </OrderReviewBox>
+
+          {stateValue.value === '배송 완료' ? (
+            <Button variant="outlined" size="small">
+              별점평가
+            </Button>
+          ) : (
+            ''
+          )}
         </Box>
       ));
 
@@ -260,13 +259,6 @@ const OrderProductList = styled(Box)({
   alignItems: 'flex-start',
   justifyContent: 'flex-start',
   borderBottom: '1px solid #e2e2e2',
-});
-
-const OrderReviewBox = styled(Box)({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingRight: '10px',
 });
 
 const TableHeaderCell = styled(TableCell)({
