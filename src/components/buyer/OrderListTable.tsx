@@ -54,6 +54,10 @@ export default function OrderListTable({
         </Box>
       ));
 
+  const handleMoveTo = () => {
+    window.scrollTo(0, 0);
+  };
+
   return (
     <>
       {matches ? (
@@ -122,11 +126,7 @@ export default function OrderListTable({
                     </TableRow>
                   ))}
                   <TableRow>
-                    <TableCell
-                      colSpan={6}
-                      sx={{ padding: '0' }}
-                      variant="footer"
-                    >
+                    <TableCell colSpan={6} sx={{ padding: '0' }}>
                       <Box
                         sx={{
                           display: 'flex',
@@ -158,6 +158,7 @@ export default function OrderListTable({
         </>
       ) : (
         <>
+          {/* 해상도 1200px 이하 */}
           {orderList.map((list) => (
             <Card
               sx={{ marginBottom: '20px', boxShadow: 'none' }}
@@ -169,6 +170,7 @@ export default function OrderListTable({
                 </Typography>
                 <Link
                   to={`/user/${id}/buyer-orderlist/${list._id}`}
+                  onClick={handleMoveTo}
                   state={{ productId: list._id }}
                 >
                   <Button sx={{ padding: '0', margin: '0' }}>
@@ -196,7 +198,7 @@ export default function OrderListTable({
                       variant="subtitle2"
                       fontStyle={{ color: '#646464' }}
                     >
-                      주문번호: {product._id}
+                      주문번호: {list._id}
                     </Typography>
                     <Typography
                       variant="body1"
