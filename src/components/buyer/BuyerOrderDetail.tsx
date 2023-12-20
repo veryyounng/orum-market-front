@@ -4,7 +4,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Button,
   Typography,
   Table,
   useMediaQuery,
@@ -16,29 +15,32 @@ import {
 } from '@mui/material';
 import formatDate from '../../lib/formatDate';
 import { ORDER_STATE } from '../../constants';
-import { ChevronRight } from '@mui/icons-material';
 import { Link, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
 
 export default function OrderListTable() {
   const matches = useMediaQuery('(min-width:1200px)');
   const location = useLocation();
-  const productId = location.state.productId;
-  console.log(productId);
+  const orderId = location.state.productId;
+  const [orderDetail, setOrderDetail] = useState({});
+
+  console.log('location', location);
 
   // 구매자 구매 목록 상세조회
   useEffect(() => {
     const fetchBuyerOrderList = async () => {
       try {
-        const response = await api.getOrderProductDetail(productId);
-        console.log(response.data.item);
+        const response = await api.getOrderProductDetail(orderId);
+        setOrderDetail(response.data.item);
       } catch (error) {
         console.log('구매목록 조회에 실패했습니다.', error);
       }
     };
     fetchBuyerOrderList();
   }, []);
+
+  console.log('상태', orderDetail);
 
   const orderState = (list: string) =>
     ORDER_STATE.codes
@@ -54,15 +56,6 @@ export default function OrderListTable() {
           >
             {stateValue.value}
           </Typography>
-          <OrderReviewBox>
-            {stateValue.value === '배송 완료' ? (
-              <Button variant="outlined" size="small" fullWidth>
-                별점평가
-              </Button>
-            ) : (
-              ''
-            )}
-          </OrderReviewBox>
         </Box>
       ));
 
@@ -92,19 +85,19 @@ export default function OrderListTable() {
           <TableBody>
             <TableRow>
               <BasicHeadCell>주문번호</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderDetail._id}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문일자</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderDetail.createdAt}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문자</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderDetail?.value?.name}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문상태</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderState(orderDetail.state)}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -128,15 +121,25 @@ export default function OrderListTable() {
           <TableBody>
             <TableRow>
               <BasicHeadCell>총 결제금액</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>
+                <Typography variant="body2" color={'red'} fontWeight={700}>
+                  {orderDetail?.cost?.total.toLocaleString()}원
+                </Typography>
+              </TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>상품금액</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>
+                {orderDetail?.cost?.products.toLocaleString()}원 (할인금액:
+                &nbsp;
+                {orderDetail?.cost?.discount.products.toLocaleString()}원)
+              </TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>배송비</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>
+                {orderDetail?.cost?.shippingFees?.toLocaleString()}원
+              </TableCell>
             </TableRow>
           </TableBody>
         </BasicTable>
@@ -160,11 +163,11 @@ export default function OrderListTable() {
           <TableBody>
             <TableRow>
               <BasicHeadCell>수령인</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderDetail?.value?.name}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>배송주소</BasicHeadCell>
-              <TableCell>dd</TableCell>
+              <TableCell>{orderDetail?.value?.value}</TableCell>
             </TableRow>
           </TableBody>
         </BasicTable>
@@ -199,65 +202,75 @@ export default function OrderListTable() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell align="center">
-                  <CardMedia
-                    component="img"
-                    height="150"
-                    style={{ width: '150px', objectFit: 'cover' }}
-                    // image={product.image.path}
-                    // alt={product.name}
-                  />
-                </TableCell>
-                <TableCell align="left"></TableCell>
-                <TableCell align="center"></TableCell>
-                <TableCell align="center"></TableCell>
-              </TableRow>
+              {orderDetail?.products?.map((list) => (
+                <TableRow key={list.id}>
+                  <TableCell align="center">
+                    <CardMedia
+                      component="img"
+                      height="150"
+                      style={{ width: '150px', objectFit: 'cover' }}
+                      image={list.image.path}
+                      alt={list.name}
+                    />
+                  </TableCell>
+
+                  <TableCell align="left">
+                    <Link
+                      to={`/product/${list._id}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      {list.name}
+                    </Link>
+                  </TableCell>
+                  <TableCell align="center">
+                    {list.price.toLocaleString()}원
+                  </TableCell>
+                  <TableCell align="center">
+                    {orderState(orderDetail.state)}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         ) : (
           <>
-            <Card
-              sx={{ marginBottom: '20px', boxShadow: 'none' }}
-              // key={list._id}
-            >
-              {/* {list.products.map((product) => ( */}
-              <OrderProductList>
-                <CardMedia
-                  component="img"
-                  height="180"
-                  style={{ width: '180px', objectFit: 'cover' }}
-                  // image={product.image.path}
-                  // alt={product.name}
-                  sx={{ padding: '15px' }}
-                />
-                <CardContent
-                  sx={{
-                    padding: '15px 0 0 0 ',
-                    margin: '0',
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    fontStyle={{ color: '#646464' }}
+            <Card sx={{ marginBottom: '20px', boxShadow: 'none' }}>
+              {orderDetail?.products?.map((list) => (
+                <OrderProductList>
+                  <CardMedia
+                    component="img"
+                    height="180"
+                    style={{ width: '180px', objectFit: 'cover' }}
+                    image={list.image.path}
+                    alt={list.name}
+                    sx={{ padding: '15px' }}
+                  />
+                  <CardContent
+                    sx={{
+                      padding: '15px 0 0 0 ',
+                      margin: '0',
+                    }}
                   >
-                    {/* 주문번호: {product._id} */}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    fontWeight={700}
-                    textOverflow={'ellipsis'}
-                    marginTop={0.3}
-                  >
-                    {/* {product.name} */}
-                  </Typography>
-                  <Typography variant="body1" marginTop={0.5}>
-                    {/* {product.price.toLocaleString()}원 */}
-                  </Typography>
-                  {/* {orderState(list.state)} */}
-                </CardContent>
-              </OrderProductList>
-              {/* ))} */}
+                    <Link
+                      to={`/product/${list._id}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <Typography
+                        variant="body1"
+                        fontWeight={700}
+                        textOverflow={'ellipsis'}
+                        marginTop={0.3}
+                      >
+                        {list.name}
+                      </Typography>
+                    </Link>
+                    <Typography variant="body1" marginTop={0.5}>
+                      {list.price.toLocaleString()}원
+                    </Typography>
+                    {orderState(orderDetail.state)}
+                  </CardContent>
+                </OrderProductList>
+              ))}
             </Card>
             {/* ))} */}
           </>
@@ -267,14 +280,6 @@ export default function OrderListTable() {
   );
 }
 
-const OrderListBox = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  padding: '15px 0 15px 15px ',
-  borderBottom: '1px solid #e2e2e2',
-});
-
 const OrderProductList = styled(Box)({
   display: 'flex',
   alignItems: 'flex-start',
@@ -282,25 +287,8 @@ const OrderProductList = styled(Box)({
   borderBottom: '1px solid #e2e2e2',
 });
 
-const OrderReviewBox = styled(Box)({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingRight: '10px',
-});
-
 const TableHeaderCell = styled(TableCell)({
   fontWeight: '700',
-});
-
-const OrderPriceBox = styled(Box)({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '10px',
-  marginBottom: '15px',
-  borderBottom: '1px solid #e2e2e2',
 });
 
 const BasicHeadCell = styled(TableCell)({
