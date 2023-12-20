@@ -13,17 +13,18 @@ import {
   CardContent,
   styled,
 } from '@mui/material';
-import formatDate from '../../lib/formatDate';
+// import formatDate from '../../lib/formatDate';
 import { ORDER_STATE } from '../../constants';
 import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { api } from '../../api/api';
+import { IOrderItemDetail } from '../../type';
 
 export default function OrderListTable() {
   const matches = useMediaQuery('(min-width:1200px)');
   const location = useLocation();
   const orderId = location.state.productId;
-  const [orderDetail, setOrderDetail] = useState({});
+  const [orderDetail, setOrderDetail] = useState<IOrderItemDetail>();
 
   // 구매자 구매 목록 상세조회
   useEffect(() => {
@@ -81,11 +82,11 @@ export default function OrderListTable() {
           <TableBody>
             <TableRow>
               <BasicHeadCell>주문번호</BasicHeadCell>
-              <TableCell>{orderDetail._id}</TableCell>
+              <TableCell>{orderDetail?._id}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문일자</BasicHeadCell>
-              <TableCell>{orderDetail.createdAt}</TableCell>
+              <TableCell>{orderDetail?.createdAt}</TableCell>
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문자</BasicHeadCell>
@@ -93,7 +94,7 @@ export default function OrderListTable() {
             </TableRow>
             <TableRow>
               <BasicHeadCell>주문상태</BasicHeadCell>
-              <TableCell>{orderState(orderDetail.state)}</TableCell>
+              <TableCell>{orderState(orderDetail?.state || '')}</TableCell>
             </TableRow>
           </TableBody>
         </Table>

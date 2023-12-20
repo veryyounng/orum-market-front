@@ -76,6 +76,13 @@ export interface IOrderItem {
   updatedAt: string;
 }
 
+export interface IOrderItemDetail extends IOrderItem {
+  value: {
+    name: string;
+    value: string;
+  };
+}
+
 interface IOrderProduct {
   _id: number;
   quantity: number;
