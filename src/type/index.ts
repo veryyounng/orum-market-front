@@ -127,3 +127,19 @@ export interface IProductListQuery {
   page?: number;
   limit?: number;
 }
+
+export interface IProductListQueryParams {
+  page: number;
+  limit: number;
+  [key: string]: string | number;
+}
+
+export interface IProductListResponse {
+  item: IProduct[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPage: number;
+  };
+}

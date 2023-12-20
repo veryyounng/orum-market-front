@@ -3,6 +3,7 @@ import {
   Button,
   Grid,
   Grow,
+  Pagination,
   Skeleton,
   Slide,
   Typography,
@@ -16,7 +17,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { CircularProgress } from '@mui/material';
 
 import ProductCard from './ProductCard';
 import { SearchSection } from '../../components/search/SearchSection';
@@ -45,6 +45,8 @@ export function SearchPage() {
   const [selectedPrice, setSelectedPrice] = useState('전체');
   const [selectedShippingFee, setSelectedShippingFee] = useState('전체');
   const [isDataFetched, setIsDataFetched] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   const { addRecentViewProduct } = useRecentViewProductStore() as {
     addRecentViewProduct: Function;
@@ -57,15 +59,40 @@ export function SearchPage() {
   function toggleSidebar() {
     setIsSidebarOpen(!isSidebarOpen);
   }
-  const productListQuery = {};
+  const productListQuery = {
+    page: currentPage,
+    limit: 12,
+  };
   const { data, error, isLoading } = useFetchProducts(productListQuery);
 
   useEffect(() => {
     if (data) {
       setSearchResult(Array.isArray(data.data.item) ? data.data.item : []);
+      setTotalPage(data.data.pagination?.totalPages);
+      console.log('data', data);
       setIsDataFetched(true);
     }
-  }, [data, setSearchResult]);
+  }, [data, setSearchResult, currentPage]);
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    page: number,
+  ) => {
+    setCurrentPage(page);
+  };
+
+  const paginationControl = (
+    <Box sx={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+      <Pagination
+        count={totalPage}
+        page={currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        showFirstButton
+        showLastButton
+      />
+    </Box>
+  );
 
   if (error) {
     console.error('Error fetching products:', error);
@@ -364,6 +391,9 @@ export function SearchPage() {
             {productGrid}
           </Grid>
         </Grid>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+        {paginationControl}
       </Box>
     </Box>
   );
