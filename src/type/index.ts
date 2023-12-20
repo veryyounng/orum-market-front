@@ -61,7 +61,7 @@ export interface IOrderItem {
   _id: number;
   user_id: number;
   state: string;
-  products: IProduct[];
+  products: IOrderProduct[];
   cost: {
     discount: number[];
     products: number;
@@ -101,4 +101,27 @@ export interface ISearchState {
 export interface IRecentlyViewedStore {
   viewdItems: IProduct[];
   addRecentViewProduct: (newItem: IProduct) => void;
+}
+
+export interface IOrderProduct {
+  _id: number;
+  seller_id: number;
+  state: string;
+  name: string;
+  image: {
+    id: string;
+    path: string;
+  };
+  quantity: number;
+  price: number;
+  history: [
+    {
+      actor: number;
+      updated: {
+        state: string;
+        memo: string;
+      };
+      createdAt: string;
+    },
+  ];
 }
