@@ -18,6 +18,7 @@ import formatDate from '../../lib/formatDate';
 import { ORDER_STATE } from '../../constants';
 import { ChevronRight } from '@mui/icons-material';
 import { IOrderItem } from '../../type';
+import { Link } from 'react-router-dom';
 
 export default function OrderListTable({
   orderList,
@@ -54,6 +55,9 @@ export default function OrderListTable({
 
   return (
     <>
+      <Link to={`/user/4/buyer-orderlist/3`}>
+        <Button>test</Button>
+      </Link>
       {matches ? (
         <>
           <TableContainer>
