@@ -26,6 +26,7 @@ export default function OrderListTable({
   orderList: IOrderItem[];
 }) {
   const matches = useMediaQuery('(min-width:1200px)');
+  const id = localStorage.getItem('_id');
 
   const orderState = (list: string) =>
     ORDER_STATE.codes
@@ -55,13 +56,10 @@ export default function OrderListTable({
 
   return (
     <>
-      <Link to={`/user/4/buyer-orderlist/3`}>
-        <Button>test</Button>
-      </Link>
       {matches ? (
         <>
           <TableContainer>
-            <Table aria-label="결제내역">
+            <Table aria-label="구매내역">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell align="center" sx={{ width: '160px' }}>
@@ -79,9 +77,9 @@ export default function OrderListTable({
                 </TableRow>
               </TableHead>
               {orderList.map((list) => (
-                <TableBody>
+                <TableBody key={list._id}>
                   {list.products.map((product) => (
-                    <TableRow>
+                    <TableRow key={product._id}>
                       <TableCell align="center" sx={{ minWidth: '80px' }}>
                         {formatDate(list.createdAt)} <br />
                         <Typography variant="caption">
@@ -97,7 +95,14 @@ export default function OrderListTable({
                           alt={product.name}
                         />
                       </TableCell>
-                      <TableCell align="left"> {product.name}</TableCell>
+                      <TableCell align="left">
+                        <Link
+                          to={`/product/${product._id}`}
+                          style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                          {product.name}
+                        </Link>
+                      </TableCell>
                       <TableCell align="center">
                         {product.price.toLocaleString()}원
                       </TableCell>
@@ -105,14 +110,23 @@ export default function OrderListTable({
                         {orderState(list.state)}
                       </TableCell>
                       <TableCell align="center">
-                        <Button sx={{ padding: '0', margin: '0' }}>
-                          상세보기 <ChevronRight />
-                        </Button>
+                        <Link
+                          to={`/user/${id}/buyer-orderlist/${list._id}`}
+                          state={{ productId: list._id }}
+                        >
+                          <Button sx={{ padding: '0', margin: '0' }}>
+                            상세보기 <ChevronRight />
+                          </Button>
+                        </Link>
                       </TableCell>
                     </TableRow>
                   ))}
                   <TableRow>
-                    <TableCell colSpan={6} sx={{ padding: '0' }}>
+                    <TableCell
+                      colSpan={6}
+                      sx={{ padding: '0' }}
+                      variant="footer"
+                    >
                       <Box
                         sx={{
                           display: 'flex',
@@ -153,16 +167,21 @@ export default function OrderListTable({
                 <Typography variant="body1" fontWeight={700}>
                   {formatDate(list.createdAt)}
                 </Typography>
-                <Button sx={{ padding: '0', margin: '0' }}>
-                  상세보기 <ChevronRight />
-                </Button>
+                <Link
+                  to={`/user/${id}/buyer-orderlist/${list._id}`}
+                  state={{ productId: list._id }}
+                >
+                  <Button sx={{ padding: '0', margin: '0' }}>
+                    상세보기 <ChevronRight />
+                  </Button>
+                </Link>
               </OrderListBox>
               {list.products.map((product) => (
                 <OrderProductList key={product._id}>
                   <CardMedia
                     component="img"
                     height="180"
-                    style={{ width: '200px', objectFit: 'cover' }}
+                    style={{ width: '180px', objectFit: 'cover' }}
                     image={product.image.path}
                     alt={product.name}
                     sx={{ padding: '15px' }}
