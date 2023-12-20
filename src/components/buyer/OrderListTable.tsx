@@ -143,7 +143,9 @@ export default function OrderListTable({
                           &nbsp;상품금액 {list.cost.products.toLocaleString()} +
                           {list.cost.shippingFees === 0
                             ? ' 배송비 무료 ='
-                            : ` 배송비 ${list.cost.shippingFees.toLocaleString()} =`}
+                            : ` 배송비 ${list.cost.shippingFees.toLocaleString()}`}{' '}
+                          - 할인금액&nbsp;
+                          {list.cost.discount.products.toLocaleString()} ={' '}
                         </Typography>
                         <Typography variant="body2" fontWeight={700}>
                           &nbsp;{list.cost.total.toLocaleString()}원
@@ -200,14 +202,19 @@ export default function OrderListTable({
                     >
                       주문번호: {list._id}
                     </Typography>
-                    <Typography
-                      variant="body1"
-                      fontWeight={700}
-                      textOverflow={'ellipsis'}
-                      marginTop={0.3}
+                    <Link
+                      to={`/product/${product._id}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
                     >
-                      {product.name}
-                    </Typography>
+                      <Typography
+                        variant="body1"
+                        fontWeight={700}
+                        textOverflow={'ellipsis'}
+                        marginTop={0.3}
+                      >
+                        {product.name}
+                      </Typography>
+                    </Link>
                     <Typography variant="body1" marginTop={0.5}>
                       {product.price.toLocaleString()}원
                     </Typography>
@@ -223,7 +230,8 @@ export default function OrderListTable({
                       상품금액 {list.cost.products.toLocaleString()} +
                       {list.cost.shippingFees === 0
                         ? ' 배송비 무료'
-                        : ` 배송비 ${list.cost.shippingFees.toLocaleString()}`}
+                        : ` 배송비 ${list.cost.shippingFees.toLocaleString()}`}{' '}
+                      - 할인금액 {list.cost.discount.products.toLocaleString()}
                     </Typography>
                   </Typography>
                   <Typography variant="body2" fontWeight={700}>
