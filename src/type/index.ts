@@ -73,6 +73,24 @@ export interface IOrderItem {
   updatedAt: string;
 }
 
+interface IOrderProduct {
+  _id: number;
+  quantity: number;
+  seller_id: number;
+  name: string;
+  image: {
+    id: string;
+    path: string;
+  };
+  price: number;
+  extra: {
+    isNew: boolean;
+    isBest: boolean;
+    category: string[];
+    sort: number;
+  };
+}
+
 export interface IUserInfo {
   id: number;
   email: string;
@@ -103,25 +121,9 @@ export interface IRecentlyViewedStore {
   addRecentViewProduct: (newItem: IProduct) => void;
 }
 
-export interface IOrderProduct {
-  _id: number;
-  seller_id: number;
-  state: string;
-  name: string;
-  image: {
-    id: string;
-    path: string;
-  };
-  quantity: number;
-  price: number;
-  history: [
-    {
-      actor: number;
-      updated: {
-        state: string;
-        memo: string;
-      };
-      createdAt: string;
-    },
-  ];
+export interface IProductListQuery {
+  category?: string;
+  sort?: string;
+  page?: number;
+  limit?: number;
 }

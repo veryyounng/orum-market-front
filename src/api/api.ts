@@ -122,7 +122,8 @@ export const api = {
   // 상품 목록 조회
   getProductList: (query: IProductListQuery = {}) => {
     const queryString = new URLSearchParams(query as any).toString();
-    return axiosInstance.get(`/products/?${queryString}`);
+    const response = axiosInstance.get(`/products/?${queryString}`);
+    return response;
   },
 
   // 상품 카테고리 조회
@@ -203,6 +204,10 @@ export const api = {
 
   // 내 북마크 목록 조회
   getMyBookMark: () => axiosInstance.get('/bookmarks/'),
+
+  // 구매자 구매 상세 조회
+  getOrderProductDetail: (order_id: number) =>
+    axiosInstance.get(`/orders/${order_id}`),
 };
 
 interface IProductListQuery {
