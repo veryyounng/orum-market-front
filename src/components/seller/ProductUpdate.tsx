@@ -81,7 +81,7 @@ export default function ProductUpdate() {
     try {
       const response = await api.getProduct(Number(id));
       const mainImagesWithId = response.data.item.mainImages.map(
-        (image, index) => ({
+        (image: any, index: any) => ({
           img_id: image.id || index.toString(),
           path: image.path || image,
         }),
@@ -113,7 +113,8 @@ export default function ProductUpdate() {
   //파일 업로드를 눌렀을때 실행
   const clickFileUpload = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fileInput = e.target.files;
+    const fileInput = (e.target as HTMLInputElement).files;
+
     if (!fileInput) return;
 
     const totalFiles = filePreview.length + fileInput.length;

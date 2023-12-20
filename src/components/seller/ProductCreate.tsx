@@ -45,33 +45,17 @@ import {
 import Check from '@mui/icons-material/Check';
 import { useMutation } from 'react-query';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const initCreateData = {
-  price: 0,
-  shippingFees: 0,
-  show: true,
-  active: true,
-  name: '',
-  mainImages: [],
-  content: '',
-  createdAt: '',
-  updatedAt: '',
-  quantity: 1,
-  buyQuantity: 0,
-  extra: {
-    isNew: true,
-    isBest: true,
-    category: ['H01', 'H0101'],
-    sort: 1,
-  },
-};
+import { initProductData } from '../../lib/initProductData';
 
 export default function ProductCreate() {
   const userId = localStorage.getItem('_id');
 
   const [productData, setProductData] =
-    useState<Partial<IProduct>>(initCreateData);
+    useState<Partial<IProduct>>(initProductData);
   const [isValid, setIsValid] = useState(true);
-  const [filePreview, setFilePreview] = useState([]);
+  const [filePreview, setFilePreview] = useState<
+    { id: string; path: string }[]
+  >([]);
   const [italic, setItalic] = useState(false);
   const [fontWeight, setFontWeight] = useState('normal');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -86,7 +70,7 @@ export default function ProductCreate() {
   const [contentError, setContentError] = useState('');
 
   // 사진 클릭시 팝업
-  const handleClickOpen = (image) => {
+  const handleClickOpen = (image: any) => {
     setSelectedImage(image);
     setOpenDialog(true);
   };
@@ -140,13 +124,16 @@ export default function ProductCreate() {
   //뒤로가기
   const handleMoveBack = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
     if (window.confirm('작성한 내용이 저장되지 않습니다. 취소하시겠습니까?'))
       navigate(-1);
   };
 
   //카테고리 상태값 업데이트
-  const handleCategoryChange = (event, newCategory) => {
+  const handleCategoryChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newCategory: string | null,
+  ) => {
+    event.preventDefault();
     if (newCategory !== null) {
       setSelectedCategory(newCategory);
       setProductData({
@@ -160,9 +147,11 @@ export default function ProductCreate() {
   };
 
   //품질 상태값 업데이트
-  const handleQualityChange = (event, newQuality) => {
+  const handleQualityChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newQuality: string | number,
+  ) => {
     if (newQuality !== null) {
-      // Prevent deselecting all options
       setSelectedQuality(newQuality);
       setProductData({
         ...productData,
@@ -243,9 +232,6 @@ export default function ProductCreate() {
       mainImages: updatedFilePreview,
     });
   };
-
-  console.log('preview', filePreview);
-  console.log('data', productData);
 
   return (
     <form onSubmit={productAllSubmit}>
