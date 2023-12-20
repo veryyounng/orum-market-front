@@ -99,7 +99,7 @@ export default function ProductManager() {
     );
   }
 
-  const getOrderStateLabel = (productId) => {
+  const getOrderStateLabel = (productId: number) => {
     const orderItem = orderList.find((order) =>
       order.products.some((product) => product._id === productId),
     );

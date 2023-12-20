@@ -126,7 +126,7 @@ export default function ProductCreate() {
       const response = await api.createProduct(productData);
       setProductData(response.data.item);
       alert('판매 상품 등록이 완료되었습니다.');
-      navigate(`/user/${userId}/seller-orderlist`);
+      navigate(`/user/${userId}/product-manager`);
     } catch (error) {
       console.error('API Error:', error);
     }
