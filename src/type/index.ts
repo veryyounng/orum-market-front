@@ -63,7 +63,10 @@ export interface IOrderItem {
   state: string;
   products: IOrderProduct[];
   cost: {
-    discount: number[];
+    discount: {
+      products: number;
+      shippingFees: number;
+    };
     products: number;
     shippingFees: number;
     total: number;
