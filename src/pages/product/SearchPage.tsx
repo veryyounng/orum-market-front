@@ -4,7 +4,6 @@ import {
   Grid,
   Grow,
   Pagination,
-  Skeleton,
   Slide,
   Typography,
   styled,
@@ -32,6 +31,7 @@ import {
   SHIPPING_FEE,
 } from '../../constants';
 import { useFetchProducts } from '../../hooks/useFetchProducts';
+import ProductSkeleton from '../../components/ProductSkeleton';
 
 export function SearchPage() {
   const { searchResult, setSearchResult } = useSearchStore();
@@ -136,20 +136,6 @@ export function SearchPage() {
     setSelectedShippingFee('전체');
   };
 
-  const ProductSkeleton = () => {
-    return (
-      <Grid container spacing={4} m={4}>
-        {Array.from(new Array(itemsPerPage)).map((_, index) => (
-          <Grid item key={index} {...getItemSize()}>
-            <Skeleton variant="rectangular" height={200} />
-            <Skeleton variant="text" />
-            <Skeleton variant="text" />
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
-
   const renderNoProductsMessage = () => {
     if (!isLoading && isDataFetched && filteredProducts.length === 0) {
       return (
@@ -172,7 +158,12 @@ export function SearchPage() {
 
   const renderProductsOrSkeletons = () => {
     if (isLoading) {
-      return <ProductSkeleton />;
+      return (
+        <ProductSkeleton
+          itemsPerPage={itemsPerPage}
+          getItemSize={getItemSize}
+        />
+      );
     }
 
     return (

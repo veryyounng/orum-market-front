@@ -142,4 +142,14 @@ export interface IProductListResponse {
     limit: number;
     totalPage: number;
   };
+  data: IData;
+}
+
+interface IPagination {
+  totalPages: number;
+}
+
+interface IData {
+  item: IProduct[];
+  pagination: IPagination;
 }
