@@ -1,6 +1,7 @@
 import _ from 'lodash';
+import { IOrderItem } from '../type';
 
-export default function getState(orderList) {
+export default function getState(orderList: IOrderItem[]) {
   const state = {
     OS020: 0,
     OS030: 0,

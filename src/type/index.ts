@@ -123,7 +123,7 @@ export interface ISearchState {
 }
 
 export interface IRecentlyViewedStore {
-  viewdItems: IProduct[];
+  viewItems: IProduct[];
   addRecentViewProduct: (newItem: IProduct) => void;
 }
 
@@ -132,4 +132,19 @@ export interface IProductListQuery {
   sort?: string;
   page?: number;
   limit?: number;
+}
+
+export interface IDashboardMenu {
+  dashboardMenu: {
+    buyer: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
+    seller: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
+  };
 }
