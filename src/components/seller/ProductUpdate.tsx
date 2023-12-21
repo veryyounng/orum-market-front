@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import {
@@ -73,7 +73,15 @@ export default function ProductUpdate() {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProductData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }));
+    checkValidate();
+  };
+
+  const handelSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setProductData((prevData) => ({
       ...prevData,
       [e.target.name]: e.target.value,
@@ -279,7 +287,7 @@ export default function ProductUpdate() {
                       : productData.quantity || ''
                   }
                   sx={{ width: '100px' }}
-                  onChange={handleChange}
+                  onChange={handelSelectChange}
                 >
                   {QUALITY.map((menu) => {
                     return (
@@ -299,7 +307,7 @@ export default function ProductUpdate() {
                 type="text"
                 name="name"
                 value={productData.name}
-                onChange={handleChange}
+                onChange={handleInputChange}
               ></TextField>
               {!isValid && productData.name?.length !== 0 ? (
                 <div style={{ color: 'red' }}>{nameError}</div>
@@ -315,7 +323,7 @@ export default function ProductUpdate() {
                 type="text"
                 name="price"
                 value={productData.price || ''}
-                onChange={handleChange}
+                onChange={handleInputChange}
               ></TextField>
               {!isValid ? (
                 <div style={{ color: 'red' }}>{priceError}</div>
@@ -331,7 +339,7 @@ export default function ProductUpdate() {
                 type="text"
                 name="shippingFees"
                 value={productData.shippingFees || ''}
-                onChange={handleChange}
+                onChange={handleInputChange}
               ></TextField>
               {shippingFeesError && (
                 <div style={{ color: 'red' }}>{shippingFeesError}</div>

@@ -45,11 +45,30 @@ import {
 import Check from '@mui/icons-material/Check';
 import { useMutation } from 'react-query';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
+const initCreateData = {
+  price: 0,
+  shippingFees: 0,
+  show: true,
+  active: true,
+  name: '',
+  mainImages: [],
+  content: '',
+  createdAt: '',
+  updatedAt: '',
+  quantity: 1,
+  buyQuantity: 0,
+  extra: {
+    isNew: true,
+    isBest: true,
+    category: ['H01', 'H0101'],
+    sort: 1,
+  },
+};
 export default function ProductCreate() {
   const userId = localStorage.getItem('_id');
 
-  const [productData, setProductData] = useState<IUpdateProduct>();
+  const [productData, setProductData] =
+    useState<IUpdateProduct>(initCreateData);
   const [isValid, setIsValid] = useState(true);
   const [filePreview, setFilePreview] = useState<
     { id: string; path: string }[]
@@ -60,7 +79,7 @@ export default function ProductCreate() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedQuality, setSelectedQuality] = useState();
+  const [selectedQuality, setSelectedQuality] = useState('');
 
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
@@ -230,6 +249,8 @@ export default function ProductCreate() {
       mainImages: updatedFilePreview,
     });
   };
+
+  console.log('data', productData);
 
   return (
     <form onSubmit={productAllSubmit}>
