@@ -117,7 +117,7 @@ export interface ISearchState {
 }
 
 export interface IRecentlyViewedStore {
-  viewdItems: IProduct[];
+  viewItems: IProduct[];
   addRecentViewProduct: (newItem: IProduct) => void;
 }
 
