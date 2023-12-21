@@ -11,8 +11,9 @@ import Typography from '@mui/material/Typography';
 import { Link, useLocation } from 'react-router-dom';
 import { Box, Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { IDashboardMenu } from '../type';
 
-export default function DashboardNavBar({ dashboardMenu }) {
+export default function DashboardNavBar({ dashboardMenu }: IDashboardMenu) {
   const location = useLocation();
   const [selectedMenu, setSelectedMenu] = useState('');
 

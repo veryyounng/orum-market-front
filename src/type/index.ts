@@ -127,3 +127,18 @@ export interface IProductListQuery {
   page?: number;
   limit?: number;
 }
+
+export interface IDashboardMenu {
+  dashboardMenu: {
+    buyer: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
+    seller: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
+  };
+}
