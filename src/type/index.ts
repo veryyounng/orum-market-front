@@ -127,7 +127,7 @@ export interface ISearchState {
 }
 
 export interface IRecentlyViewedStore {
-  viewdItems: IProduct[];
+  viewItems: IProduct[];
   addRecentViewProduct: (newItem: IProduct) => void;
 }
 
@@ -136,4 +136,22 @@ export interface IProductListQuery {
   sort?: string;
   page?: number;
   limit?: number;
+}
+
+export interface IBookmarkItem {
+  _id: number;
+  user_id: number;
+  product_id: number;
+  memo: string;
+  createdAt: string;
+  product: {
+    name: string;
+    price: number;
+    quantity: number;
+    buyQuantity: number;
+    image: {
+      id: string;
+      path: string;
+    };
+  };
 }
