@@ -64,7 +64,10 @@ export interface IOrderItem {
   state: string;
   products: IOrderProduct[];
   cost: {
-    discount: number[];
+    discount: {
+      products: number;
+      shippingFees: number;
+    };
     products: number;
     shippingFees: number;
     total: number;
@@ -72,6 +75,13 @@ export interface IOrderItem {
   address: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IOrderItemDetail extends IOrderItem {
+  value: {
+    name: string;
+    value: string;
+  };
 }
 
 interface IOrderProduct {
@@ -134,6 +144,23 @@ export interface IProductListQuery {
   limit?: number;
 }
 
+export interface IBookmarkItem {
+  _id: number;
+  user_id: number;
+  product_id: number;
+  memo: string;
+  createdAt: string;
+  product: {
+    name: string;
+    price: number;
+    quantity: number;
+    buyQuantity: number;
+    image: {
+      id: string;
+      path: string;
+    };
+  };
+}
 export interface IDashboardMenu {
   dashboardMenu: {
     buyer: {
