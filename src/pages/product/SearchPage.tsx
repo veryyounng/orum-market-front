@@ -16,9 +16,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { CircularProgress } from '@mui/material';
 
-import ProductCard from './ProductCard';
 import { SearchSection } from '../../components/search/SearchSection';
 import { useSearchStore, useRecentViewProductStore } from '../../lib/store';
 import StickyNavbar from '../../components/NavigationBar';
@@ -32,6 +30,7 @@ import {
   SHIPPING_FEE,
 } from '../../constants';
 import { useFetchProducts } from '../../hooks/useFetchProducts';
+import { ProductCard } from './ProductCard';
 
 export function SearchPage() {
   const { searchResult, setSearchResult } = useSearchStore();
@@ -39,7 +38,7 @@ export function SearchPage() {
     searchResult,
     '최신순',
   ) as any;
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedPrice, setSelectedPrice] = useState('전체');

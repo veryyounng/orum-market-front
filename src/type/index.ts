@@ -20,7 +20,7 @@ export interface IProduct {
   content: string;
 }
 
-interface IProductImage {
+export interface IProductImage {
   id: string;
   path: string;
 }
@@ -153,5 +153,19 @@ export interface IBookmarkItem {
       id: string;
       path: string;
     };
+  };
+}
+export interface IDashboardMenu {
+  dashboardMenu: {
+    buyer: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
+    seller: {
+      id: number;
+      title: string;
+      url: string;
+    }[];
   };
 }
