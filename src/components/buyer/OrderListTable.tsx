@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   TableContainer,
   TableHead,
@@ -14,11 +15,13 @@ import {
   CardContent,
   styled,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { ChevronRight } from '@mui/icons-material';
 import formatDate from '../../lib/formatDate';
 import { ORDER_STATE } from '../../constants';
-import { ChevronRight } from '@mui/icons-material';
 import { IOrderItem } from '../../type';
-import { Link } from 'react-router-dom';
+import RatingModal from './modal/ratingModal';
+import { api } from '../../api/api';
 
 export default function OrderListTable({
   orderList,
@@ -27,8 +30,16 @@ export default function OrderListTable({
 }) {
   const matches = useMediaQuery('(min-width:1200px)');
   const id = localStorage.getItem('_id');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ratingValue, setRatingValue] = useState(0);
+  const [replies, setReplies] = useState({
+    order_id: 0,
+    product_id: 0,
+    rating: 0,
+    content: '',
+  });
 
-  const orderState = (list: string) =>
+  const orderState = (list: string, order_id: number, product_id: number) =>
     ORDER_STATE.codes
       .filter((state) => state.code === list)
       .map((stateValue) => (
@@ -44,8 +55,12 @@ export default function OrderListTable({
           </Typography>
 
           {stateValue.value === '배송 완료' ? (
-            <Button variant="outlined" size="small">
-              별점평가
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => handleModalOpen(product_id, order_id)}
+            >
+              별점후기
             </Button>
           ) : (
             ''
@@ -57,8 +72,46 @@ export default function OrderListTable({
     window.scrollTo(0, 0);
   };
 
+  const handleModalOpen = (product_id, order_id) => {
+    setIsModalOpen(true);
+    setReplies({
+      ...replies,
+      order_id: order_id,
+      product_id: product_id,
+    });
+  };
+
+  const handleCloseBtn = () => {
+    setIsModalOpen(false);
+    setRatingValue(0);
+  };
+
+  const submitRating = async () => {
+    try {
+      const updateReplies = {
+        ...replies,
+        rating: ratingValue,
+        content: 'done',
+      };
+
+      await api.addRating(updateReplies);
+      setIsModalOpen(false);
+      alert('후기가 등록되었습니다!');
+    } catch (error) {
+      console.log('후기 등록에 실패했습니다.', error);
+    }
+  };
+
   return (
     <>
+      <RatingModal
+        open={isModalOpen}
+        handleClose={() => handleCloseBtn()}
+        ratingValue={ratingValue}
+        setRatingValue={setRatingValue}
+        handleCloseBtn={handleCloseBtn}
+        submitRating={submitRating}
+      />
       {matches ? (
         <>
           <TableContainer>
@@ -110,7 +163,7 @@ export default function OrderListTable({
                         {product.price.toLocaleString()}원
                       </TableCell>
                       <TableCell align="center">
-                        {orderState(list.state)}
+                        {orderState(list.state, list._id, product._id)}
                       </TableCell>
                       <TableCell align="center">
                         <Link
@@ -217,7 +270,7 @@ export default function OrderListTable({
                     <Typography variant="body1" marginTop={0.5}>
                       {product.price.toLocaleString()}원
                     </Typography>
-                    {orderState(list.state)}
+                    {orderState(list.state, list._id, product._id)}
                   </CardContent>
                 </OrderProductList>
               ))}
