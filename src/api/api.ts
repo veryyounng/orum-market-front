@@ -1,6 +1,6 @@
 import axios from 'axios';
 import initCreateData from '../../src/components/seller/ProductCreate';
-import { IProduct } from '../type';
+import { IUpdateProduct } from '../type';
 import { useUserStore } from '../lib/store';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -157,7 +157,7 @@ export const api = {
     }),
 
   // 상품 수정
-  updateProduct: (_id: string, productData: IProduct) =>
+  updateProduct: (_id: string, productData: IUpdateProduct) =>
     axiosInstance.patch(`/seller/products/${_id}`, productData),
 
   // 상품 삭제

@@ -28,7 +28,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import { IProduct } from '../../type';
+import { IUpdateProduct } from '../../type';
 
 import {
   validateProductName,
@@ -45,13 +45,11 @@ import {
 import Check from '@mui/icons-material/Check';
 import { useMutation } from 'react-query';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-import { initProductData } from '../../lib/initProductData';
 
 export default function ProductCreate() {
   const userId = localStorage.getItem('_id');
 
-  const [productData, setProductData] =
-    useState<Partial<IProduct>>(initProductData);
+  const [productData, setProductData] = useState<IUpdateProduct>();
   const [isValid, setIsValid] = useState(true);
   const [filePreview, setFilePreview] = useState<
     { id: string; path: string }[]
@@ -62,7 +60,7 @@ export default function ProductCreate() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedQuality, setSelectedQuality] = useState('');
+  const [selectedQuality, setSelectedQuality] = useState();
 
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
