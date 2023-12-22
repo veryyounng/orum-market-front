@@ -17,6 +17,7 @@ import {
   FormControl,
   Button,
   ToggleButton,
+  Skeleton,
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -33,6 +34,7 @@ export default function ProductManager() {
   const [sortOrder, setSortOrder] = useState('최신순');
   const [isShow, setIsShow] = useState(false);
   const [orderList, setOrderList] = useState<IOrderItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getSellerProductInfo();
@@ -40,11 +42,14 @@ export default function ProductManager() {
 
   const getSellerProductInfo = async () => {
     try {
+      setIsLoading(true);
       const response = await api.getSellerProductInfo();
       const getMatchItem = response.data.item;
       setProductList(getMatchItem);
+      setIsLoading(false);
     } catch (error) {
       console.log('판매 상품 조회 실패', error);
+      setIsLoading(false);
     }
   };
 
@@ -88,16 +93,6 @@ export default function ProductManager() {
     }
     setSortedProductList(sorted);
   }, [productList, sortOrder]);
-
-  if (productList.length === 0) {
-    return (
-      <>
-        <Typography variant="h3" sx={{ marginBottom: '1rem' }}>
-          주문된 상품이 존재하지 않습니다.
-        </Typography>
-      </>
-    );
-  }
 
   const getOrderStateLabel = (productId: number) => {
     const orderItem = orderList.find((order) =>
@@ -160,79 +155,114 @@ export default function ProductManager() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {sortedProductList.map((rows) => (
-                <TableRow key={rows._id}>
-                  <TableCell align="center">
-                    <Typography variant="body2" color="text.secondary">
-                      {formatDate(rows.createdAt)}
-                    </Typography>
-                    ({rows._id})
-                  </TableCell>
+              {isLoading
+                ? // 로딩 중에는 Skeleton을 표시
+                  Array.from(new Array(5)).map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton
+                          variant="rectangular"
+                          width={80}
+                          height={80}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : // 로딩 완료 후 실제 데이터 렌더링
+                  sortedProductList.map((rows) => (
+                    <TableRow key={rows._id}>
+                      <TableCell align="center">
+                        <Typography variant="body2" color="text.secondary">
+                          {formatDate(rows.createdAt)}
+                        </Typography>
+                        ({rows._id})
+                      </TableCell>
 
-                  <TableCell align="center">
-                    <img
-                      src={`${rows.mainImages[0].path}`}
-                      alt={`${rows.mainImages[0].id}`}
-                      style={{
-                        width: '80px',
-                        height: '80px',
-                        objectFit: 'cover',
-                        borderRadius: '5px',
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell align="center">
-                    <Link to={`/product/${rows._id}`}>{rows.name}</Link>
-                  </TableCell>
-                  <TableCell align="center">
-                    {rows.extra.sort
-                      ? QUALITY.find(
-                          (quality) => quality.value === rows.extra.sort,
-                        )?.name
-                      : QUALITY.find(
-                          (quality) => quality.value === rows.quantity,
-                        )?.name || 'Unknown Quality'}
-                  </TableCell>
-                  <TableCell align="center">
-                    {rows.price.toLocaleString()}원
-                  </TableCell>
-                  <TableCell align="center">
-                    {getOrderStateLabel(rows._id) || ''}
-                  </TableCell>
-                  <TableCell align="center">
-                    <ToggleButton
-                      value="check"
-                      selected={isShow}
-                      size={'small'}
-                      onChange={() => {
-                        setIsShow(!rows.show);
-                      }}
-                    >
-                      <CheckIcon />
-                    </ToggleButton>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: 1,
-                      }}
-                    ></Box>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Link
-                      to={`/user/${rows._id}/product-update`}
-                      state={{ productId: `${rows._id}` }}
-                    >
-                      <Button type="button" variant="contained">
-                        수정하기
-                      </Button>
-                    </Link>
-                  </TableCell>
-                </TableRow>
-              ))}
+                      <TableCell align="center">
+                        <img
+                          src={`${rows.mainImages[0].path}`}
+                          alt={`${rows.mainImages[0].id}`}
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            objectFit: 'cover',
+                            borderRadius: '5px',
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        <Link to={`/product/${rows._id}`}>{rows.name}</Link>
+                      </TableCell>
+                      <TableCell align="center">
+                        {rows.extra.sort
+                          ? QUALITY.find(
+                              (quality) => quality.value === rows.extra.sort,
+                            )?.name
+                          : QUALITY.find(
+                              (quality) => quality.value === rows.quantity,
+                            )?.name || 'Unknown Quality'}
+                      </TableCell>
+                      <TableCell align="center">
+                        {rows.price.toLocaleString()}원
+                      </TableCell>
+                      <TableCell align="center">
+                        {getOrderStateLabel(rows._id) || ''}
+                      </TableCell>
+                      <TableCell align="center">
+                        <ToggleButton
+                          value="check"
+                          selected={isShow}
+                          size={'small'}
+                          onChange={() => {
+                            setIsShow(!rows.show);
+                          }}
+                        >
+                          <CheckIcon />
+                        </ToggleButton>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 1,
+                          }}
+                        ></Box>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Link
+                          to={`/user/${rows._id}/product-update`}
+                          state={{ productId: `${rows._id}` }}
+                        >
+                          <Button type="button" variant="contained">
+                            수정하기
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
             </TableBody>
           </Table>
         </TableContainer>
