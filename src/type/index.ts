@@ -112,17 +112,17 @@ interface IOrderProduct {
 }
 
 export interface IUserInfo {
-  id: number;
+  id: number | string;
   email: string;
   name: string;
   address?: string;
   extra: {
     address: [
       {
+        id?: number | string;
         receiver: string;
         addressName: string;
-        tel: number;
-        name: string;
+        tel: number | string;
         mainAddress: string;
         subAddress: string;
       },
@@ -185,7 +185,7 @@ export interface IDashboardMenu {
 export interface IAddressData {
   addressName?: string;
   receiver?: string;
-  tel?: number;
+  tel?: number | string;
   name?: string;
   mainAddress?: string;
   subAddress?: string;
@@ -216,4 +216,13 @@ export interface ISidebarProps {
 export interface IOrderRes {
   ok: number;
   item: IOrderItem[];
+}
+
+export interface IAddressFormProps {
+  data: any;
+  func: any;
+  setData: any;
+  submit: any;
+  title: string;
+  reset: any;
 }

@@ -1,4 +1,5 @@
 import { Typography, TextField, FormLabel, Button, Box } from '@mui/material';
+import { IAddressFormProps } from '../../type';
 
 export default function AddressForm({
   data,
@@ -7,7 +8,7 @@ export default function AddressForm({
   submit,
   title,
   reset,
-}) {
+}: IAddressFormProps) {
   return (
     <>
       <Typography variant="h5" fontWeight={700} marginBottom={1}>

@@ -14,10 +14,27 @@ import { api } from '../../api/api';
 import { v4 as uuidv4 } from 'uuid';
 import AddressForm from '../address/AddressForm';
 import { Add } from '@mui/icons-material';
+import { IAddressData, IUserInfo } from '../../type';
 
 export default function BuyerInfo() {
   const userId = localStorage.getItem('_id');
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState<IUserInfo>({
+    id: '',
+    email: '',
+    name: '',
+    extra: {
+      address: [
+        {
+          id: '',
+          addressName: '',
+          receiver: '',
+          tel: '' || 0,
+          mainAddress: '',
+          subAddress: '',
+        },
+      ],
+    },
+  });
   const [updateUserInfo, setUpdateUserInfo] = useState({});
   const [isCreateAddress, setIsCreateAddress] = useState(false);
   const [isEditAddress, setIsEditAddress] = useState(false);
@@ -29,7 +46,7 @@ export default function BuyerInfo() {
     mainAddress: '',
     subAddress: '',
   });
-  const [addressEditData, setAddressEditData] = useState({
+  const [addressEditData, setAddressEditData] = useState<IAddressData>({
     addressName: '',
     receiver: '',
     tel: '',
@@ -130,7 +147,7 @@ export default function BuyerInfo() {
   };
 
   // delete address
-  const handleRemoveAddress = async (addressId) => {
+  const handleRemoveAddress = async (addressId: number) => {
     const confirmRemoveAddress =
       window.confirm('해당 주소를 삭제하시겠습니까?');
 
@@ -159,253 +176,262 @@ export default function BuyerInfo() {
   };
 
   // Edit Address
-  const handleEditAddress = (editAddressId) => {
+  const handleEditAddress = (editAddressId: number | string) => {
     setIsEditAddress(true);
     const selectAddress = userInfo?.extra.address.find(
       (item) => item.id === editAddressId,
     );
+    if (selectAddress) {
+      setAddressEditData({
+        ...selectAddress,
+        addressName: selectAddress.addressName,
+        receiver: selectAddress.receiver,
+        tel: selectAddress.tel,
+        mainAddress: selectAddress.mainAddress,
+        subAddress: selectAddress.subAddress,
+      });
 
-    setAddressEditData({
-      ...selectAddress,
-      addressName: selectAddress.addressName,
-      receiver: selectAddress.receiver,
-      tel: selectAddress.tel,
-      mainAddress: selectAddress.mainAddress,
-      subAddress: selectAddress.subAddress,
-    });
-
-    setSelectAddressId(editAddressId);
-  };
-
-  const handleChangeEditAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAddressEditData({
-      ...addressEditData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmitEditAddress = async (
-    e: React.FormEvent<HTMLFormElement>,
-  ) => {
-    e.preventDefault();
-
-    try {
-      const response = await api.getUserInfo(userId);
-      const onEdit = response.data.item.extra.address.map((list) =>
-        list.id === selectAddressId ? { ...list, ...addressEditData } : list,
-      );
-
-      const updateAddressData = {
-        ...response.data.item,
-        extra: {
-          ...response.data.item.extra,
-          address: [...onEdit],
-        },
-      };
-      await api.updateUserInfo(userId, updateAddressData);
-      alert('배송지 주소가 수정되었습니다.');
-      window.location.reload();
-    } catch (error) {
-      console.log(error);
-      alert('배송지 주소 수정에 실패했습니다.');
+      setSelectAddressId(editAddressId.toString());
+    } else {
+      // Handle the case where 'selectAddress' is 'undefined'
     }
-  };
 
-  const emptyUser = (
-    <Grid item xs={12} style={{ height: '100%' }}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        style={{ height: '100%' }}
-      >
-        <Typography variant="h6" color="textSecondary">
-          사용자 정보를 받아오지 못했습니다.
-        </Typography>
-      </Box>
-    </Grid>
-  );
+    const handleChangeEditAddress = (
+      e: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+      setAddressEditData({
+        ...addressEditData,
+        [e.target.name]: e.target.value,
+      });
+    };
 
-  const emptyAddress = (
-    <Grid item xs={12} style={{ height: '10%' }}>
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        style={{ height: '100%' }}
-      >
-        <Typography variant="body1" color="textSecondary">
-          등록된 배송지가 없습니다.
-        </Typography>
-      </Box>
-    </Grid>
-  );
+    const handleSubmitEditAddress = async (
+      e: React.FormEvent<HTMLFormElement>,
+    ) => {
+      e.preventDefault();
 
-  return (
-    <>
-      {!userInfo && (
-        <>
-          <Typography variant="h5" fontWeight={700}>
-            내 정보 수정
+      try {
+        const response = await api.getUserInfo(userId);
+        const onEdit = response.data.item.extra.address.map((list: any) =>
+          list.id === selectAddressId ? { ...list, ...addressEditData } : list,
+        );
+
+        const updateAddressData = {
+          ...response.data.item,
+          extra: {
+            ...response.data.item.extra,
+            address: [...onEdit],
+          },
+        };
+        await api.updateUserInfo(userId, updateAddressData);
+        alert('배송지 주소가 수정되었습니다.');
+        window.location.reload();
+      } catch (error) {
+        console.log(error);
+        alert('배송지 주소 수정에 실패했습니다.');
+      }
+    };
+
+    const emptyUser = (
+      <Grid item xs={12} style={{ height: '100%' }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          style={{ height: '100%' }}
+        >
+          <Typography variant="h6" color="textSecondary">
+            사용자 정보를 받아오지 못했습니다.
           </Typography>
-          {emptyUser}
-        </>
-      )}
-      {userInfo && !isCreateAddress && !isEditAddress && (
-        <>
-          <Typography variant="h5" fontWeight={700}>
-            내 정보 수정
-          </Typography>
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            marginTop={2}
-            marginBottom={1}
-          >
-            개인 정보 수정
-          </Typography>
-          <form onSubmit={handleUpdateUserInfo}>
-            <FormLabel>이메일</FormLabel>
-            <TextField
-              type="email"
-              value={userInfo.email}
-              variant="outlined"
-              size="small"
-              fullWidth
-              required
-              disabled
-              sx={{ marginBottom: '10px' }}
-            />
-            <FormLabel>이름</FormLabel>
-            <TextField
-              type="text"
-              value={updateUserInfo.name || ''}
-              onChange={handleChangeUserName}
-              size="small"
-              fullWidth
-              required
-            />
+        </Box>
+      </Grid>
+    );
 
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              sx={{ marginTop: '12px' }}
+    const emptyAddress = (
+      <Grid item xs={12} style={{ height: '10%' }}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          style={{ height: '100%' }}
+        >
+          <Typography variant="body1" color="textSecondary">
+            등록된 배송지가 없습니다.
+          </Typography>
+        </Box>
+      </Grid>
+    );
+
+    return (
+      <>
+        {!userInfo && (
+          <>
+            <Typography variant="h5" fontWeight={700}>
+              내 정보 수정
+            </Typography>
+            {emptyUser}
+          </>
+        )}
+        {userInfo && !isCreateAddress && !isEditAddress && (
+          <>
+            <Typography variant="h5" fontWeight={700}>
+              내 정보 수정
+            </Typography>
+            <Typography
+              variant="h6"
+              fontWeight={600}
+              marginTop={2}
+              marginBottom={1}
             >
-              정보 수정
-            </Button>
-          </form>
+              개인 정보 수정
+            </Typography>
+            <form onSubmit={handleUpdateUserInfo}>
+              <FormLabel>이메일</FormLabel>
+              <TextField
+                type="email"
+                value={userInfo.email}
+                variant="outlined"
+                size="small"
+                fullWidth
+                required
+                disabled
+                sx={{ marginBottom: '10px' }}
+              />
+              <FormLabel>이름</FormLabel>
+              <TextField
+                type="text"
+                value={(updateUserInfo as { name?: string }).name || ''}
+                onChange={handleChangeUserName}
+                size="small"
+                fullWidth
+                required
+              />
 
-          <Typography
-            variant="h6"
-            fontWeight={600}
-            marginTop={5}
-            marginBottom={1}
-          >
-            배송지 관리
-          </Typography>
-          {!userInfo.extra.address && <>{emptyAddress}</>}
-          {userInfo?.extra?.address?.length === 0 && <>{emptyAddress}</>}
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                sx={{ marginTop: '12px' }}
+              >
+                정보 수정
+              </Button>
+            </form>
 
-          {userInfo.extra.address && (
-            <>
-              {userInfo.extra.address.map((list) => (
-                // 주소록 목록 테이블 형태로 출력
-                <StyledCard
-                  key={list.id}
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    border: '1px solid #ccc',
-                    padding: '0.5rem',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  <AddrdssDetails padding={1}>
-                    <Typography variant="h6">{list.addressName}</Typography>
-                    <Typography variant="body2" fontWeight={600}>
-                      {list.receiver}
-                    </Typography>
-                    <Typography variant="body2" fontWeight={600}>
-                      {list.tel}
-                    </Typography>
-                    <Typography variant="body2" fontWeight={600}>
-                      {list.mainAddress} {list.subAddress}
-                    </Typography>
-                  </AddrdssDetails>
-                  <AddressActions
+            <Typography
+              variant="h6"
+              fontWeight={600}
+              marginTop={5}
+              marginBottom={1}
+            >
+              배송지 관리
+            </Typography>
+            {!userInfo.extra.address && <>{emptyAddress}</>}
+            {userInfo.extra.address && userInfo.extra.address.length < 1 && (
+              <>{emptyAddress}</>
+            )}
+
+            {userInfo.extra.address && (
+              <>
+                {userInfo.extra.address.map((list) => (
+                  // 주소록 목록 테이블 형태로 출력
+                  <StyledCard
+                    key={list.id}
                     sx={{
                       display: 'flex',
-                      flexDirection: 'column',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      border: '1px solid #ccc',
+                      padding: '0.5rem',
+                      marginBottom: '0.5rem',
                     }}
-                    gap={1}
                   >
-                    <Button
-                      onClick={() => handleEditAddress(list.id)}
-                      variant="contained"
-                      size="medium"
+                    <AddrdssDetails padding={1}>
+                      <Typography variant="h6">{list.addressName}</Typography>
+                      <Typography variant="body2" fontWeight={600}>
+                        {list.receiver}
+                      </Typography>
+                      <Typography variant="body2" fontWeight={600}>
+                        {list.tel}
+                      </Typography>
+                      <Typography variant="body2" fontWeight={600}>
+                        {list.mainAddress} {list.subAddress}
+                      </Typography>
+                    </AddrdssDetails>
+                    <AddressActions
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                      gap={1}
                     >
-                      수정
-                    </Button>
-                    <Button
-                      onClick={() => handleRemoveAddress(list.id)}
-                      variant="contained"
-                      size="medium"
-                    >
-                      삭제
-                    </Button>
-                  </AddressActions>
-                </StyledCard>
-              ))}
-            </>
-          )}
+                      <Button
+                        onClick={() => handleEditAddress(list.id || '')}
+                        variant="contained"
+                        size="medium"
+                      >
+                        수정
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          handleRemoveAddress(Number(list.id) || 0)
+                        }
+                        variant="contained"
+                        size="medium"
+                      >
+                        삭제
+                      </Button>
+                    </AddressActions>
+                  </StyledCard>
+                ))}
+              </>
+            )}
 
-          <Box>
-            <Button
-              onClick={() => setIsCreateAddress(true)}
-              variant="outlined"
-              size="large"
-              fullWidth
-              sx={{ marginTop: '4px' }}
-            >
-              <Add /> 배송지 신규입력
-            </Button>
-          </Box>
-        </>
-      )}
+            <Box>
+              <Button
+                onClick={() => setIsCreateAddress(true)}
+                variant="outlined"
+                size="large"
+                fullWidth
+                sx={{ marginTop: '4px' }}
+              >
+                <Add /> 배송지 신규입력
+              </Button>
+            </Box>
+          </>
+        )}
 
-      {userInfo && isCreateAddress && (
-        <>
-          <AddressForm
-            data={addressData}
-            func={handleChangeAddress}
-            setData={resetData}
-            submit={handleSubmitAddress}
-            title={'배송지 등록'}
-            reset={true}
-          />
-        </>
-      )}
+        {userInfo && isCreateAddress && (
+          <>
+            <AddressForm
+              data={addressData}
+              func={handleChangeAddress}
+              setData={resetData}
+              submit={handleSubmitAddress}
+              title={'배송지 등록'}
+              reset={true}
+            />
+          </>
+        )}
 
-      {userInfo && isEditAddress && (
-        <>
-          <AddressForm
-            data={addressEditData}
-            func={handleChangeEditAddress}
-            setData={setIsEditAddress}
-            submit={handleSubmitEditAddress}
-            title={'배송지 수정'}
-            reset={false}
-          />
-        </>
-      )}
-    </>
-  );
+        {userInfo && isEditAddress && (
+          <>
+            <AddressForm
+              data={addressEditData}
+              func={handleChangeEditAddress}
+              setData={setIsEditAddress}
+              submit={handleSubmitEditAddress}
+              title={'배송지 수정'}
+              reset={false}
+            />
+          </>
+        )}
+      </>
+    );
+  };
 }
 
 const StyledCard = styled(Card)({
