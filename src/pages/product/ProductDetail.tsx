@@ -197,6 +197,9 @@ const ProductImageGallery = ({ images }: { images: IProductImage[] }) => {
               loading="lazy"
               onClick={() => setSelectedImage(image.path)}
               style={{
+                width: '100%',
+                height: '200px',
+                objectFit: 'cover',
                 borderRadius: '5px',
                 cursor: 'pointer',
                 border: selectedImage === image.path ? '2px solid #EF5B2A' : '',

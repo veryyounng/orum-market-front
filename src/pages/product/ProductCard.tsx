@@ -53,7 +53,8 @@ export const ProductCard = memo(function ProductCard({
               src={product.mainImages[0].path}
               alt={product.name}
               width="100%"
-              height="100%"
+              height="200px"
+              style={{ objectFit: 'cover' }}
               effect="blur"
             />
           )}
@@ -63,7 +64,8 @@ export const ProductCard = memo(function ProductCard({
               src="/assets/no-image.jpg"
               alt={product.name}
               width="100%"
-              height="100%"
+              height="200px"
+              style={{ objectFit: 'cover' }}
               effect="blur"
             />
           )}
