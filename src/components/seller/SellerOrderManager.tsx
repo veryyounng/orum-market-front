@@ -20,21 +20,26 @@ import { api } from '../../api/api';
 import { IOrderItem } from '../../type';
 import { QUALITY, ORDER_STATE } from '../../constants/index';
 import formatDate from '../../lib/formatDate';
+import SkeletonTable from './SkeletonTable';
 
 export default function SellerOrderManager() {
   const [sortedOrderList, setSortedOrderList] = useState<IOrderItem[]>([]);
   const [sortOrder, setSortOrder] = useState('최신순');
   const [orderList, setOrderList] = useState<IOrderItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const getOrderState = async () => {
       try {
+        setIsLoading(true);
         const response = await api.getOrderState();
         const orderState = response.data.item;
         setSortedOrderList(orderState);
         setOrderList(orderState);
+        setIsLoading(false);
       } catch (error) {
         console.log('판매자의 주문상태 조회 실패', error);
+        setIsLoading(false);
       }
     };
     getOrderState();
@@ -68,11 +73,11 @@ export default function SellerOrderManager() {
     setSortedOrderList(sorted);
   }, [orderList, sortOrder]);
 
-  if (orderList.length === 0) {
+  if (orderList.length === 0 && !isLoading) {
     return (
       <>
         <Typography variant="h3" sx={{ marginBottom: '1rem' }}>
-          주문된 상품이 존재하지 않습니다.
+          주문한 상품이 존재하지 않습니다.
         </Typography>
       </>
     );
@@ -168,6 +173,7 @@ export default function SellerOrderManager() {
               </TableRow>
             </TableHead>
             <TableBody>
+              {isLoading && <SkeletonTable rows={5} columns={9} />}
               {sortedOrderList.map((orderItem) =>
                 orderItem.products.map((productItem) => (
                   <TableRow key={orderItem._id}>
