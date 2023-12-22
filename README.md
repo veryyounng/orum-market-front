@@ -15,14 +15,15 @@ Phoenix 🐦
 평소에 등산용품을 새로 사려면 가격대가 고민이 되었는데, 오름마켓에서는 중고로 누구나 판매할 수 있다는 장점에 합리적인 가격으로 구입할 수 있습니다. 
 
 # 기술 스택 📚
-|사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white">|
+|사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white">|
 |------|---|
 |패키지|<img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white">|
 |빌드툴|<img src="https://img.shields.io/badge/vite-646CFF?style=for-the-badge&logo=vite&logoColor=white">|
 |협업툴|<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"> <img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=Discord&logoColor=white"> <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white">|
 |IDE|<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white">|
-|Design|<img src="https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white"> <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"> |
+|Design|<img src="https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white"> <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"> <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"> |
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
+|Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
 # 사용 가이드
 구매자용 <br>
@@ -53,14 +54,15 @@ pw: 11111111
 - 오픈 마켓에 상품을 판매할 수 있습니다.
 - 내 정보를 수정할 수 있습니다.
 - 오픈마켓에 본인이 판매중인 상품을 관리할 수 있습니다.
-- 배송중인 상품의 배송상태를 확인할 수 있습니다.
+- 구매자가 결제한 상품을 확인할 수 있습니다.
+- 결제된 상품의 배송상태를 수정할 수 있습니다.
 
 ## 구매자 (buyer) 🙋‍♀️
 - 오픈 마켓에 로그인 할 수 있습니다.
 - 마음에 드는 상품을 찜하기할 수 있습니다.
 - 사고 싶은 상품을 장바구니에 담을 수 있습니다.
-- 오픈 마켓 상품을 구입할 수 있습니다.
-- 구매한 상품의 배송상태를 확인할 수 있습니다.
+- 오픈 마켓 상품을 구매할 수 있습니다.
+- 주문 내역과 배송상태를 확인할 수 있습니다.
 - 내 정보를 수정할 수 있습니다.
 - 최근 본 상품을 볼 수 있습니다.
 
