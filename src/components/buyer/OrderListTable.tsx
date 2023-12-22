@@ -72,7 +72,7 @@ export default function OrderListTable({
     window.scrollTo(0, 0);
   };
 
-  const handleModalOpen = (product_id, order_id) => {
+  const handleModalOpen = (product_id: number, order_id: number) => {
     setIsModalOpen(true);
     setReplies({
       ...replies,

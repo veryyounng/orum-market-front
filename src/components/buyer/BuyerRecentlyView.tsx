@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
+import { IProduct } from '../../type';
 
 export default function BuyerRecentlyView() {
   // 아이템 사이즈를 계산하는 함수
@@ -62,7 +63,7 @@ export default function BuyerRecentlyView() {
         최근 본 상품
       </Typography>
       <Grid container spacing={4} rowSpacing={4}>
-        {viewItems.map((product) => (
+        {viewItems.map((product: IProduct) => (
           <Grid item {...getItemSize()} key={product._id} marginTop={3}>
             <StyledCard>
               <CardActionArea component={Link} to={`/product/${product._id}`}>

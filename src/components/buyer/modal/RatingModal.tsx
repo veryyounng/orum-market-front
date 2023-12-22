@@ -67,10 +67,10 @@ export default function RatingModal({
               value={ratingValue}
               getLabelText={getLabelText}
               size="large"
-              onChange={(event, newValue) => {
+              onChange={(_, newValue) => {
                 setRatingValue(newValue || 0);
               }}
-              onChangeActive={(event, newHover) => {
+              onChangeActive={(_, newHover) => {
                 setHover(newHover);
               }}
               emptyIcon={

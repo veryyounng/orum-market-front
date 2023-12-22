@@ -119,12 +119,13 @@ export interface IUserInfo {
   extra: {
     address: [
       {
-        id?: number | string;
-        receiver: string;
+        id: number;
         addressName: string;
-        tel: number | string;
+        receiver: string;
+        tel: number;
         mainAddress: string;
         subAddress: string;
+        name: string;
       },
     ];
   };
@@ -183,6 +184,7 @@ export interface IDashboardMenu {
 }
 
 export interface IAddressData {
+  id?: number;
   addressName?: string;
   receiver?: string;
   tel?: number | string;
