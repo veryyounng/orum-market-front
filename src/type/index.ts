@@ -201,3 +201,14 @@ export interface IAddressIamPort {
   bname2: string;
   buildingName: string;
 }
+
+export interface ISidebarProps {
+  selectedCategory: string;
+  selectedPrice: string;
+  selectedShippingFee: string;
+  setSelectedCategory: (category: string) => void;
+  setSelectedPrice: (price: string) => void;
+  setSelectedShippingFee: (shippingFee: string) => void;
+  resetFilters: () => void;
+  isReady: boolean;
+}

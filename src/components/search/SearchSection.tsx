@@ -12,7 +12,7 @@ export function SearchSection() {
   const [inputValue, setInputValue] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const { isLoading, error, data } = useQuery(
+  const { isLoading, data } = useQuery(
     ['searchProducts', inputValue],
     () => api.searchProducts(inputValue, 0, 999999),
     {

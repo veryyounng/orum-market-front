@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Grid,
-  Grow,
-  Skeleton,
-  Slide,
-  Typography,
-  styled,
-} from '@mui/material';
+import { Box, Button, Grid, Slide, Typography, styled } from '@mui/material';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -30,7 +21,7 @@ import {
   SHIPPING_FEE,
 } from '../../constants';
 import { useFetchProducts } from '../../hooks/useFetchProducts';
-import { ProductCard } from './ProductCard';
+import { ProductGrid } from '../../components/search/ProductGrid';
 
 export function SearchPage() {
   const { searchResult, setSearchResult } = useSearchStore();
@@ -75,13 +66,6 @@ export function SearchPage() {
     setItemsPerPage(value);
   };
 
-  // 아이템 사이즈를 계산하는 함수
-  const getItemSize = () => {
-    if (itemsPerPage === 8) return { xs: 6, sm: 3, md: 2, lg: 2, xl: 2 };
-    return { xs: 12, sm: 6, md: 4, lg: 4, xl: 4 };
-  };
-
-  // 카테고리, 가격, 배송료에 따라 필터링된 상품 목록
   const selectedPriceRange = PRICE_BOUNDARIES[selectedPrice];
 
   const filteredProducts = sortedProducts.filter((product: IProduct) => {
@@ -107,86 +91,6 @@ export function SearchPage() {
     setSelectedPrice('전체');
     setSelectedShippingFee('전체');
   };
-
-  const ProductSkeleton = () => {
-    return (
-      <Grid container spacing={4} m={4}>
-        {Array.from(new Array(itemsPerPage)).map((_, index) => (
-          <Grid item key={index} {...getItemSize()}>
-            <Skeleton variant="rectangular" height={200} />
-            <Skeleton variant="text" />
-            <Skeleton variant="text" />
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
-
-  const renderNoProductsMessage = () => {
-    if (!isLoading && isDataFetched && filteredProducts.length === 0) {
-      return (
-        <Grid item xs={12} style={{ height: '100%' }}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            style={{ height: '100%' }}
-          >
-            <Typography variant="h6" color="textSecondary">
-              찾으시는 상품이 없습니다.
-            </Typography>
-          </Box>
-        </Grid>
-      );
-    }
-    return null;
-  };
-
-  const renderProductsOrSkeletons = () => {
-    if (isLoading) {
-      return <ProductSkeleton />;
-    }
-
-    return (
-      <>
-        {filteredProducts.map((product: IProduct) => (
-          <Grow
-            in={true}
-            key={product._id}
-            style={{ transformOrigin: '0 0 0' }}
-            {...{ timeout: 1000 }}
-            onClick={() => handleSaveRecentlyViewed(product)}
-          >
-            <Grid item {...getItemSize()}>
-              <ProductCard product={product} />
-            </Grid>
-          </Grow>
-        ))}
-        {/* {filteredProducts.length === 0 && (
-          <Grid item xs={12} style={{ height: '100%' }}>
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              style={{ height: '100%' }}
-            >
-              <Typography variant="h6" color="textSecondary">
-                찾으시는 상품이 없습니다.
-              </Typography>
-            </Box>
-          </Grid>
-        )} */}
-      </>
-    );
-  };
-
-  // 상품 목록 Grid
-  const productGrid = (
-    <Grid container spacing={4} rowSpacing={8}>
-      {renderProductsOrSkeletons()}
-      {renderNoProductsMessage()}
-    </Grid>
-  );
 
   // 사이드바 Grid
   const sidebarGrid = (
@@ -360,7 +264,13 @@ export function SearchPage() {
             {sidebarGrid}
           </Slide>
           <Grid item xs={isSidebarOpen ? 9 : 12}>
-            {productGrid}
+            <ProductGrid
+              isLoading={isLoading}
+              isDataFetched={isDataFetched}
+              filteredProducts={filteredProducts}
+              itemsPerPage={itemsPerPage}
+              handleSaveRecentlyViewed={handleSaveRecentlyViewed}
+            />
           </Grid>
         </Grid>
       </Box>
