@@ -20,12 +20,17 @@ interface Props {
 export default function Dashboard(props: Props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const role = localStorage.getItem('role');
+  const dashboardMenu = {
+    buyer: role === 'user' ? DASHBOARD_MENU.buyer : [],
+    seller: role === 'seller' ? DASHBOARD_MENU.seller : [],
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const drawer = <DashboardNavBar dashboardMenu={DASHBOARD_MENU} />;
+  const drawer = <DashboardNavBar dashboardMenu={dashboardMenu} />;
 
   // Remove this const when copying and pasting into your project.
   const container =

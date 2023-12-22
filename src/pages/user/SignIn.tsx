@@ -63,6 +63,7 @@ export default function SignInPage() {
         response.data.item.token.refreshToken,
       );
       localStorage.setItem('_id', response.data.item._id);
+      localStorage.setItem('role', response.data.item.type);
       setLoginSuccess(true);
       setSnackbarMessage('로그인에 성공하였습니다. 메인 페이지로 이동합니다.');
       setSnackbarOpen(true);
