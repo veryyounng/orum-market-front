@@ -1,6 +1,6 @@
 import axios from 'axios';
 import initCreateData from '../../src/components/seller/ProductCreate';
-import { IUpdateProduct } from '../type';
+import { IOrderRes, IUpdateProduct } from '../type';
 import { useUserStore } from '../lib/store';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -178,7 +178,7 @@ export const api = {
   checkOut: (orderData: any) => axiosInstance.post('/orders/', orderData),
 
   // 구매자 구매 목록 조회
-  getOrderProductInfo: () => axiosInstance.get('/orders/'),
+  getOrderProductInfo: () => axiosInstance.get<IOrderRes>('/orders/'),
 
   //판매자 주문 목록 조회
   getOrderState: () => axiosInstance.get('seller/orders/'),

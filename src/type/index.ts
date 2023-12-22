@@ -212,3 +212,8 @@ export interface ISidebarProps {
   resetFilters: () => void;
   isReady: boolean;
 }
+
+export interface IOrderRes {
+  ok: number;
+  item: IOrderItem[];
+}
