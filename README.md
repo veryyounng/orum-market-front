@@ -25,12 +25,12 @@ Phoenix 🐦
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
 |Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
-# 사용 가이드
-구매자용 <br>
+# 로그인 가이드
+### 구매자용 <br>
 id: user@market.com<br>
 pw: 11111111
 <br>
-판매자용 <br>
+### 판매자용 <br>
 id: seller@market.com <br>
 pw: 11111111
 
