@@ -57,11 +57,6 @@ export function SearchPage() {
     }
   }, [data, setSearchResult]);
 
-  if (error) {
-    console.error('Error fetching products:', error);
-    return <div>Error fetching products</div>;
-  }
-
   const handleDisplayChange = (value: number) => {
     setItemsPerPage(value);
   };
@@ -92,7 +87,12 @@ export function SearchPage() {
     setSelectedShippingFee('전체');
   };
 
-  // 사이드바 Grid
+  if (error) {
+    console.error('Error fetching products:', error);
+    return <div>Error fetching products</div>;
+  }
+
+  // 사이드바 Grid: MUI Slide의 ref 문제로 인해 내부에서 관리
   const sidebarGrid = (
     <Grid item xs={3}>
       <Box

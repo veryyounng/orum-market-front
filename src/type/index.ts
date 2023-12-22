@@ -22,7 +22,7 @@ export interface IProduct {
 }
 
 export interface IProductImage {
-  img_id: string;
+  id: string;
   path: string;
 }
 
