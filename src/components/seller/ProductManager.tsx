@@ -94,7 +94,7 @@ export default function ProductManager() {
     setSortedProductList(sorted);
   }, [productList, sortOrder]);
 
-  const getOrderStateLabel = (productId: number) => {
+  const getOrderStateLabel = (productId: number | undefined) => {
     const orderItem = orderList.find((order) =>
       order.products.some((product) => product._id === productId),
     );
@@ -204,7 +204,7 @@ export default function ProductManager() {
                       {rows.price.toLocaleString()}원
                     </TableCell>
                     <TableCell align="center">
-                      {getOrderStateLabel(rows._id) || ''}
+                      {getOrderStateLabel(rows._id)}
                     </TableCell>
                     <TableCell align="center">
                       <ToggleButton

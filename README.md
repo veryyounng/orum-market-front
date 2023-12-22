@@ -4,6 +4,9 @@
 # Orum Market 🏔️
 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
 
+# URL
+https://buly.kr/6tYonST
+
 # Team ❤️‍🔥
 Phoenix 🐦
 
@@ -20,6 +23,26 @@ Phoenix 🐦
 |IDE|<img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=for-the-badge&logo=Visual Studio Code&logoColor=white">|
 |Design|<img src="https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white"> <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"> |
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
+
+# 사용 가이드
+구매자용 <br>
+id: user@market.com<br>
+pw: 11111111
+<br>
+판매자용 <br>
+id: seller@market.com <br>
+pw: 11111111
+
+# UserFlow
+<details>
+<summary> UserFlow 보기</summary>
+<div markdown="1">
+
+<img width="5032" alt="useflow" src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/d74e2fdf-b7bc-42d6-ad2c-49a2d2f12e92">
+
+</div>
+</details>
+
 
 # 주요 기능 🛒
 ## 비회원 (Guest) 👩‍💻

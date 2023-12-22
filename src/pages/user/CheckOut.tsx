@@ -49,6 +49,7 @@ export default function CheckOut() {
     extra: {
       address: [
         {
+          id: 0,
           addressName: '',
           receiver: '',
           tel: 0,
