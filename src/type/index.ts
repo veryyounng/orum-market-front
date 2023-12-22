@@ -7,7 +7,7 @@ export interface IProduct {
   shippingFees: number;
   show: boolean;
   active: boolean;
-  mainImages: string[];
+  mainImages: IProductImage[];
   content: string;
   createdAt: string;
   updatedAt: string;

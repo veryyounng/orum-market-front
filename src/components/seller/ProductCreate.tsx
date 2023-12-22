@@ -245,7 +245,7 @@ export default function ProductCreate() {
 
     setProductData({
       ...productData,
-      mainImages: updatedFilePreview.map((file) => file.path),
+      mainImages: updatedFilePreview,
     });
   };
 
