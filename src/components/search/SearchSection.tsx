@@ -4,26 +4,34 @@ import { Box, FormControl, Typography } from '@mui/material';
 import { useRef, useState } from 'react';
 import { api } from '../../api/api';
 import { useSearchStore } from '../../lib/store';
+import { useQuery } from 'react-query';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export function SearchSection() {
-  const { searchQuery, searchResult, setSearchQuery, setSearchResult } =
-    useSearchStore();
+  const { searchQuery, setSearchQuery, setSearchResult } = useSearchStore();
   const [inputValue, setInputValue] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const handleSearch = async (event: React.FormEvent) => {
+  const { isLoading, error, data } = useQuery(
+    ['searchProducts', inputValue],
+    () => api.searchProducts(inputValue, 0, 999999),
+    {
+      enabled: !!inputValue,
+      onSuccess: (data) => {
+        setSearchResult(data.data.item || []);
+      },
+      onError: (error) => {
+        console.error('Failed to search products', error);
+        setSearchResult([]);
+      },
+    },
+  );
+
+  const handleSearch = (event: React.FormEvent) => {
     event.preventDefault();
     setSearchQuery(inputValue);
     if (searchInputRef.current) {
       searchInputRef.current.blur();
-    }
-
-    try {
-      const response = await api.searchProducts(inputValue, 0, 999999);
-      setSearchResult(response.data.item || []);
-    } catch (error) {
-      console.error('Failed to search products', error);
-      setSearchResult([]);
     }
   };
 
@@ -62,14 +70,19 @@ export function SearchSection() {
             />
           </FormControl>
         </form>
-        {searchResult && searchResult.length > 0 && searchQuery && (
+        {isLoading && (
+          <div>
+            <CircularProgress />
+          </div>
+        )}
+        {data && data.data.length > 0 && (
           <Typography variant="body1" sx={{ mt: 2 }}>
             <strong>'{searchQuery}'</strong> 검색 결과{' '}
-            <span style={{ color: 'red' }}>{searchResult.length}</span>개의
-            상품이 있습니다.
+            <span style={{ color: 'red' }}>{data.data.length}</span>개의 상품이
+            있습니다.
           </Typography>
         )}
-        {searchResult && searchResult.length === 0 && searchQuery && (
+        {data && data.data.length === 0 && (
           <Typography variant="body1" sx={{ mt: 2 }}>
             <strong>'{searchQuery}'</strong> 검색 결과가 없습니다.
           </Typography>
