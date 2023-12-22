@@ -5,7 +5,7 @@
 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
 
 # URL
-https://buly.kr/6tYonST
+http://orum.pro
 
 # Team ❤️‍🔥
 Phoenix 🐦
