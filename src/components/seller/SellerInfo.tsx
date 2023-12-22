@@ -21,12 +21,9 @@ const Form = styled.form`
 
 export default function SellerInfo() {
   const userId = localStorage.getItem('_id');
-  const [sellerInfoData, setSellerInfoData] = useState<IUserInfo>({
-    id: 0,
-    email: '',
-    name: '',
-    address: '',
-  });
+  const [sellerInfoData, setSellerInfoData] = useState<IUserInfo>(
+    {} as IUserInfo,
+  );
 
   const handleChangeUserName = (newName: string) => {
     setSellerInfoData({

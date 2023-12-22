@@ -187,7 +187,7 @@ export interface IAddressData {
   id?: number;
   addressName?: string;
   receiver?: string;
-  tel?: number | string;
+  tel?: number | string | null;
   name?: string;
   mainAddress?: string;
   subAddress?: string;

@@ -106,7 +106,7 @@ export default function SellerOrderManager() {
     setSortedOrderList(updatedOrderList);
   };
 
-  const updateOderState = async (_id: number, product_id: number) => {
+  const updateOderState = async (_id: number) => {
     try {
       const selectedProduct = sortedOrderList.find(
         (product) => product._id === _id,
@@ -232,9 +232,7 @@ export default function SellerOrderManager() {
                       <Button
                         type="button"
                         variant="contained"
-                        onClick={() =>
-                          updateOderState(orderItem._id, productItem._id)
-                        }
+                        onClick={() => updateOderState(orderItem._id)}
                       >
                         수정하기
                       </Button>

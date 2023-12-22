@@ -46,6 +46,7 @@ const router = createBrowserRouter([
     element: <Dashboard />,
     errorElement: <NotFound />,
     children: [
+      // 라우팅 수정 RESTful API
       { index: true, path: '/user/:id', element: <BuyerHome /> },
       {
         path: '/user/:id/buyer-orderlist',

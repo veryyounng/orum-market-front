@@ -47,7 +47,7 @@ export default function MyCart() {
             {items.map((item: ICartItem) => (
               <ListItem key={item._id} divider>
                 <img
-                  src={item.mainImages[0]}
+                  src={item.mainImages[0].path}
                   alt={item.name}
                   style={{ width: '100px', marginRight: '20px' }}
                 />

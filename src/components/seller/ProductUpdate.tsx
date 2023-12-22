@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import {
-  FormControl,
   InputLabel,
-  Select,
-  MenuItem,
   TextField,
   Button,
+  Box,
+  FormLabel,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { IconButton, Stack } from '@mui/material';
@@ -15,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import { IUpdateProduct, IProductImage, IProduct } from '../../type/index';
+import { IProductImage, IProduct } from '../../type/index';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import {
@@ -24,18 +25,38 @@ import {
   validateProductPrice,
   validateProductShippingFees,
 } from '../../lib/validation';
-
+const initCreateData = {
+  price: 0,
+  shippingFees: 0,
+  show: true,
+  active: true,
+  name: '',
+  mainImages: [],
+  content: '',
+  createdAt: '',
+  updatedAt: '',
+  quantity: 1,
+  buyQuantity: 0,
+  extra: {
+    isNew: true,
+    isBest: true,
+    category: ['H01', 'H0101'],
+    sort: 1,
+  },
+};
 export default function ProductUpdate() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [productData, setProductData] = useState<Partial<IProduct>>();
+  const [productData, setProductData] = useState<IProduct>(initCreateData);
   const [filePreview, setFilePreview] = useState<IProductImage[]>([]);
   const [isValid, setIsValid] = useState(true);
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
   const [shippingFeesError, setShippingFeesError] = useState('');
   const [contentError, setContentError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedQuality, setSelectedQuality] = useState<string | number>('');
 
   useEffect(() => {
     fetchProduct();
@@ -73,6 +94,24 @@ export default function ProductUpdate() {
     }
   };
 
+  //카테고리 상태값 업데이트
+  const handleCategoryChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newCategory: string | null,
+  ) => {
+    event.preventDefault();
+    if (newCategory !== null) {
+      setSelectedCategory(newCategory);
+      setProductData({
+        ...productData,
+        extra: {
+          ...productData.extra,
+          category: ['H01', newCategory],
+        },
+      });
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProductData((prevData) => ({
       ...prevData,
@@ -81,12 +120,21 @@ export default function ProductUpdate() {
     checkValidate();
   };
 
-  const handelSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setProductData((prevData) => ({
-      ...prevData,
-      [e.target.name]: e.target.value,
-    }));
-    checkValidate();
+  //품질 상태값 업데이트
+  const handleQualityChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newQuality: number,
+  ) => {
+    if (newQuality !== null) {
+      setSelectedQuality(newQuality);
+      setProductData({
+        ...productData,
+        extra: {
+          ...productData.extra,
+          sort: newQuality,
+        },
+      });
+    }
   };
 
   //뒤로가기
@@ -168,7 +216,7 @@ export default function ProductUpdate() {
       //단일파일일때
       else {
         let fileObject: IProductImage = {
-          img_id: response.data.file.name,
+          id: response.data.file.name,
           path: `${API_BASE_URL}${response.data.file.path}`,
         }!;
 
@@ -194,7 +242,7 @@ export default function ProductUpdate() {
     setProductData((prevData) => ({
       ...prevData,
       mainImages: prevData!.mainImages!.filter(
-        (item) => item.img_id !== idToRemove,
+        (item) => item.id !== idToRemove,
       ),
     }));
   };
@@ -223,20 +271,20 @@ export default function ProductUpdate() {
                 <input hidden type="file" multiple accept="image/*" />
               </Button>
               {filePreview.map((item) => (
-                <div key={item.img_id}>
+                <div key={item.id}>
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <IconButton
                       aria-label="delete"
                       size="large"
                       onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                        handleFileRemove(e, item.img_id)
+                        handleFileRemove(e, item.id)
                       }
                     >
                       <DeleteIcon />
                     </IconButton>
                   </Stack>
                   <img
-                    key={item.img_id}
+                    key={item.id}
                     src={item.path}
                     alt={'File Preview'}
                     style={{ marginTop: '10px', maxWidth: '60%' }}
@@ -246,59 +294,47 @@ export default function ProductUpdate() {
             </>
             <br />
             <br />
-            <InputLabel id="category-label">카테고리</InputLabel>
-            <Select
-              labelId="category-label"
-              id="category-select"
-              label="category"
-              sx={{ width: '100px' }}
-              value={productData.extra?.category[1] || ''}
-              onChange={(e) => {
-                const selectedDBCode = e.target.value;
-                setProductData((prevData) => ({
-                  ...prevData,
-                  extra: {
-                    ...prevData!.extra,
-                    category: ['H01', selectedDBCode],
-                  },
-                }));
-              }}
-            >
-              {CATEGORY.depth2.map((menu) => (
-                <MenuItem key={menu.id} value={menu.dbCode}>
-                  {menu.name}
-                </MenuItem>
-              ))}
-            </Select>
+            <Box>
+              <FormLabel sx={{ fontSize: 'medium' }}>카테고리:</FormLabel>
+
+              <ToggleButtonGroup
+                value={selectedCategory}
+                exclusive
+                onChange={handleCategoryChange}
+                aria-label="category"
+              >
+                {CATEGORY.depth2.map((menu) => (
+                  <ToggleButton
+                    key={menu.id}
+                    value={menu.dbCode}
+                    aria-label={menu.name}
+                  >
+                    {menu.name}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Box>
             <br />
             <br />
-            <>
-              상품 품질:
-              <FormControl>
-                <InputLabel id="quantity-label">상품 품질</InputLabel>
-                <Select
-                  labelId="quantity-label"
-                  id="quantity-select"
-                  label="quantity"
-                  name="quantity"
-                  value={
-                    productData.quantity && productData.quantity >= 5
-                      ? '2'
-                      : productData.quantity || ''
-                  }
-                  sx={{ width: '100px' }}
-                  onChange={handelSelectChange}
-                >
-                  {QUALITY.map((menu) => {
-                    return (
-                      <MenuItem key={menu.id} value={menu.value}>
-                        {menu.name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </>
+            <Box>
+              <FormLabel sx={{ fontSize: 'medium' }}>상품 품질:</FormLabel>
+              <ToggleButtonGroup
+                value={selectedQuality}
+                exclusive
+                onChange={handleQualityChange}
+                aria-label="quality"
+              >
+                {QUALITY.map((quality) => (
+                  <ToggleButton
+                    key={quality.id}
+                    value={quality.value}
+                    aria-label={quality.name}
+                  >
+                    {quality.name}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Box>
             <br />
             <br />
             <>
