@@ -28,7 +28,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { api } from '../../api/api';
 import { CATEGORY, QUALITY } from '../../constants/index';
-import { IUpdateProduct } from '../../type';
+import { IProduct } from '../../type';
 
 import {
   validateProductName,
@@ -67,8 +67,7 @@ const initCreateData = {
 export default function ProductCreate() {
   const userId = localStorage.getItem('_id');
 
-  const [productData, setProductData] =
-    useState<IUpdateProduct>(initCreateData);
+  const [productData, setProductData] = useState<IProduct>(initCreateData);
   const [isValid, setIsValid] = useState(true);
   const [filePreview, setFilePreview] = useState<
     { id: string; path: string }[]
@@ -79,7 +78,7 @@ export default function ProductCreate() {
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedQuality, setSelectedQuality] = useState('');
+  const [selectedQuality, setSelectedQuality] = useState<string | number>('');
 
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
@@ -99,7 +98,7 @@ export default function ProductCreate() {
   const navigate = useNavigate();
 
   //가격, 배송료, 상품명, 상품 설명 상태값 업데이트
-  const handleAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAllChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     if (name === 'price' || name === 'shippingFees') {
       const numericValue = parseFloat(value);
@@ -165,8 +164,8 @@ export default function ProductCreate() {
 
   //품질 상태값 업데이트
   const handleQualityChange = (
-    event: React.MouseEvent<HTMLElement>,
-    newQuality: string | number,
+    _: React.MouseEvent<HTMLElement>,
+    newQuality: number,
   ) => {
     if (newQuality !== null) {
       setSelectedQuality(newQuality);
@@ -198,16 +197,16 @@ export default function ProductCreate() {
   };
 
   // 파일 업로드
-  const uploadFileMutation = useMutation(
+  const uploadFileMutation = useMutation<any, Error, FormData>(
     (newFiles) => {
       return api.uploadFile(newFiles);
     },
     {
       onSuccess: (response) => {
         const files = response.data.files || [response.data.file];
-        const newPreviews = files.map((file) => ({
+        const newPreviews = files.map((file: File) => ({
           id: file.name,
-          path: `${API_BASE_URL}${file.path}`,
+          path: `${API_BASE_URL}${(file as any).path}`,
         }));
         setFilePreview((currentPreviews) => [
           ...currentPreviews,
@@ -224,20 +223,20 @@ export default function ProductCreate() {
     },
   );
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const files = e.target.files;
     if (files) {
       const formData = new FormData();
       Array.from(files).forEach((file) => {
-        formData.append('attach', file);
+        formData.append('attach', file as Blob);
       });
       uploadFileMutation.mutate(formData);
     }
   };
 
   //파일 삭제
-  const handleFileRemove = (indexToRemove) => {
+  const handleFileRemove = (indexToRemove: string) => {
     let updatedFilePreview = [...filePreview];
     updatedFilePreview = updatedFilePreview.filter(
       (item) => item.id !== indexToRemove,
@@ -246,7 +245,7 @@ export default function ProductCreate() {
 
     setProductData({
       ...productData,
-      mainImages: updatedFilePreview,
+      mainImages: updatedFilePreview.map((file) => file.path),
     });
   };
 
@@ -382,14 +381,10 @@ export default function ProductCreate() {
                   flex: 'auto',
                 }}
               >
-                <IconButton
-                  variant="plain"
-                  color="neutral"
-                  onClick={(event) => setAnchorEl(event.currentTarget)}
-                >
+                <Button onClick={(event) => setAnchorEl(event.currentTarget)}>
                   <FormatBold />
-                  <KeyboardArrowDown fontSize="md" />
-                </IconButton>
+                  <KeyboardArrowDown />
+                </Button>
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
@@ -409,20 +404,19 @@ export default function ProductCreate() {
                       sx={{ fontWeight: weight }}
                     >
                       <ListItemDecorator>
-                        {fontWeight === weight && <Check fontSize="sm" />}
+                        {fontWeight === weight && <Check fontSize="small" />}
                       </ListItemDecorator>
                       {weight === '200' ? 'lighter' : weight}
                     </MenuItem>
                   ))}
                 </Menu>
-                <IconButton
-                  variant={italic ? 'soft' : 'plain'}
-                  color={italic ? 'primary' : 'neutral'}
+                <Button
+                  color={italic ? 'primary' : 'inherit'}
                   aria-pressed={italic}
                   onClick={() => setItalic((bool) => !bool)}
                 >
                   <FormatItalic />
-                </IconButton>
+                </Button>
               </Box>
             }
             sx={{
@@ -452,11 +446,16 @@ export default function ProductCreate() {
             component="label"
             variant="outlined"
             startIcon={<CloudUploadIcon />}
-            onChange={handleFileUpload}
             disabled={filePreview.length >= 10}
           >
             사진 업로드
-            <input hidden accept="image/*" multiple type="file" />
+            <input
+              hidden
+              accept="image/*"
+              multiple
+              type="file"
+              onChange={handleFileUpload}
+            />
           </Button>
           {uploadFileMutation.isLoading && (
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>

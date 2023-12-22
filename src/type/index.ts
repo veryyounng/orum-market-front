@@ -1,24 +1,24 @@
 export type IUpdateProduct = Partial<IProduct>;
 export interface IProduct {
-  _id: number;
-  seller_id: number;
+  _id?: number;
+  seller_id?: number;
   name: string;
   price: number;
   shippingFees: number;
-  quantity: number;
   show: boolean;
   active: boolean;
-  mainImages: IProductImage[];
-  buyQuantity: number;
-  extra: {
-    isNew?: boolean;
-    isBest?: boolean;
-    category: string[];
-    sort?: number;
-  };
+  mainImages: string[];
+  content: string;
   createdAt: string;
   updatedAt: string;
-  content: string;
+  quantity: number;
+  buyQuantity: number;
+  extra: {
+    isNew: boolean;
+    isBest: boolean;
+    category: string[];
+    sort: number;
+  };
 }
 
 export interface IProductImage {
