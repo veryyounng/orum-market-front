@@ -34,7 +34,15 @@ id: seller@market.com <br>
 pw: 11111111
 
 # UserFlow
+<details>
+<summary> UserFlow 보기</summary>
+<div markdown="1">
+
 <img width="5032" alt="useflow" src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/d74e2fdf-b7bc-42d6-ad2c-49a2d2f12e92">
+
+</div>
+</details>
+
 
 # 주요 기능 🛒
 ## 비회원 (Guest) 👩‍💻
