@@ -24,6 +24,18 @@ Phoenix 🐦
 |Design|<img src="https://img.shields.io/badge/MUI-007FFF?style=for-the-badge&logo=MUI&logoColor=white"> <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"> |
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
 
+# 사용 가이드
+구매자용 <br>
+id: user@market.com<br>
+pw: 11111111
+<br>
+판매자용 <br>
+id: seller@market.com <br>
+pw: 11111111
+
+# UserFlow
+<img width="5032" alt="useflow" src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/d74e2fdf-b7bc-42d6-ad2c-49a2d2f12e92">
+
 # 주요 기능 🛒
 ## 비회원 (Guest) 👩‍💻
 - 오픈 마켓의 상품들을 둘러볼 수 있습니다.
