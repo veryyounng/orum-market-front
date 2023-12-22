@@ -150,12 +150,13 @@ export default function ProductDetail() {
 }
 
 const ProductImageGallery = ({ images }: { images: IProductImage[] }) => {
-  const [selectedImage, setSelectedImage] = useState(images[0]);
+  const [selectedImage, setSelectedImage] = useState(images[0].path);
   const imageContainerStyle = {
     overflow: 'hidden',
     position: 'relative',
     width: '100%',
-    height: '100%',
+    height: 0,
+    paddingTop: '100%',
     margin: '10px 10px',
   };
   const imageListStyle = {
@@ -172,6 +173,21 @@ const ProductImageGallery = ({ images }: { images: IProductImage[] }) => {
         alignItems: 'center',
       }}
     >
+      <Box sx={imageContainerStyle}>
+        <img
+          src={selectedImage}
+          alt="Selected-Image"
+          style={{
+            borderRadius: '5px',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </Box>
       <ImageList sx={imageListStyle} cols={3} gap={9}>
         {images.map((image) => (
           <ImageListItem key={image.id}>
@@ -179,29 +195,17 @@ const ProductImageGallery = ({ images }: { images: IProductImage[] }) => {
               src={image.path}
               alt={`Product ${image.id}`}
               loading="lazy"
-              onClick={() => setSelectedImage(image)}
+              onClick={() => setSelectedImage(image.path)}
               style={{
                 borderRadius: '5px',
                 cursor: 'pointer',
-                border: selectedImage === image ? '2px solid #EF5B2A' : '',
-                filter: selectedImage === image ? '' : 'brightness(0.5)',
+                border: selectedImage === image.path ? '2px solid #EF5B2A' : '',
+                filter: selectedImage === image.path ? '' : 'brightness(0.5)',
               }}
             />
           </ImageListItem>
         ))}
       </ImageList>
-      <Box sx={imageContainerStyle}>
-        <img
-          src={selectedImage.path}
-          alt="Selected-Image"
-          style={{
-            borderRadius: '5px',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
     </Box>
   );
 };
@@ -301,7 +305,9 @@ const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
 
         {/* 상품 등급 */}
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Box sx={{ width: '70px', textAlign: 'left' }}>
+          <Box
+            sx={{ width: '70px', textAlign: 'left', justifyContent: 'start' }}
+          >
             <Typography variant="body2" fontWeight={800} component="legend">
               품질
             </Typography>
@@ -309,17 +315,32 @@ const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {generateQualityIcons(product.extra.sort || 0)}
           </Box>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            fontWeight={700}
-            sx={{ ml: 1 }}
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontWeight={700}
+              sx={{ ml: 1 }}
+            >
+              {getQualityName(product.extra.sort || 0)}
+            </Typography>
+          </Box>
+        </Stack>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <Box
+            sx={{ width: '70px', textAlign: 'left', justifyContent: 'start' }}
           >
-            {getQualityName(product.extra.sort || 0)}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-            {` (하<중<상<최상)`}
-          </Typography>
+            <Typography
+              variant="body2"
+              fontWeight={800}
+              component="legend"
+            ></Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {`(하<중<상<최상)`}
+            </Typography>
+          </Box>
         </Stack>
 
         {/* 구매 장바구니 북마크 버튼 */}
