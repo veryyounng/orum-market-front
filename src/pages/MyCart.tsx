@@ -5,6 +5,8 @@ import {
   Box,
   Button,
   Container,
+  Divider,
+  Grid,
   IconButton,
   List,
   ListItem,
@@ -21,6 +23,8 @@ export default function MyCart() {
     clearCart: () => void;
   };
 
+  console.log('장바구니 아이템', items);
+
   const currencyFormatter = new Intl.NumberFormat('ko-KR', {
     style: 'currency',
     currency: 'KRW',
@@ -33,61 +37,110 @@ export default function MyCart() {
   );
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
+    <Container sx={{ marginY: '50px' }}>
+      <Typography variant="h4" fontWeight={700} mb={5}>
         장바구니
       </Typography>
-      {items.length === 0 && <p>장바구니가 비었습니다.</p>}
-      {items.length > 0 && (
-        <p>장바구니에 {items.length} 개의 아이템이 있습니다.</p>
-      )}
-      {items.length > 0 && (
-        <Box>
-          <List>
-            {items.map((item: ICartItem) => (
-              <ListItem key={item._id} divider>
-                <img
-                  src={item.mainImages[0]}
-                  alt={item.name}
-                  style={{ width: '100px', marginRight: '20px' }}
-                />
-                <ListItemText primary={item.name} />
-                <ListItemSecondaryAction>
-                  {/* {item.quantity} */}
+      <Typography variant="body1">
+        {items.length === 0 && <p>장바구니가 비었습니다.</p>}
+        {items.length > 0 && (
+          <p>장바구니에 {items.length} 개의 아이템이 있습니다.</p>
+        )}
+      </Typography>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={12} sx={{ padding: '2rem' }}>
+          {items.length > 0 && (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  onClick={clearCart}
+                  variant="text"
+                  color="info"
+                  style={{ height: '56px' }}
+                >
+                  전체 삭제
+                </Button>
+              </Box>
+              <Divider />
+              <List>
+                {items.map((item: ICartItem) => (
+                  <ListItem key={item._id} divider>
+                    {item.mainImages.length === 0 ? (
+                      <img
+                        src="/assets/no-image.jpg"
+                        alt={item.name}
+                        style={{ width: '100px', marginRight: '20px' }}
+                      />
+                    ) : (
+                      <img
+                        src={item.mainImages[0]?.path}
+                        alt={item.name}
+                        style={{ width: '100px', marginRight: '20px' }}
+                      />
+                    )}
+                    <ListItemText>
+                      <Typography variant="h6">{item.name}</Typography>
+                    </ListItemText>
+                    <ListItemSecondaryAction
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                      }}
+                    >
+                      <Typography
+                        variant="body1"
+                        style={{ minWidth: '60px', fontWeight: '700' }}
+                        textAlign={'right'}
+                      >
+                        {currencyFormatter.format(item.price)}
+                      </Typography>
+                      <IconButton onClick={() => removeFromCart(item._id)}>
+                        <Button
+                          type="button"
+                          variant="text"
+                          sx={{
+                            color: '#000',
+                          }}
+                        >
+                          <ClearIcon />
+                          삭제
+                        </Button>
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
 
-                  <Typography variant="body1" style={{ minWidth: '60px' }}>
-                    {currencyFormatter.format(item.price)}
-                  </Typography>
-                  <IconButton onClick={() => removeFromCart(item._id)}>
-                    <ClearIcon />
-                    <Typography variant="button">삭제</Typography>
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6">
-              총 금액: {currencyFormatter.format(totalCost)}
-            </Typography>
-            <Button onClick={clearCart} variant="outlined" color="secondary">
-              전체 삭제
-            </Button>
-          </Box>
-          <Button
-            component={Link}
-            to="/checkout"
-            variant="contained"
-            color="primary"
-          >
-            구매하기
-          </Button>
-        </Box>
-      )}
+              <Box
+                sx={{
+                  mb: 2,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <Typography variant="h6" sx={{ my: 2, fontWeight: '800' }}>
+                  총 금액: {currencyFormatter.format(totalCost)}
+                </Typography>
+                <Box sx={{ display: 'flex' }} gap={2}>
+                  <Button
+                    component={Link}
+                    to="/checkout"
+                    color="primary"
+                    variant="outlined"
+                    style={{ height: '56px' }}
+                  >
+                    구매하기
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          )}
+        </Grid>
+      </Grid>
       {/* <button onClick={clearCart}>Clear Cart</button>
       <Link to="/checkout">
-        <button>Check Out</button>
-      </Link> */}
+      <button>Check Out</button>
+    </Link> */}
     </Container>
   );
 }
