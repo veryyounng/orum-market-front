@@ -8,7 +8,7 @@ interface ReusableTooltipProps {
   arrow?: boolean;
 }
 
-const ReusableTooltip: React.FC<ReusableTooltipProps> = ({
+const CustomTooltip: React.FC<ReusableTooltipProps> = ({
   title,
   children,
   placement = 'bottom',
@@ -21,4 +21,4 @@ const ReusableTooltip: React.FC<ReusableTooltipProps> = ({
   );
 };
 
-export default ReusableTooltip;
+export default CustomTooltip;

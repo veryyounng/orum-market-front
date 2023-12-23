@@ -27,6 +27,7 @@ import useAddToCart from '../../hooks/useAddToCart';
 import VerifiedIcon from '@mui/icons-material/Verified';
 
 import { QUALITY } from '../../constants';
+import CustomTooltip from '../../components/CustomTooltip';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -408,14 +409,16 @@ const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
 
         {/* 구매 장바구니 북마크 버튼 */}
         <Stack spacing={2} direction="column" mt={5}>
-          <Button
-            variant="contained"
-            startIcon={<PaymentIcon />}
-            onClick={perchaseProduct}
-            fullWidth
-          >
-            바로구매
-          </Button>
+          <CustomTooltip title="바로 구매하기">
+            <Button
+              variant="contained"
+              startIcon={<PaymentIcon />}
+              onClick={perchaseProduct}
+              fullWidth
+            >
+              바로구매
+            </Button>
+          </CustomTooltip>
 
           <Box
             sx={{
@@ -426,21 +429,29 @@ const ProductDetailsCard: React.FC<IProductDetailsCard> = ({
               borderRadius: '5px',
             }}
           >
-            <Button
-              variant="outlined"
-              startIcon={<ShoppingCartOutlinedIcon />}
-              sx={{ flexGrow: 1, mr: 1 }}
-              onClick={() => addProductToCart(product)}
-            >
-              장바구니
-            </Button>
-            <IconButton
-              sx={{ ml: 1 }}
-              onClick={() => handleBookmark()}
-              color={isBookmarked ? 'primary' : 'default'}
-            >
-              {isBookmarked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-            </IconButton>
+            <CustomTooltip title="장바구니에 담기">
+              <Button
+                variant="outlined"
+                startIcon={<ShoppingCartOutlinedIcon />}
+                sx={{ flexGrow: 1, mr: 1 }}
+                onClick={() => addProductToCart(product)}
+              >
+                장바구니
+              </Button>
+            </CustomTooltip>
+            <CustomTooltip title="찜하기 목록에 추가/삭제">
+              <Button
+                variant="outlined"
+                startIcon={
+                  isBookmarked ? <FavoriteIcon /> : <FavoriteBorderIcon />
+                }
+                sx={{ flexGrow: 1, ml: 1 }}
+                onClick={() => handleBookmark()}
+                {...(!isLoggedIn && { onClick: handleNotLoggedIn })}
+              >
+                찜하기
+              </Button>
+            </CustomTooltip>
           </Box>
         </Stack>
       </CardContent>

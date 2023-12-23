@@ -141,8 +141,8 @@ function App() {
         <Toolbar id="back-to-top-anchor" />
         <Outlet />
         <ScrollTop>
-          <Fab size="small" aria-label="scroll back to top">
-            <KeyboardArrowUpIcon />
+          <Fab size="small" aria-label="scroll back to top" color="primary">
+            <KeyboardArrowUpIcon color="secondary" />
           </Fab>
         </ScrollTop>
         <Footer />

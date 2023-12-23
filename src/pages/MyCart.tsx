@@ -15,6 +15,7 @@ import {
   Typography,
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
+import CustomTooltip from '../components/CustomTooltip';
 
 export default function MyCart() {
   const { items, removeFromCart, clearCart } = useCartStore() as {
@@ -52,14 +53,16 @@ export default function MyCart() {
           {items.length > 0 && (
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <Button
-                  onClick={clearCart}
-                  variant="text"
-                  color="info"
-                  style={{ height: '56px' }}
-                >
-                  전체 삭제
-                </Button>
+                <CustomTooltip title="장바구니 전부 비우기">
+                  <Button
+                    onClick={clearCart}
+                    variant="text"
+                    color="info"
+                    style={{ height: '56px' }}
+                  >
+                    전체 삭제
+                  </Button>
+                </CustomTooltip>
               </Box>
               <Divider />
               <List>
@@ -79,7 +82,20 @@ export default function MyCart() {
                       />
                     )}
                     <ListItemText>
-                      <Typography variant="h6">{item.name}</Typography>
+                      <Link
+                        to={`/product/${item._id}`}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        <CustomTooltip title="해당 상품 페이지로 이동">
+                          <Button
+                            variant="text"
+                            color="inherit"
+                            sx={{ fontSize: '1.2rem', fontWeight: '700' }}
+                          >
+                            {item.name}
+                          </Button>
+                        </CustomTooltip>
+                      </Link>
                     </ListItemText>
                     <ListItemSecondaryAction
                       sx={{
@@ -94,18 +110,20 @@ export default function MyCart() {
                       >
                         {currencyFormatter.format(item.price)}
                       </Typography>
-                      <IconButton onClick={() => removeFromCart(item._id)}>
-                        <Button
-                          type="button"
-                          variant="text"
-                          sx={{
-                            color: '#000',
-                          }}
-                        >
-                          <ClearIcon />
-                          삭제
-                        </Button>
-                      </IconButton>
+                      <CustomTooltip title="해당 상품만 장바구니에서 삭제">
+                        <IconButton onClick={() => removeFromCart(item._id)}>
+                          <Button
+                            type="button"
+                            variant="text"
+                            sx={{
+                              color: '#000',
+                            }}
+                          >
+                            <ClearIcon />
+                            삭제
+                          </Button>
+                        </IconButton>
+                      </CustomTooltip>
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}
@@ -122,25 +140,23 @@ export default function MyCart() {
                   총 금액: {currencyFormatter.format(totalCost)}
                 </Typography>
                 <Box sx={{ display: 'flex' }} gap={2}>
-                  <Button
-                    component={Link}
-                    to="/checkout"
-                    color="primary"
-                    variant="outlined"
-                    style={{ height: '56px' }}
-                  >
-                    구매하기
-                  </Button>
+                  <CustomTooltip title="결제 페이지로 이동합니다">
+                    <Button
+                      component={Link}
+                      to="/checkout"
+                      color="primary"
+                      variant="outlined"
+                      style={{ height: '56px' }}
+                    >
+                      구매하기
+                    </Button>
+                  </CustomTooltip>
                 </Box>
               </Box>
             </Box>
           )}
         </Grid>
       </Grid>
-      {/* <button onClick={clearCart}>Clear Cart</button>
-      <Link to="/checkout">
-      <button>Check Out</button>
-    </Link> */}
     </Container>
   );
 }

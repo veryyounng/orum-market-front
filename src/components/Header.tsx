@@ -32,6 +32,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import { useCart, useUserStore } from '../lib/store';
 import { IUserStore } from '../type';
 import { ColorModeContext } from '../App';
+import CustomTooltip from './CustomTooltip';
 
 // 메인 헤더 컴포넌트
 export default function Header() {
@@ -79,27 +80,33 @@ export default function Header() {
           gap: '1rem',
         }}
       >
-        <IconButton color="inherit">
-          <Badge badgeContent={4} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <Link to="/cart" style={{ textDecoration: 'none', color: 'inherit' }}>
+        <CustomTooltip title="알림">
           <IconButton color="inherit">
-            <Badge badgeContent={cartItemsCount} color="error">
-              <ShoppingCartIcon />
+            <Badge badgeContent={4} color="error">
+              <NotificationsIcon />
             </Badge>
           </IconButton>
+        </CustomTooltip>
+        <Link to="/cart" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <CustomTooltip title="장바구니">
+            <IconButton color="inherit">
+              <Badge badgeContent={cartItemsCount} color="error">
+                <ShoppingCartIcon />
+              </Badge>
+            </IconButton>
+          </CustomTooltip>
         </Link>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="menu-appbar"
-          aria-haspopup="true"
-          onClick={handleAvatarClick}
-          color="inherit"
-        >
-          <Avatar alt="User Avatar" src="/path/to/your/avatar.jpg" />
-        </IconButton>
+        <CustomTooltip title="내 정보">
+          <IconButton
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleAvatarClick}
+            color="inherit"
+          >
+            <Avatar alt="User Avatar" src="/path/to/your/avatar.jpg" />
+          </IconButton>
+        </CustomTooltip>
         <Menu
           id="menu-appbar"
           anchorEl={anchorEl}
@@ -183,17 +190,19 @@ export default function Header() {
           <Box
             sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}
           >
-            <IconButton
-              onClick={colorMode.toggleColorMode}
-              color="inherit"
-              style={{ marginRight: '0.1rem', fontSize: '1rem' }}
-            >
-              {theme.palette.mode === 'dark' ? (
-                <Brightness7Icon />
-              ) : (
-                <Brightness4Icon />
-              )}
-            </IconButton>
+            <CustomTooltip title="다크모드/라이트모드 전환">
+              <IconButton
+                onClick={colorMode.toggleColorMode}
+                color="inherit"
+                style={{ marginRight: '0.1rem', fontSize: '1rem' }}
+              >
+                {theme.palette.mode === 'dark' ? (
+                  <Brightness7Icon />
+                ) : (
+                  <Brightness4Icon />
+                )}
+              </IconButton>
+            </CustomTooltip>
             {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
           </Box>
         </ToolbarStyled>

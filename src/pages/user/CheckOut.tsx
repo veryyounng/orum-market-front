@@ -27,6 +27,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/system';
 import AddressListDialog from '../../components/address/AddressListDialog';
 import NewAddressInput from '../../components/address/NewAddressForm';
+import CustomTooltip from '../../components/CustomTooltip';
 declare const IMP: any;
 type TelPartsType = {
   telPart1: string;
@@ -332,14 +333,16 @@ export default function CheckOut() {
                   {deliveryInfo.mainAddress} {deliveryInfo.subAddress}
                 </Typography>
               </Box>
-              <Button
-                variant="outlined"
-                color="inherit"
-                style={{ height: '56px' }}
-                onClick={() => setIsAddressDialogOpen(true)}
-              >
-                배송지 목록
-              </Button>
+              <CustomTooltip title="배송지 목록에서 고르기">
+                <Button
+                  variant="outlined"
+                  color="inherit"
+                  style={{ height: '56px' }}
+                  onClick={() => setIsAddressDialogOpen(true)}
+                >
+                  배송지 목록
+                </Button>
+              </CustomTooltip>
               <AddressListDialog
                 isOpen={isAddressDialogOpen}
                 onClose={() => setIsAddressDialogOpen(false)}

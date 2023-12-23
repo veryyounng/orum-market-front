@@ -17,6 +17,7 @@ import AppsRoundedIcon from '@mui/icons-material/AppsRounded';
 import { styled, useTheme } from '@mui/material/styles';
 import { useState } from 'react';
 import { SORT_OPTIONS } from '../constants';
+import CustomTooltip from './CustomTooltip';
 
 interface INavigationBar {
   totalProducts: number;
@@ -59,14 +60,15 @@ export default function NavigationBar({
           <Button variant="text" color="inherit" onClick={handleToggel}>
             {isSidebarOpen ? '필터 닫기' : '필터 열기'}
           </Button>
-          <IconButton onClick={handleToggel}>
-            <TuneIcon
-              style={{
-                color: isSidebarOpen ? 'inherit' : 'darkgray',
-              }}
-            />
-          </IconButton>
-
+          <CustomTooltip title="필터 열기/닫기">
+            <IconButton onClick={handleToggel}>
+              <TuneIcon
+                style={{
+                  color: isSidebarOpen ? 'inherit' : 'darkgray',
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
           <Typography variant="h6">총 {totalProducts}개의 상품</Typography>
         </Box>
 
@@ -104,22 +106,26 @@ export default function NavigationBar({
                 {option.label}
               </Button>
             ))}
-            <IconButton
-              onClick={() => handleGridChange(4)}
-              sx={{
-                color: itemsPerPage === 4 ? 'inherit' : 'darkgray',
-              }}
-            >
-              <GridViewRoundedIcon />
-            </IconButton>
-            <IconButton
-              onClick={() => handleGridChange(8)}
-              sx={{
-                color: itemsPerPage === 8 ? 'inherit' : 'darkgray',
-              }}
-            >
-              <AppsRoundedIcon />
-            </IconButton>
+            <CustomTooltip title="아이템 크게 보기">
+              <IconButton
+                onClick={() => handleGridChange(4)}
+                sx={{
+                  color: itemsPerPage === 4 ? 'inherit' : 'darkgray',
+                }}
+              >
+                <GridViewRoundedIcon />
+              </IconButton>
+            </CustomTooltip>
+            <CustomTooltip title="아이템 많이 보기">
+              <IconButton
+                onClick={() => handleGridChange(8)}
+                sx={{
+                  color: itemsPerPage === 8 ? 'inherit' : 'darkgray',
+                }}
+              >
+                <AppsRoundedIcon />
+              </IconButton>
+            </CustomTooltip>
           </Box>
         )}
       </NavbarContent>
