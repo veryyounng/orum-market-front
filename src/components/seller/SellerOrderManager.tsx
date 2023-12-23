@@ -45,7 +45,6 @@ export default function SellerOrderManager() {
     getOrderState();
   }, []);
 
-  // SORT 정렬
   useEffect(() => {
     let sorted = [...orderList];
     switch (sortOrder) {
@@ -72,16 +71,6 @@ export default function SellerOrderManager() {
     }
     setSortedOrderList(sorted);
   }, [orderList, sortOrder]);
-
-  if (orderList.length === 0 && !isLoading) {
-    return (
-      <>
-        <Typography variant="h3" sx={{ marginBottom: '1rem' }}>
-          주문한 상품이 존재하지 않습니다.
-        </Typography>
-      </>
-    );
-  }
 
   const getQualityName = (quantity: number) => {
     const qualityItem = QUALITY.find((q) => q.value === quantity);
