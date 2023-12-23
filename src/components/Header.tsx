@@ -80,22 +80,6 @@ export default function Header() {
           gap: '1rem',
         }}
       >
-        <CustomTooltip title="알림">
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="error">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-        </CustomTooltip>
-        <Link to="/cart" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <CustomTooltip title="장바구니">
-            <IconButton color="inherit">
-              <Badge badgeContent={cartItemsCount} color="error">
-                <ShoppingCartIcon />
-              </Badge>
-            </IconButton>
-          </CustomTooltip>
-        </Link>
         <CustomTooltip title="내 정보">
           <IconButton
             aria-label="account of current user"
@@ -107,6 +91,26 @@ export default function Header() {
             <Avatar alt="User Avatar" src="/path/to/your/avatar.jpg" />
           </IconButton>
         </CustomTooltip>
+        <CustomTooltip title="알림">
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+        </CustomTooltip>
+        <Link to="/cart" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <CustomTooltip title="장바구니">
+            <Button color="inherit">
+              <Badge badgeContent={cartItemsCount} color="error">
+                <ShoppingCartIcon />
+              </Badge>
+              <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                장바구니
+              </Typography>
+            </Button>
+          </CustomTooltip>
+        </Link>
+
         <Menu
           id="menu-appbar"
           anchorEl={anchorEl}
@@ -189,19 +193,30 @@ export default function Header() {
 
           <Box
             sx={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}
+            gap={1}
           >
             <CustomTooltip title="다크모드/라이트모드 전환">
-              <IconButton
+              <Button
                 onClick={colorMode.toggleColorMode}
                 color="inherit"
-                style={{ marginRight: '0.1rem', fontSize: '1rem' }}
+                style={{ fontSize: '1rem' }}
               >
                 {theme.palette.mode === 'dark' ? (
-                  <Brightness7Icon />
+                  <>
+                    <Brightness7Icon />
+                    <Typography variant="body1" ml={1}>
+                      라이트모드
+                    </Typography>
+                  </>
                 ) : (
-                  <Brightness4Icon />
+                  <>
+                    <Brightness4Icon />
+                    <Typography variant="body1" ml={1}>
+                      다크모드
+                    </Typography>
+                  </>
                 )}
-              </IconButton>
+              </Button>
             </CustomTooltip>
             {isLoggedIn ? isLoggedInUserButton() : notLoggedInUserButton()}
           </Box>
