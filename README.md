@@ -1,21 +1,23 @@
 
-![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)
+![image](https://github.com/PhoenixFE/orum-market-front/assets/121228672/a72d5068-c3f3-4471-b8cb-40b55beab47b)
 
 # Orum Market 🏔️
 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
 
-# URL
+# URL 🔗
 http://orum.pro
 
 # Team ❤️‍🔥
-Phoenix 🐦
+Phoenix 🐦<br>
+<br>
+![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)<br>
 
 # 주제 선정이유 👀 
 진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. 
 평소에 등산용품을 새로 사려면 가격대가 고민이 되었는데, 오름마켓에서는 중고로 누구나 판매할 수 있다는 장점에 합리적인 가격으로 구입할 수 있습니다. 
 
 # 기술 스택 📚
-|사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white">|
+|사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white"> <img src="https://img.shields.io/badge/.ENV-ECD53F?style=for-the-badge&logo=.ENV&logoColor=white">|
 |------|---|
 |패키지|<img src="https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white">|
 |빌드툴|<img src="https://img.shields.io/badge/vite-646CFF?style=for-the-badge&logo=vite&logoColor=white">|
@@ -25,16 +27,16 @@ Phoenix 🐦
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
 |Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
-# 로그인 가이드
+# 로그인 가이드 🔐
 ### 구매자용 <br>
 id: user@market.com<br>
 pw: 11111111
 <br>
 ### 판매자용 <br>
-id: seller@market.com <br>
+id: s2@market.com <br>
 pw: 11111111
 
-# UserFlow
+# UserFlow 
 <details>
 <summary> UserFlow 보기</summary>
 <div markdown="1">
@@ -66,8 +68,20 @@ pw: 11111111
 - 내 정보를 수정할 수 있습니다.
 - 최근 본 상품을 볼 수 있습니다.
 
+## 페이지 별 기능 시연 📝
+| 회원가입  ![회원가입](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b46e85ed-1cbe-4184-8349-1226c65b634a)| 로그인 ![로그인](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b55106b4-82b1-4fb7-acc2-c7ff2cabeacb) |
+|------|---|
+
+| 필터 정렬 및 검색  ![필터정렬및검색](https://github.com/PhoenixFE/orum-market-front/assets/121228672/8145f21a-63c4-4886-8e83-b95575e11fa6)| 북마크 ![북마크](https://github.com/PhoenixFE/orum-market-front/assets/121228672/da5035b8-0db7-4f13-b7cd-dea60a665bdf) |
+|------|---|
+
+
+
+
 # Figma 
+
 https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0
 
 # 팀 노션 👩‍👧‍👦
 https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b
+
