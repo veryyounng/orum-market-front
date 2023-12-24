@@ -88,4 +88,23 @@ pw: 11111111
 ![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)<br>
 <br>
 
-## 팀원 소개 및 역할 분정
+## 팀원 소개 및 역할 분담 👩‍👧‍👦
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/wSeungMi"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/c2ced0ed-14fd-4190-aa7f-01e43b661806"width="100px;alt=""/><br /><sub><b>팀장 :우승미</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/jingoworld"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/f2237308-62eb-4f38-af02-e11ffd4baf0d" width="100px;" alt=""/><br /><sub><b> 팀원 : 최진우</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/veryyounng"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/7bf607a3-c895-404e-b8b7-ea946ad82feb" width="100px;" alt=""/><br /><sub><b>팀원 : 최소영</b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
+
+## 팀 협업 👐
+▶️ <a href="https://github.com/PhoenixFE/orum-market-front/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98-%EB%B0%8F-%ED%98%91%EC%97%85-%EA%B7%9C%EC%B9%99"> 깃 코딩 컨벤션 및 협업 규칙 </a> <br>
+▶️ <a href="https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b">팀 노션 바로가기</a>
+- 매일 9시 30분, 5시에 데일리 스크럼과 주간 회의록을 노션을 이용하여 기록하였습니다.
+- 트러블 슈팅이나 새로운 기술을 공부할 때 노션을 이용하여 기록하였습니다.
+- Discord를 이용하여 자료 공유와 소통을 활발히 하였습니다.
+
+## 프로젝트 진행 일정📆
