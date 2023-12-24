@@ -10,7 +10,6 @@ import {
   Chip,
   Container,
   Grid,
-  IconButton,
   ImageList,
   ImageListItem,
   Skeleton,
