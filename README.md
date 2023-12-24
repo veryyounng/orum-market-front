@@ -32,7 +32,7 @@ pw: 11111111
 |Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
 # 프로토타입 Figma 🖍️
-▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 바로보보기</a>
+▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 바로보기</a>
 
 # UserFlow ❗
 <details>
