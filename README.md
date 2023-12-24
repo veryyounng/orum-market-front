@@ -2,19 +2,23 @@
 ![image](https://github.com/PhoenixFE/orum-market-front/assets/121228672/a72d5068-c3f3-4471-b8cb-40b55beab47b)
 
 # Orum Market 🏔️
-등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다.
-
-# URL 🔗
-http://orum.pro
-
-# Team ❤️‍🔥
-Phoenix 🐦<br>
-<br>
-![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)<br>
+오름 마켓은 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다. 
 
 # 주제 선정이유 👀 
-진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. 
+진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. <br>
 평소에 등산용품을 새로 사려면 가격대가 고민이 되었는데, 오름마켓에서는 중고로 누구나 판매할 수 있다는 장점에 합리적인 가격으로 구입할 수 있습니다. 
+
+# 오름마켓 바로가기 🔗
+<a href = "http://orum.pro">오름마켓 바로가기 ! </a>
+
+# 로그인 가이드 🔐
+### 구매자용 <br>
+id: ab@market.com<br>
+pw: 11111111
+<br>
+### 판매자용 <br>
+id: abc@market.com <br>
+pw: 11111111
 
 # 기술 스택 📚
 |사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white"> <img src="https://img.shields.io/badge/.ENV-ECD53F?style=for-the-badge&logo=.ENV&logoColor=white">|
@@ -27,25 +31,16 @@ Phoenix 🐦<br>
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
 |Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
-# 로그인 가이드 🔐
-### 구매자용 <br>
-id: user@market.com<br>
-pw: 11111111
-<br>
-### 판매자용 <br>
-id: s2@market.com <br>
-pw: 11111111
+# 프로토타입 Figma 
+▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 바로보보기</a>
 
-# UserFlow 
+# UserFlow ❗
 <details>
-<summary> UserFlow 보기</summary>
+<summary> UserFlow 보기 ! </summary>
 <div markdown="1">
-
 <img width="5032" alt="useflow" src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/d74e2fdf-b7bc-42d6-ad2c-49a2d2f12e92">
-
 </div>
 </details>
-
 
 # 주요 기능 🛒
 ## 비회원 (Guest) 👩‍💻
@@ -68,20 +63,38 @@ pw: 11111111
 - 내 정보를 수정할 수 있습니다.
 - 최근 본 상품을 볼 수 있습니다.
 
+## 주요 코드 
+
 ## 페이지 별 기능 시연 📝
 | 회원가입  ![회원가입](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b46e85ed-1cbe-4184-8349-1226c65b634a)| 로그인 ![로그인](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b55106b4-82b1-4fb7-acc2-c7ff2cabeacb) |
 |------|---|
 
-| 필터 정렬 및 검색  ![필터정렬및검색](https://github.com/PhoenixFE/orum-market-front/assets/121228672/8145f21a-63c4-4886-8e83-b95575e11fa6)| 북마크 ![북마크](https://github.com/PhoenixFE/orum-market-front/assets/121228672/da5035b8-0db7-4f13-b7cd-dea60a665bdf) |
+| 필터 정렬 및 검색  ![필터정렬및검색](https://github.com/PhoenixFE/orum-market-front/assets/121228672/8145f21a-63c4-4886-8e83-b95575e11fa6)| 찜하기 ![북마크](https://github.com/PhoenixFE/orum-market-front/assets/121228672/da5035b8-0db7-4f13-b7cd-dea60a665bdf) |
 |------|---|
 
+| 장바구니 ![장바구니](https://github.com/PhoenixFE/orum-market-front/assets/121228672/634ca277-9ca5-4ce0-889c-4f5af33df38f) | 결제 ![구매](https://github.com/PhoenixFE/orum-market-front/assets/121228672/5e49f561-02ad-43ab-8b33-5f7cacac7a20) |
+|------|---|
 
+| 주문내역 ![내주문내역보기](https://github.com/PhoenixFE/orum-market-front/assets/121228672/281c2521-0103-41df-a7b6-ff9c7d5285c3) | 배송지 관리  ![배송지관리](https://github.com/PhoenixFE/orum-market-front/assets/121228672/3d7d5eb2-357a-4141-9601-fbad3e52ccc6) |
+|------|---|
 
+| 찜한 상품 및 최근 본 상품 ![찜한상품최근본상품](https://github.com/PhoenixFE/orum-market-front/assets/121228672/4606fd65-5390-4fb6-8654-ca5eacb46b16) | 판매자 상품 등록 ![상품등록](https://github.com/PhoenixFE/orum-market-front/assets/121228672/162c330e-2d46-4173-948a-3b5d19314848) |
+|------|---|
 
-# Figma 
+| 판매자 상품 수정 | 판매자 주문상태 수정 ![주문수정](https://github.com/PhoenixFE/orum-market-front/assets/121228672/9de92bec-3a3b-4c2a-8d6d-78ed6133c5c7) |
+|------|---|
 
-https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0
+# Team ❤️‍🔥
+Phoenix 🐦<br>
+<br>
+![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)<br>
 
-# 팀 노션 👩‍👧‍👦
-https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b
+# 팀원 소개 및 역할 분담
+
+# 팀 협업 👐
+▶️ <a href="https://github.com/PhoenixFE/orum-market-front/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98-%EB%B0%8F-%ED%98%91%EC%97%85-%EA%B7%9C%EC%B9%99"> 깃 코딩 컨벤션 및 협업 규칙 </a> <br>
+▶️ <a href="https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b">팀 노션 바로가기</a>
+- 매일 9시 30분, 5시에 데일리 스크럼과 주간 회의록을 노션을 이용하여 기록하였습니다.
+- 트러블 슈팅이나 새로운 기술을 공부할 때 노션을 이용하여 기록하였습니다.
+- Discord를 이용하여 자료 공유와 소통을 활발히 하였습니다.
 
