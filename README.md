@@ -1,5 +1,5 @@
 
-![image](https://github.com/PhoenixFE/orum-market-front/assets/121228672/a72d5068-c3f3-4471-b8cb-40b55beab47b)
+<img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/a72d5068-c3f3-4471-b8cb-40b55beab47b" width="58%">
 
 # Orum Market 🏔️
 오름 마켓은 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다. 
@@ -31,7 +31,7 @@ pw: 11111111
 |DataBase|<img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">|
 |Deploy|<img src="https://img.shields.io/badge/netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white"> <img src="https://img.shields.io/badge/Koyeb-121212?style=for-the-badge&logo=Koyeb&logoColor=white">|
 
-# 프로토타입 Figma 
+# 프로토타입 Figma 🖍️
 ▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 바로보보기</a>
 
 # UserFlow ❗
@@ -63,9 +63,9 @@ pw: 11111111
 - 내 정보를 수정할 수 있습니다.
 - 최근 본 상품을 볼 수 있습니다.
 
-## 주요 코드 
+# 주요 코드 📌
 
-## 페이지 별 기능 시연 📝
+# 페이지 별 기능 시연 📝
 | 회원가입  ![회원가입](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b46e85ed-1cbe-4184-8349-1226c65b634a)| 로그인 ![로그인](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b55106b4-82b1-4fb7-acc2-c7ff2cabeacb) |
 |------|---|
 
@@ -84,14 +84,23 @@ pw: 11111111
 | 판매자 상품 수정 | 판매자 주문상태 수정 ![주문수정](https://github.com/PhoenixFE/orum-market-front/assets/121228672/9de92bec-3a3b-4c2a-8d6d-78ed6133c5c7) |
 |------|---|
 
-# Team ❤️‍🔥
-Phoenix 🐦<br>
-<br>
+# Team Phoenix 🐦
 ![phoenix](https://github.com/PhoenixFE/orum-market-front/assets/121228672/e9ea48fe-359a-434d-a7f8-15cf6ea9e9e0)<br>
+<br>
 
-# 팀원 소개 및 역할 분담
+## 팀원 소개 및 역할 분담 👩‍👧‍👦
 
-# 팀 협업 👐
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/wSeungMi"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/c2ced0ed-14fd-4190-aa7f-01e43b661806"width="100px;alt=""/><br /><sub><b>팀장 :우승미</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/jingoworld"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/f2237308-62eb-4f38-af02-e11ffd4baf0d" width="100px;" alt=""/><br /><sub><b> 팀원 : 최진우</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/veryyounng"><img src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/7bf607a3-c895-404e-b8b7-ea946ad82feb" width="100px;" alt=""/><br /><sub><b>팀원 : 최소영</b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
+
+## 팀 협업 👐
 ▶️ <a href="https://github.com/PhoenixFE/orum-market-front/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98-%EB%B0%8F-%ED%98%91%EC%97%85-%EA%B7%9C%EC%B9%99"> 깃 코딩 컨벤션 및 협업 규칙 </a> <br>
 ▶️ <a href="https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b">팀 노션 바로가기</a>
 - 매일 9시 30분, 5시에 데일리 스크럼과 주간 회의록을 노션을 이용하여 기록하였습니다.
