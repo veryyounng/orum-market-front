@@ -25,20 +25,17 @@ interface FilePreview {
 interface FileUploadProps {
   originalFiles?: { id: string; path: string }[];
   onFilesChange: (files: FilePreview[]) => void;
-  images: ImageListType;
-  setImages: (images: ImageListType) => void;
+  onChange?: (imageList: ImageListType) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
   originalFiles,
   onFilesChange,
-  images,
-  setImages,
 }) => {
   const { filePreview, isUploading } = useFileUpload(originalFiles);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  // const [images, setImages] = useState(originalFiles || []);
+  const [images, setImages] = useState(originalFiles || []);
   const maxNumber = 69;
 
   const onChange = (imageList: ImageListType) => {

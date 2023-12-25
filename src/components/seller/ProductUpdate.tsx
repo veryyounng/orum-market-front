@@ -55,10 +55,6 @@ interface FilePreview {
   id: string;
   path: string;
 }
-type ImageListType = {
-  dataURL?: string;
-  file?: File;
-}[];
 
 export default function ProductUpdate() {
   const [productData, setProductData] = useState<IProduct>(initCreateData);
@@ -71,7 +67,6 @@ export default function ProductUpdate() {
   const [existingImages, setExistingImages] = useState<FilePreview[]>([]);
   const { productId } = useParams();
   const navigate = useNavigate();
-  const [images, setImages] = useState<ImageListType>([]);
 
   const [nameError, setNameError] = useState('');
   const [priceError, setPriceError] = useState('');
@@ -450,8 +445,6 @@ export default function ProductUpdate() {
                 onFilesChange={(files: FilePreview[]) =>
                   handleFilesChange(files)
                 }
-                images={images}
-                setImages={(images: ImageListType) => setImages(images)}
               />
             )}
           </Box>
