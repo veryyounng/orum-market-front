@@ -12,13 +12,16 @@
 ▶️ <a href = "http://orum.pro">오름마켓 바로가기 ! </a>
 
 # 로그인 가이드 🔐
-### 구매자용 <br>
-id: ab@market.com<br>
+### 구매자용 로그인
+```
+id: ab@market.com
 pw: 11111111
-<br>
-### 판매자용 <br>
-id: abc@market.com <br>
+```
+### 판매자용 로그인
+```
+id: abc@market.com 
 pw: 11111111
+```
 
 # 기술 스택 📚
 |사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white"> <img src="https://img.shields.io/badge/.ENV-ECD53F?style=for-the-badge&logo=.ENV&logoColor=white">|
@@ -100,6 +103,8 @@ pw: 11111111
   </tbody>
 </table>
 
+▶️ <a href="https://github.com/PhoenixFE/orum-market-front/wiki/%ED%8C%80-%EC%97%AD%ED%95%A0-%EB%B6%84%EB%8B%B4">팀 역할 분담</a>
+
 ## 팀 협업 👐
 ▶️ <a href="https://github.com/PhoenixFE/orum-market-front/wiki/%EC%BD%94%EB%94%A9-%EC%BB%A8%EB%B2%A4%EC%85%98-%EB%B0%8F-%ED%98%91%EC%97%85-%EA%B7%9C%EC%B9%99"> 깃 코딩 컨벤션 및 협업 규칙 </a> <br>
 ▶️ <a href="https://www.notion.so/FESP-4-Phoenix-3e5adaf929e948d781848aaf3be0b05b">팀 노션 바로가기</a>
@@ -108,3 +113,10 @@ pw: 11111111
 - Discord를 이용하여 자료 공유와 소통을 활발히 하였습니다.
 
 ## 프로젝트 진행 일정📆
+<details>
+<summary> 📆 보기 </summary>
+<div markdown="1">
+<img width="5032" alt="schedule" src="https://github.com/PhoenixFE/orum-market-front/assets/121228672/a0565f6e-4a55-4d63-8ad4-ec41d6d417de">
+</div>
+</details>
+
