@@ -47,7 +47,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     if (filePreview) {
       onFilesChange(filePreview);
     }
-  }, [filePreview]);
+  }, [filePreview, originalFiles]);
 
   const handleOpenDialog = (imagePath: string) => {
     setSelectedImage(imagePath);
@@ -57,7 +57,8 @@ const FileUpload: React.FC<FileUploadProps> = ({
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-
+  console.log('filePreview', filePreview);
+  console.log('originalFiles', originalFiles);
   return (
     <Box
       sx={{
@@ -91,6 +92,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         </Box>
       )}
       <Stack direction="row" spacing={2}>
+        {originalFiles && <>'original'</>}
         {filePreview &&
           filePreview.map((image, index) => (
             <Badge

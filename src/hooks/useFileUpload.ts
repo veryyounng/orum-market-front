@@ -9,14 +9,14 @@ interface FilePreview {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const useFileUpload = (initialFiles: FilePreview[] = []) => {
+export const useFileUpload = (originalFiles: FilePreview[] = []) => {
   const [filePreview, setFilePreview] = useState<FilePreview[]>();
 
   useEffect(() => {
-    if (initialFiles.length > 0) {
-      setFilePreview(initialFiles);
+    if (originalFiles && originalFiles.length > 0) {
+      setFilePreview(originalFiles);
     }
-  }, [initialFiles]);
+  }, [originalFiles]);
 
   const uploadFileMutation = useMutation<any, Error, FormData>(
     (newFiles) => api.uploadFile(newFiles),
@@ -56,7 +56,11 @@ export const useFileUpload = (initialFiles: FilePreview[] = []) => {
       });
       uploadFileMutation.mutate(formData);
     }
+    if (e.target) {
+      e.target.value = '';
+    }
     console.log('filePreview', filePreview);
+    console.log('files', files);
   };
 
   const handleFileRemove = (id: string) => {

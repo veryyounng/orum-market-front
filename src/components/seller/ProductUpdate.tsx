@@ -64,6 +64,7 @@ export default function ProductUpdate() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedQuality, setSelectedQuality] = useState<string | number>('');
+  const [existingImages, setExistingImages] = useState<FilePreview[]>([]);
   const { productId } = useParams();
   const navigate = useNavigate();
 
@@ -86,15 +87,17 @@ export default function ProductUpdate() {
           const response = await api.getProduct(Number(productId));
           const fetchedProductData = response.data.item;
           console.log('fetchedProductData', fetchedProductData);
-          const existingImages = fetchedProductData.mainImages.map(
+          const images = fetchedProductData.mainImages.map(
             (image: { id: number; path: string }) => ({
               id: image.id,
               path: image.path,
             }),
           );
+          setExistingImages(images);
+          console.log('existingImages', existingImages);
 
           setProductData(fetchedProductData);
-          handleFilesChange(existingImages);
+          handleFilesChange(images);
         }
       } catch (error) {
         console.error('Failed to fetch product data:', error);
@@ -220,6 +223,8 @@ export default function ProductUpdate() {
       console.error('API Error:', error);
     }
   };
+
+  console.log('productData', productData);
 
   return (
     <form onSubmit={handleUpdateData}>
@@ -418,11 +423,12 @@ export default function ProductUpdate() {
                 <></>
               )}
             </Box>
-
-            <FileUpload
-              originalFiles={productData.mainImages}
-              onFilesChange={handleFilesChange}
-            />
+            {existingImages && (
+              <FileUpload
+                originalFiles={existingImages}
+                onFilesChange={handleFilesChange}
+              />
+            )}
           </Box>
 
           <Box
