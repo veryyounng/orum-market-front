@@ -74,7 +74,7 @@ pw: 11111111
 
 # 페이지 별 기능 시연 📝
 <details>
-<summary> 바로 보기 </summary>
+<summary> 페이지 시연 보기 </summary>
 <div markdown="1">
   
 | 회원가입  ![회원가입](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b46e85ed-1cbe-4184-8349-1226c65b634a)| 로그인 ![로그인](https://github.com/PhoenixFE/orum-market-front/assets/121228672/b55106b4-82b1-4fb7-acc2-c7ff2cabeacb) |
