@@ -5,7 +5,7 @@
 오름 마켓은 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다. 
 
 ▶️ <a href = "http://orum.pro">오름마켓 바로가기 ! </a> <br>
-▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 바로보기</a>
+▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 피그마 바로보기</a>
 
 # 주제 선정이유 👀 
 진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. <br>
