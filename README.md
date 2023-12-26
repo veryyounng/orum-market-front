@@ -21,7 +21,7 @@ pw: 11111111
 ```
 ### 판매자용 로그인
 ```
-id: abc@market.com 
+id: s1@market.com 
 pw: 11111111
 ```
 
