@@ -4,26 +4,11 @@
 # Orum Market 🏔️
 오름 마켓은 등산용품을 누구나 판매하고 구입할 수 있는 오픈 마켓 프로젝트입니다. 
 
-▶️ <a href = "http://orum.pro">오름마켓 바로가기 ! </a> <br>
 ▶️ <a href="https://www.figma.com/file/fI0ziwgIHaLaoRLi7Ghv6Z/Orum-Market?type=design&node-id=3-2&mode=design&t=MIVtmaYddSUiZ9Yd-0">오름마켓 프로토타입 피그마 바로보기</a>
 
 # 주제 선정이유 👀 
 진입장벽이 높은 다른 운동에 비해 등산은 누구나 접할 수 있고 누구나 한번씩은 해본 스포츠이므로 관심이 갔습니다. <br>
 평소에 등산용품을 새로 사려면 가격대가 고민이 되었는데, 오름마켓에서는 중고로 누구나 판매할 수 있다는 장점에 합리적인 가격으로 구입할 수 있습니다. 
-
-
-
-# 로그인 가이드 🔐
-### 구매자용 로그인
-```
-id: ab@market.com
-pw: 11111111
-```
-### 판매자용 로그인
-```
-id: s1@market.com 
-pw: 11111111
-```
 
 # 기술 스택 📚
 |사용 기술| <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> <img src="https://img.shields.io/badge/React Query-FF4154?style=for-the-badge&logo=React Query&logoColor=white"> <img src="https://img.shields.io/badge/React Router-CA4245?style=for-the-badge&logo=React Router&logoColor=white"> <img src="https://img.shields.io/badge/.ENV-ECD53F?style=for-the-badge&logo=.ENV&logoColor=white">|
